@@ -1,0 +1,70 @@
+Created At: 2026-05-20T13:48:00Z
+Completed At: 2026-05-20T13:48:00Z
+File Path: `file:///c:/Users/LENOVO/Documents/kerja%20praktik/spmb-landing/scratch/admin_dashboard_step_300.tsx`
+Total Lines: 76
+Total Bytes: 4121
+Showing lines 1 to 76
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: Created At: 2026-05-20T13:22:50Z
+2: Completed At: 2026-05-20T13:22:50Z
+3: File Path: `file:///c:/Users/LENOVO/Documents/kerja%20praktik/spmb-landing/src/AdminDashboard.tsx`
+4: Total Lines: 1080
+5: Total Bytes: 60938
+6: Showing lines 1 to 800
+7: The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+8: 1: import React, { useState, useEffect } from 'react';
+9: 2: 
+10: 3: interface Payment {
+11: 4:   id: number;
+12: 5:   tanggal_bayar: string;
+13: 6:   kode_pembayaran: string;
+14: 7:   nama_penyetor: string;
+15: 8:   jumlah_bayar: string;
+16: 9:   bukti_path: string;
+17: 10:   status: string;
+18: 11:   created_at: string;
+19: 12: }
+20: 13: 
+21: 14: interface AdminDashboardProps {
+22: 15:   onLogout: () => void;
+23: 16:   user: any;
+24: 17: }
+25: 18: 
+26: 19: const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
+27: 20:   const [payments, setPayments] = useState<Payment[]>([]);
+28: 21:   const [biodatas, setBiodatas] = useState<any[]>([]);
+29: 22:   const [isLoading, setIsLoading] = useState(true);
+30: 23:   const [selectedProof, setSelectedProof] = useState<string | null>(null);
+31: 24:   const [activeTab, setActiveTab] = useState<'payments' | 'students' | 'health' | 'registration'>('payments');
+32: 25:   const [selectedBiodata, setSelectedBiodata] = useState<any | null>(null);
+33: 26:   const [searchTerm, setSearchTerm] = useState(''
+<truncated 882 bytes>
+   </div>
+50: 776: 
+51: 777:                 {/* Personal & School */}
+52: 778:                 <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+53: 779:                   <div className="space-y-6">
+54: 780:                      <section>
+55: 781:                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2 mb-3">Info Pribadi</p>
+56: 782:                         <div className="space-y-3">
+57: 783:                           {[
+58: 784:                             { label: 'NISN', val: selectedBiodata.nisn },
+59: 785:                             { label: 'TTL', val: `${selectedBiodata.tempat_lahir}, ${selectedBiodata.tanggal_lahir}` },
+60: 786:                             { label: 'Gender', val: selectedBiodata.jenis_kelamin },
+61: 787:                             { label: 'Agama', val: selectedBiodata.agama },
+62: 788:                           ].map(item => (
+63: 789:                             <div key={item.label} className="flex flex-col">
+64: 790:                               <span className="text-[9px] font-bold text-slate-400 uppercase">{item.label}</span>
+65: 791:                               <span className="text-sm font-bold text-slate-700">{item.val || '-'}</span>
+66: 792:                             </div>
+67: 793:                           ))}
+68: 794:                         </div>
+69: 795:                      </section>
+70: 796:                   </div>
+71: 797: 
+72: 798:                   <div className="space-y-6">
+73: 799:                      <section>
+74: 800:                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2 mb-3">Asal Sekolah</p>
+75: The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+76: 
+The above content shows the entire, complete file contents of the requested file.

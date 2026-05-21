@@ -1,0 +1,23 @@
+export const KABUPATEN_LIST = [
+  "50 Kota", "ACEH TENGAH", "Agam", "Anambas", "Asahan", "Batam", "Batang Hari", 
+  "Batu Bara", "Bengkalis", "Bengkulu", "Bengkulu Selatan", "Bengkulu Tengah", 
+  "Bengkulu Utara", "Binjai", "Bintan", "BOGOR", "Bukittinggi", "Bungo", "CIREBON", 
+  "Dairi", "Deli Serdang", "Dharmasraya", "Dumai", "GAYO LUES", "Gunung Sitoli", 
+  "Humbang Hasundutan", "Indragiri Hilir", "Indragiri Hulu", "Jakarta Barat", 
+  "Jakarta Pusat", "Jakarta Selatan", "Jakarta Timur", "Jakarta Utara", "Jambi", 
+  "Kampar", "Karimun", "Karo", "Kaur", "Kepahiang", "Kepulauan Meranti", 
+  "Kepulauan Seribu", "Kerinci", "KOLAKA TIMUR", "KOTA BANDUNG", "Kuantan Singingi", 
+  "Labuhan Batu", "Labuhan Batu Utara", "LAMONGAN", "LAMPUNG BARAT", "Langkat", 
+  "Lebong", "Lhokseumawe", "Lingga", "Mandailing Natal", "Medan", "Mentawai", 
+  "Merangin", "MESUJI", "MINAHASA UTARA", "MUARA ENIM", "Muaro Jambi", "Muko Muko", 
+  "Natuna", "Nias", "Nias Barat", "Nias Selatan", "Nias Utara", "Padang", 
+  "Padang Lawas", "Padang Lawas Utara", "Padang Panjang", "Padang Pariaman", 
+  "Padang Sidempuan", "Pakpak Barat", "Palu", "Pariaman", "Pasaman", "Pasaman Barat", 
+  "Payakumbuh", "Pekanbaru", "Pelalawan", "Pematang Siantar", "Pesisir Selatan", 
+  "PONOROGO", "PURWAKARTA", "Rejang Lebong", "Rokan Hilir", "Rokan Hulu", "Samosir",
+  "Sarolangun", "Sawahlunto", "Seluma", "Semarang", "Serdang Begadai", "Siak", 
+  "Sibolga", "Simalungun", "SLEMAN", "Solok", "Solok Selatan", "SUKOHARJO", 
+  "Sungai Penuh", "SURAKARTA", "Tanah Datar", "Tanjung Balai", "Tanjung Jabung Barat", 
+  "Tanjung Jabung Timur", "Tanjung Pinang", "Tapanuli Selatan", "Tapanuli Tengah", 
+  "Tapanuli Utara", "Tebing Tinggi", "Tebo", "Toba", "Yogyakarta"
+];
