@@ -18,6 +18,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [RegistrationController::class, 'store']);
 Route::post('/login', [RegistrationController::class, 'login']);
 Route::post('/forgot-password', [RegistrationController::class, 'forgotPassword']);
+Route::get('/prodis', [RegistrationController::class, 'getProdis']);
 
 Route::post('/payment', [PaymentConfirmationController::class, 'store']);
 Route::get('/payment/status/{kode_pembayaran}', [PaymentConfirmationController::class, 'checkStatus']);

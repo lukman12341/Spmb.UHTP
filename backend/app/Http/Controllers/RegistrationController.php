@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Registration;
+use App\Models\Prodi;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -98,5 +99,43 @@ class RegistrationController extends Controller
         ]);
 
         return response()->json(['message' => 'Password Anda berhasil diperbarui! Silakan login.']);
+    }
+
+    public function getProdis()
+    {
+        $prodis = Prodi::orderBy('nama_prodi')->pluck('nama_prodi');
+        
+        if ($prodis->isEmpty()) {
+            $prodis = [
+                'S1 Kesmas Program Reguler',
+                'S1 Kesmas Program RPLA1',
+                'S1 Kesmas Program RPLA2',
+                'S1 TI Program Reguler',
+                'S1 TI Program RPLA1',
+                'S1 TI Program RPLA2',
+                'S1 SI Program Reguler',
+                'S1 SI Program RPLA1',
+                'S1 SI Program RPLA2',
+                'S2 Kesmas Program Reguler',
+                'S2 Kesmas Program RPLA2',
+                'S1 Kebidanan Program Reguler',
+                'S1 Kebidanan Program RPLA1',
+                'S1 Kebidanan Program RPLA2',
+                'S1 Keperawatan Program Reguler',
+                'S1 Keperawatan Program RPLA1',
+                'S1 Keperawatan Program RPLA2',
+                'Profesi Ners',
+                'Profesi Bidan',
+                'D3 Rekam Medis',
+                'S1 Ilmu Komunikasi',
+                'S1 Ilmu Hukum',
+                'D4 Manajemen Informasi Kesehatan'
+            ];
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $prodis
+        ]);
     }
 }

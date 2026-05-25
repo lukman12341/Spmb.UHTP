@@ -64,11 +64,50 @@ function App() {
   }, [isLoggedIn, isAdminLoggedIn, showCbt, loggedInUser]);
 
   // Clear any existing session storage on initial mount if not reloading to ensure clean start
+  const [prodiList, setProdiList] = useState<string[]>([
+    'S1 Kesmas Program Reguler',
+    'S1 Kesmas Program RPLA1',
+    'S1 Kesmas Program RPLA2',
+    'S1 TI Program Reguler',
+    'S1 TI Program RPLA1',
+    'S1 TI Program RPLA2',
+    'S1 SI Program Reguler',
+    'S1 SI Program RPLA1',
+    'S1 SI Program RPLA2',
+    'S2 Kesmas Program Reguler',
+    'S2 Kesmas Program RPLA2',
+    'S1 Kebidanan Program Reguler',
+    'S1 Kebidanan Program RPLA1',
+    'S1 Kebidanan Program RPLA2',
+    'S1 Keperawatan Program Reguler',
+    'S1 Keperawatan Program RPLA1',
+    'S1 Keperawatan Program RPLA2',
+    'Profesi Ners',
+    'Profesi Bidan',
+    'D3 Rekam Medis',
+    'S1 Ilmu Komunikasi',
+    'S1 Ilmu Hukum',
+    'D4 Manajemen Informasi Kesehatan'
+  ]);
+
   useEffect(() => {
     if (!isReload) {
       sessionStorage.clear();
       localStorage.clear();
     }
+
+    const fetchProdis = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/prodis`);
+        const data = await response.json();
+        if (data.status === 'success') {
+          setProdiList(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch prodis:', error);
+      }
+    };
+    fetchProdis();
   }, [isReload]);
   
   const scrollToPortal = () => {
@@ -1638,29 +1677,9 @@ function App() {
                       <div className="relative">
                         <select name="program_studi" value={formData.program_studi} onChange={handleInputChange} className="appearance-none w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all cursor-pointer pr-10 hover:border-slate-300">
                           <option value="">- Pilih Program Studi -</option>
-                          <option>S1 Kesmas Program Reguler</option>
-                          <option>S1 Kesmas Program RPLA1</option>
-                          <option>S1 Kesmas Program RPLA2</option>
-                          <option>S1 TI Program Reguler</option>
-                          <option>S1 TI Program RPLA1</option>
-                          <option>S1 TI Program RPLA2</option>
-                          <option>S1 SI Program Reguler</option>
-                          <option>S1 SI Program RPLA1</option>
-                          <option>S1 SI Program RPLA2</option>
-                          <option>S2 Kesmas Program Reguler</option>
-                          <option>S2 Kesmas Program RPLA2</option>
-                          <option>S1 Kebidanan Program Reguler</option>
-                          <option>S1 Kebidanan Program RPLA1</option>
-                          <option>S1 Kebidanan Program RPLA2</option>
-                          <option>S1 Keperawatan Program Reguler</option>
-                          <option>S1 Keperawatan Program RPLA1</option>
-                          <option>S1 Keperawatan Program RPLA2</option>
-                          <option>Profesi Ners</option>
-                          <option>Profesi Bidan</option>
-                          <option>D3 Rekam Medis</option>
-                          <option>S1 Ilmu Komunikasi</option>
-                          <option>S1 Ilmu Hukum</option>
-                          <option>D4 Manajemen Informasi Kesehatan</option>
+                          {prodiList.map((prodiName) => (
+                            <option key={prodiName} value={prodiName}>{prodiName}</option>
+                          ))}
                         </select>
                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
                       </div>
