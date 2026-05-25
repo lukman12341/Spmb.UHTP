@@ -44,7 +44,7 @@ class AdminKesehatanController extends Controller
 
     public function index(Request $request)
     {
-        $query = Registration::with(['biodata', 'examResult', 'healthTest'])
+        $query = Registration::with(['biodata', 'examResult', 'healthTest', 'interviewAnswers.soal'])
             ->whereHas('biodata', function ($q) {
                 // Hanya mahasiswa yang sudah difinalisasi (memiliki no ujian)
                 $q->whereNotNull('exam_number');
@@ -56,6 +56,16 @@ class AdminKesehatanController extends Controller
 
         if ($request->has('prodi') && $request->prodi != '') {
             $query->where('program_studi', 'LIKE', '%' . $request->prodi . '%');
+        }
+
+        if ($request->has('tpa_only') && $request->tpa_only == '1') {
+            $query->whereHas('examResult', function ($q) {
+                $q->whereNotNull('total_score');
+            });
+        }
+
+        if ($request->has('kesehatan_only') && $request->kesehatan_only == '1') {
+            $query->whereHas('healthTest');
         }
 
         $registrations = $query->get();
@@ -104,6 +114,31 @@ class AdminKesehatanController extends Controller
                 $finalStatus = 'Tidak Lulus';
             }
 
+            $details = $reg->examResult->details ?? null;
+            $jumlah_benar = '-';
+            $skor = null;
+
+            if (is_array($details) && count($details) > 0) {
+                $benarCount = 0;
+                $salahCount = 0;
+                foreach ($details as $detail) {
+                    $status = $detail['status'] ?? '';
+                    if ($status === 'Betul') {
+                        $benarCount++;
+                    } else {
+                        $salahCount++;
+                    }
+                }
+                $jumlah_benar = $benarCount;
+                $total_soal = $benarCount + $salahCount;
+                $skor = $total_soal > 0 ? round(($benarCount / $total_soal) * 100) : 0;
+            } else {
+                if ($reg->examResult) {
+                    $jumlah_benar = $reg->examResult->total_score ?? '-';
+                    $skor = $reg->examResult->total_score ?? null;
+                }
+            }
+
             return [
                 'id' => $reg->id,
                 'nama' => $reg->name,
@@ -111,8 +146,8 @@ class AdminKesehatanController extends Controller
                 'pilihan' => $reg->program_studi,
                 'gelombang' => $reg->gelombang,
                 'status_kesehatan' => $status_kesehatan,
-                'skor' => $reg->examResult->total_score ?? null,
-                'jumlah_benar' => $reg->examResult->total_score ?? '-',
+                'skor' => $skor,
+                'jumlah_benar' => $jumlah_benar,
                 'no_telp' => $reg->no_hp ?? '-',
                 'hasil_wawancara' => $hasil_wawancara ?? (\App\Models\InterviewAnswer::where('registration_id', $reg->id)->exists() ? 'SUDAH UJIAN' : 'BELUM UJIAN'),
                 'pewawancara' => $reg->biodata->pewawancara ?? null,
@@ -127,7 +162,15 @@ class AdminKesehatanController extends Controller
                 'riwayat_penyakit' => $reg->healthTest->riwayat_penyakit ?? '',
                 'keterangan_kesehatan' => $reg->healthTest->keterangan_kesehatan ?? '',
                 'bukti_kesehatan_path' => $reg->healthTest->bukti_kesehatan_path ?? null,
-                'details' => $reg->examResult->details ?? []
+                'details' => $reg->examResult->details ?? [],
+                'interview_answers' => $reg->interviewAnswers->map(function ($ans) {
+                    return [
+                        'id' => $ans->id,
+                        'soal_id' => $ans->soal_id,
+                        'pertanyaan' => $ans->soal->pertanyaan ?? 'Pertanyaan tidak ditemukan',
+                        'jawaban' => $ans->jawaban,
+                    ];
+                })->toArray(),
             ];
         });
 

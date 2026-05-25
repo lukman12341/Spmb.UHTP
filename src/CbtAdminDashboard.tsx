@@ -196,8 +196,6 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   const [showWawancaraModal, setShowWawancaraModal] = useState(false);
   const [selectedWawancaraStudent, setSelectedWawancaraStudent] = useState<any>(null);
   const [wawancaraStatus, setWawancaraStatus] = useState('LULUS');
-  const [catatanWawancara, setCatatanWawancara] = useState('');
-  const [nilaiWawancara, setNilaiWawancara] = useState<number | ''>('');
 
   // Kelulusan Data State
   const [showProsesKelulusanModal, setShowProsesKelulusanModal] = useState(false);
@@ -324,7 +322,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   const [pengumumanLoading, setPengumumanLoading] = useState(false);
 
   // Laporan (Reports) State
-  const [laporanView, setLaporanView] = useState<'rekap_keseluruhan' | 'belum_registrasi' | 'siswa_prestasi' | 'laporan_ujian_tulis' | 'laporan_tes_kesehatan' | 'rekap_tes_kesehatan'>('rekap_keseluruhan');
+  const [laporanView, setLaporanView] = useState<'rekap_keseluruhan' | 'belum_registrasi' | 'laporan_ujian_tulis' | 'laporan_tes_kesehatan' | 'rekap_tes_kesehatan'>('rekap_keseluruhan');
   const [laporanFilterPeriode, setLaporanFilterPeriode] = useState('2026');
   const [laporanFilterGelombang, setLaporanFilterGelombang] = useState('');
   const [laporanFilterProdi, setLaporanFilterProdi] = useState('');
@@ -436,7 +434,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
     setWawancaraLoading(true);
     try {
-      const url = `${API_BASE_URL}/api/admin/wawancara?gelombang=${wawancaraFilterGelombang}&prodi=${wawancaraFilterProdi}`;
+      const url = isKelulusanView
+        ? `${API_BASE_URL}/api/admin/wawancara?gelombang=${wawancaraFilterGelombang}`
+        : `${API_BASE_URL}/api/admin/wawancara?gelombang=${wawancaraFilterGelombang}&prodi=${wawancaraFilterProdi}`;
       const response = await fetch(url);
       const data = await response.json();
       if (data.status === 'success') {
@@ -814,11 +814,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       filterLabel = `Periode: ${laporanFilterPeriode} — Program Studi: ${laporanFilterProdi || 'Semua'}`;
       tableHeader = `<th style="width:5%">NO</th><th style="width:15%">NO UJIAN</th><th style="width:30%">NAMA</th><th style="width:25%">PROGRAM STUDI</th><th style="width:12%">GELOMBANG</th><th style="width:13%">NO HP</th>`;
       tableRows = laporanData.map((m: any, i: number) => `<tr><td style="text-align:center;border:1px solid #333;padding:6px">${i+1}</td><td style="text-align:center;border:1px solid #333;padding:6px;font-family:monospace">${m.no_ujian||'-'}</td><td style="border:1px solid #333;padding:6px;text-transform:uppercase">${m.nama||'-'}</td><td style="border:1px solid #333;padding:6px">${m.pilihan||'-'}</td><td style="text-align:center;border:1px solid #333;padding:6px">${m.gelombang||'-'}</td><td style="text-align:center;border:1px solid #333;padding:6px">${m.no_hp||'-'}</td></tr>`).join('');
-    } else if (laporanView === 'siswa_prestasi') {
-      title = 'LAPORAN SISWA PRESTASI 10 BESAR';
-      filterLabel = `Gelombang: ${laporanFilterGelombang || '-'} — Program Studi: ${laporanFilterProdi || 'Semua'}`;
-      tableHeader = `<th style="width:5%">RANK</th><th style="width:15%">NO UJIAN</th><th style="width:30%">NAMA</th><th style="width:25%">PROGRAM STUDI</th><th style="width:12%">NILAI</th><th style="width:13%">GELOMBANG</th>`;
-      tableRows = laporanData.map((m: any, i: number) => `<tr><td style="text-align:center;border:1px solid #333;padding:6px;font-weight:bold">${i+1}</td><td style="text-align:center;border:1px solid #333;padding:6px;font-family:monospace">${m.no_ujian||'-'}</td><td style="border:1px solid #333;padding:6px;text-transform:uppercase">${m.nama||'-'}</td><td style="border:1px solid #333;padding:6px">${m.pilihan||'-'}</td><td style="text-align:center;border:1px solid #333;padding:6px;font-weight:bold;color:#0369a1">${m.total_score||m.score||'-'}</td><td style="text-align:center;border:1px solid #333;padding:6px">${m.gelombang||'-'}</td></tr>`).join('');
+
     } else if (laporanView === 'laporan_ujian_tulis') {
       title = 'LAPORAN HASIL UJIAN TULIS';
       filterLabel = `Gelombang: ${laporanFilterGelombang || '-'} — Program Studi: ${laporanFilterProdi || 'Semua'}`;
@@ -1251,12 +1247,17 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
     setIsSaving(true);
     try {
+      const payload = {
+        ...soalForm,
+        prodi: soalForm.soal_untuk === 'Soal Wawancara' ? soalForm.prodi : '',
+        kategori: soalForm.soal_untuk === 'Soal Wawancara' ? soalForm.kategori : '',
+      };
       const response = await fetch(`${API_BASE_URL}/api/soal/store`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(soalForm),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -1300,12 +1301,17 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
     setIsSaving(true);
     try {
+      const payload = {
+        ...soalForm,
+        prodi: soalForm.soal_untuk === 'Soal Wawancara' ? soalForm.prodi : '',
+        kategori: soalForm.soal_untuk === 'Soal Wawancara' ? soalForm.kategori : '',
+      };
       const response = await fetch(`${API_BASE_URL}/api/soal/${editingSoalId}/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(soalForm),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -1523,16 +1529,6 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   const handleSaveWawancara = async () => {
     if (!selectedWawancaraStudent) return;
     
-    if (nilaiWawancara === '') {
-      alert("Mohon masukkan nilai wawancara.");
-      return;
-    }
-    const score = Number(nilaiWawancara);
-    if (isNaN(score) || score < 0 || score > 100) {
-      alert("Nilai wawancara harus berada di antara 0 dan 100!");
-      return;
-    }
-
     if (!window.confirm("Apakah Anda yakin ingin menyimpan hasil wawancara ini?")) {
       return;
     }
@@ -1544,8 +1540,8 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           hasil_wawancara: wawancaraStatus,
-          catatan_wawancara: catatanWawancara,
-          nilai_wawancara: score,
+          catatan_wawancara: '',
+          nilai_wawancara: 100,
           pewawancara: adminName
         })
       });
@@ -1962,12 +1958,32 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 Opsi Pilihan Ganda
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {['pilihan_a', 'pilihan_b', 'pilihan_c', 'pilihan_d'].map((id) => (
-                  <div key={id} className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pilihan {id.replace('pilihan_', '').toUpperCase()}</label>
-                    <input type="text" placeholder={`Masukkan Pilihan ${id.replace('pilihan_', '').toUpperCase()}`} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px]" value={(soalForm as any)[id]} onChange={e => setSoalForm({ ...soalForm, [id]: e.target.value })} />
-                  </div>
-                ))}
+                {['pilihan_a', 'pilihan_b', 'pilihan_c', 'pilihan_d'].map((id) => {
+                  const keyLetter = id.replace('pilihan_', '').toUpperCase();
+                  const theme = 
+                    keyLetter === 'A' ? { text: 'text-blue-600', bg: 'bg-blue-50/50', border: 'border-blue-100', focus: 'focus-within:border-blue-500 focus-within:ring-blue-500/5' } :
+                    keyLetter === 'B' ? { text: 'text-indigo-600', bg: 'bg-indigo-50/50', border: 'border-indigo-100', focus: 'focus-within:border-indigo-500 focus-within:ring-indigo-500/5' } :
+                    keyLetter === 'C' ? { text: 'text-purple-600', bg: 'bg-purple-50/50', border: 'border-purple-100', focus: 'focus-within:border-purple-500 focus-within:ring-purple-500/5' } :
+                                        { text: 'text-pink-600', bg: 'bg-pink-50/50', border: 'border-pink-100', focus: 'focus-within:border-pink-500 focus-within:ring-pink-500/5' };
+                  
+                  return (
+                    <div key={id} className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pilihan {keyLetter}</label>
+                      <div className={`relative flex items-center bg-slate-50 border-2 border-slate-100 rounded-2xl transition-all ${theme.focus}`}>
+                        <div className={`absolute left-3 size-8 rounded-xl ${theme.bg} ${theme.text} ${theme.border} border flex items-center justify-center font-black text-xs shadow-sm select-none`}>
+                          {keyLetter}
+                        </div>
+                        <input 
+                          type="text" 
+                          placeholder={`Masukkan Pilihan ${keyLetter}...`} 
+                          className="w-full pl-14 pr-5 py-3.5 bg-transparent outline-none border-none font-bold text-slate-700 text-[13px]" 
+                          value={(soalForm as any)[id]} 
+                          onChange={e => setSoalForm({ ...soalForm, [id]: e.target.value })} 
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -1982,28 +1998,47 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
               {soalForm.soal_untuk !== 'Soal Wawancara' && (
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kunci Jawaban</label>
-                  <div className="relative">
-                    <select className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.jawaban} onChange={e => setSoalForm({ ...soalForm, jawaban: e.target.value })}>
-                      <option value="A">Pilihan A</option><option value="B">Pilihan B</option><option value="C">Pilihan C</option><option value="D">Pilihan D</option>
+                  <div className="relative flex items-center">
+                    <select 
+                      className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
+                      value={soalForm.jawaban} 
+                      onChange={e => setSoalForm({ ...soalForm, jawaban: e.target.value })}
+                    >
+                      <option value="A">Pilihan A</option>
+                      <option value="B">Pilihan B</option>
+                      <option value="C">Pilihan C</option>
+                      <option value="D">Pilihan D</option>
                     </select>
+                    <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                   </div>
                 </div>
               )}
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Soal Untuk</label>
-                <div className="relative">
-                  <select className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.soal_untuk} onChange={e => setSoalForm({ ...soalForm, soal_untuk: e.target.value })}>
-                    <option value="Jalur A">Jalur A</option><option value="Jalur B">Jalur B</option><option value="Pasca">Pasca</option><option value="NERS">NERS</option><option value="Profesi Bidan">Profesi Bidan</option><option value="STMIK">STMIK</option><option value="Soal Wawancara">Soal Wawancara</option>
+                <div className="relative flex items-center">
+                  <select 
+                    className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
+                    value={soalForm.soal_untuk} 
+                    onChange={e => setSoalForm({ ...soalForm, soal_untuk: e.target.value })}
+                  >
+                    <option value="Jalur A">Jalur A</option>
+                    <option value="Jalur B">Jalur B</option>
+                    <option value="Pasca">Pasca</option>
+                    <option value="NERS">NERS</option>
+                    <option value="Profesi Bidan">Profesi Bidan</option>
+                    <option value="STMIK">STMIK</option>
+                    <option value="Soal Wawancara">Soal Wawancara</option>
                   </select>
+                  <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                 </div>
               </div>
               {soalForm.soal_untuk === 'Soal Wawancara' ? (
                 <>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kategori Wawancara</label>
-                    <div className="relative">
+                    <div className="relative flex items-center">
                       <select
-                        className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                         value={soalForm.kategori}
                         onChange={e => setSoalForm({ ...soalForm, kategori: e.target.value })}
                       >
@@ -2011,13 +2046,14 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                         <option value="Tujuan dan Harapan">Tujuan dan Harapan</option>
                         <option value="Kemampuan dan Kesiapan">Kemampuan dan Kesiapan</option>
                       </select>
+                      <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prodi</label>
-                    <div className="relative">
+                    <div className="relative flex items-center">
                       <select
-                        className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                         value={soalForm.prodi}
                         onChange={e => setSoalForm({ ...soalForm, prodi: e.target.value })}
                       >
@@ -2034,19 +2070,21 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                           </>
                         )}
                       </select>
+                      <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
-                    <div className="relative">
+                    <div className="relative flex items-center">
                       <select
-                        className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                         value={(soalForm as any).status}
                         onChange={e => setSoalForm({ ...soalForm, status: e.target.value })}
                       >
                         <option value="aktif">Aktif</option>
                         <option value="nonaktif">Nonaktif</option>
                       </select>
+                      <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                     </div>
                   </div>
                 </>
@@ -2054,23 +2092,30 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 <>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tipe Soal</label>
-                    <div className="relative">
-                      <select className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.type_soal} onChange={e => setSoalForm({ ...soalForm, type_soal: e.target.value })}>
-                        <option value="TPA">TPA</option><option value="Bahasa Inggris">Bahasa Inggris</option>
+                    <div className="relative flex items-center">
+                      <select 
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
+                        value={soalForm.type_soal} 
+                        onChange={e => setSoalForm({ ...soalForm, type_soal: e.target.value })}
+                      >
+                        <option value="TPA">TPA</option>
+                        <option value="Bahasa Inggris">Bahasa Inggris</option>
                       </select>
+                      <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
-                    <div className="relative">
+                    <div className="relative flex items-center">
                       <select
-                        className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                         value={(soalForm as any).status}
                         onChange={e => setSoalForm({ ...soalForm, status: e.target.value })}
                       >
                         <option value="aktif">Aktif</option>
                         <option value="nonaktif">Nonaktif</option>
                       </select>
+                      <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                     </div>
                   </div>
                 </>
@@ -2402,6 +2447,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                                   onClick={() => {
                                     setSelectedCbtResult(mhs);
                                     setCbtResultDetails(mhs.details || []);
+                                    setBackView('jadwal_ujian');
                                     setView('detail_hasil_ujian');
                                     window.scrollTo(0, 0);
                                   }}
@@ -2476,123 +2522,128 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
           </div>
         </div>
-
         <div className="overflow-x-auto custom-scrollbar">
           {isSoalLoading ? (
-            <div className="py-20 flex flex-col items-center justify-center gap-4 bg-slate-50/50">
-              <div className="size-12 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin"></div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Memuat Data Soal...</p>
+            <div className="py-12 flex flex-col items-center justify-center gap-3 bg-slate-50/50">
+              <div className="size-10 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin"></div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest animate-pulse">Memuat Data Soal...</p>
             </div>
           ) : soalList.length === 0 ? (
-            <div className="py-20 flex flex-col items-center justify-center text-center bg-slate-50/50">
-              <span className="material-symbols-outlined text-5xl text-slate-300 mb-2">inventory_2</span>
-              <h3 className="text-base font-bold text-slate-700">Tidak Ada Data</h3>
-              <p className="text-sm text-slate-500">Belum ada soal yang tersedia untuk kategori {jalur}.</p>
+            <div className="py-12 flex flex-col items-center justify-center text-center bg-slate-50/50">
+              <span className="material-symbols-outlined text-4xl text-slate-350 mb-1">inventory_2</span>
+              <h3 className="text-sm font-bold text-slate-700">Tidak Ada Data</h3>
+              <p className="text-xs text-slate-400">Belum ada soal yang tersedia untuk kategori {jalur}.</p>
             </div>
           ) : (
-            <table className="w-full text-left border-collapse min-w-[1200px]">
+            <table className="w-full text-left border-collapse min-w-[1000px]">
               <thead>
-                <tr className="bg-slate-100 text-[11px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">
-                  <th className="px-6 py-4 w-16 text-center">No</th>
-                  <th className="px-6 py-4">Pertanyaan</th>
+                <tr className="bg-slate-50 text-[10px] font-black text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                  <th className="px-4 py-3 w-12 text-center">No</th>
+                  <th className="px-4 py-3 min-w-[300px]">Pertanyaan</th>
                   {jalur === 'Soal Wawancara' ? (
                     <>
-                      <th className="px-6 py-4 w-48 text-center">Kategori</th>
-                      <th className="px-6 py-4 w-32 text-center">Prodi</th>
+                      <th className="px-4 py-3 w-48 text-center">Kategori</th>
+                      <th className="px-4 py-3 w-32 text-center">Prodi</th>
                     </>
                   ) : (
                     <>
-                      <th className="px-6 py-4">Pilihan Jawaban</th>
-                      <th className="px-6 py-4 w-24 text-center">Kunci</th>
-                      <th className="px-6 py-4 w-32 text-center">Atribut</th>
+                      <th className="px-4 py-3 min-w-[320px]">Pilihan Jawaban</th>
+                      <th className="px-4 py-3 w-20 text-center">Kunci</th>
+                      <th className="px-4 py-3 w-36 text-center">Atribut</th>
                     </>
                   )}
-                  <th className="px-6 py-4 w-32 text-center">Status</th>
-                  <th className="px-6 py-4 w-28 text-center">Aksi</th>
+                  <th className="px-4 py-3 w-24 text-center">Status</th>
+                  <th className="px-4 py-3 w-24 text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+              <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
                 {soalList.map((soal, idx) => (
-                  <tr key={soal.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-5 text-center align-top font-bold text-slate-500">
+                  <tr key={soal.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-4 py-2.5 text-center align-middle font-bold text-slate-455">
                       {idx + 1}
                     </td>
-                    <td className="px-6 py-5 align-top">
-                      <div className="rich-text-content text-slate-700 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: soal.pertanyaan }}></div>
+                    <td className="px-4 py-2.5 align-middle">
+                      <div className="rich-text-content text-slate-800 leading-relaxed font-semibold" dangerouslySetInnerHTML={{ __html: soal.pertanyaan }}></div>
                     </td>
                     {jalur === 'Soal Wawancara' ? (
                       <>
-                        <td className="px-6 py-5 align-top text-center">
-                          <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 block">
+                        <td className="px-4 py-2.5 align-middle text-center">
+                          <span className="inline-block text-[10px] font-black text-slate-600 bg-slate-100 px-2 py-1 rounded border border-slate-200">
                             {soal.kategori || '-'}
                           </span>
                         </td>
-                        <td className="px-6 py-5 align-top text-center font-black text-emerald-600">
+                        <td className="px-4 py-2.5 align-middle text-center font-bold text-emerald-600">
                           {soal.prodi || '-'}
                         </td>
                       </>
                     ) : (
                       <>
-                        <td className="px-6 py-5 align-top">
-                          <div className="grid grid-cols-2 gap-x-4 gap-y-2 min-w-[300px]">
+                        <td className="px-4 py-2.5 align-middle">
+                          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] leading-tight">
                             {[
                               { key: 'A', text: soal.pilihan_a },
                               { key: 'B', text: soal.pilihan_b },
                               { key: 'C', text: soal.pilihan_c },
                               { key: 'D', text: soal.pilihan_d }
-                            ].map((opt) => (
-                              <div key={opt.key} className="flex items-start gap-2 p-2 rounded-lg bg-transparent border border-transparent">
-                                <span className="flex-shrink-0 size-6 flex items-center justify-center rounded text-xs font-bold bg-slate-200 text-slate-600">
-                                  {opt.key}
-                                </span>
-                                <span className="text-sm leading-tight text-slate-600">
-                                  {opt.text}
-                                </span>
-                              </div>
-                            ))}
+                            ].map((opt) => {
+                              return (
+                                <div key={opt.key} className="flex items-start gap-1">
+                                  <span className="font-black mr-0.5 shrink-0 text-slate-500">
+                                    {opt.key}.
+                                  </span>
+                                  <span className="text-slate-700 font-bold">
+                                    {opt.text}
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </div>
                         </td>
-                        <td className="px-6 py-5 align-top text-center">
-                          <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-md font-black shadow-sm ring-1 ring-emerald-200">
+                        <td className="px-4 py-2.5 align-middle text-center">
+                          <span className="inline-flex size-6 items-center justify-center bg-emerald-50 text-emerald-700 rounded-full font-black text-[11px] border border-emerald-200/80 shadow-sm">
                             {soal.jawaban}
                           </span>
                         </td>
-                        <td className="px-6 py-5 align-top text-center">
-                          <div className="flex flex-col gap-1.5 items-center">
-                            <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold uppercase tracking-wider border border-indigo-100">
+                        <td className="px-4 py-2.5 align-middle text-center">
+                          <div className="flex flex-wrap items-center justify-center gap-1.5">
+                            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[9px] font-bold uppercase tracking-wider border border-indigo-100/80">
                               {soal.type_soal}
                             </span>
-                            <span className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded text-[10px] font-bold uppercase tracking-wider border border-amber-100">
+                            <span className="px-2 py-0.5 bg-amber-50 text-amber-700 rounded text-[9px] font-bold uppercase tracking-wider border border-amber-100/80">
                               {soal.soal_untuk}
                             </span>
                           </div>
                         </td>
                       </>
                     )}
-                    <td className="px-6 py-5 align-top text-center">
+                    <td className="px-4 py-2.5 align-middle text-center">
                       <button
                         onClick={() => handleToggleStatus(soal.id)}
-                        className={`inline-flex items-center justify-center w-full gap-1.5 py-1.5 rounded-md text-xs font-bold transition-colors ${soal.status === 'aktif' ? 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200' : 'text-slate-500 bg-slate-50 hover:bg-slate-100 border border-slate-200'}`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-colors cursor-pointer ${
+                          soal.status === 'aktif' 
+                            ? 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200' 
+                            : 'text-slate-500 bg-slate-50 hover:bg-slate-100 border-slate-200'
+                        }`}
                       >
-                        <span className="material-symbols-outlined text-[16px]">{soal.status === 'aktif' ? 'check_circle' : 'cancel'}</span>
+                        <span className="material-symbols-outlined text-[13px]">{soal.status === 'aktif' ? 'check_circle' : 'cancel'}</span>
                         {soal.status === 'aktif' ? 'Aktif' : 'Mati'}
                       </button>
                     </td>
-                    <td className="px-6 py-5 align-top">
-                      <div className="flex items-center justify-center gap-2">
+                    <td className="px-4 py-2.5 align-middle">
+                      <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => handleEditClick(soal)}
-                          className="size-8 rounded-md bg-white border border-slate-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors shadow-sm"
+                          className="size-7 rounded-lg bg-white border border-slate-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors shadow-sm cursor-pointer hover:scale-105 active:scale-95"
                           title="Edit Soal"
                         >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                          <span className="material-symbols-outlined text-[15px]">edit</span>
                         </button>
                         <button
                           onClick={() => {/* Tambahkan fungsi hapus di sini */ }}
-                          className="size-8 rounded-md bg-white border border-slate-200 text-rose-600 flex items-center justify-center hover:bg-rose-50 transition-colors shadow-sm"
+                          className="size-7 rounded-lg bg-white border border-slate-200 text-rose-600 flex items-center justify-center hover:bg-rose-50 transition-colors shadow-sm cursor-pointer hover:scale-105 active:scale-95"
                           title="Hapus Soal"
                         >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                          <span className="material-symbols-outlined text-[15px]">delete</span>
                         </button>
                       </div>
                     </td>
@@ -3289,8 +3340,6 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                             onClick={() => {
                               setSelectedWawancaraStudent(mhs);
                               setWawancaraStatus(mhs.hasil_wawancara === 'TIDAK LULUS' ? 'TIDAK LULUS' : 'LULUS');
-                              setCatatanWawancara(mhs.catatan_wawancara || '');
-                              setNilaiWawancara(mhs.nilai_wawancara !== undefined && mhs.nilai_wawancara !== null ? mhs.nilai_wawancara : '');
                               setShowWawancaraModal(true);
                             }}
                             className="px-4 py-1.5 rounded-full text-[10px] font-black text-indigo-700 shadow-sm transition-all hover:scale-105 bg-indigo-100 hover:bg-indigo-200 border border-indigo-200 uppercase whitespace-nowrap"
@@ -4452,7 +4501,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     const laporanTabs = [
       { key: 'rekap_keseluruhan' as const, label: 'Rekap Keseluruhan', icon: 'summarize', color: 'blue' },
       { key: 'belum_registrasi' as const, label: 'Belum Registrasi', icon: 'person_off', color: 'amber' },
-      { key: 'siswa_prestasi' as const, label: 'Siswa Prestasi', icon: 'emoji_events', color: 'emerald' },
+
       { key: 'laporan_ujian_tulis' as const, label: 'Laporan Ujian Tulis', icon: 'quiz', color: 'indigo' },
       { key: 'laporan_tes_kesehatan' as const, label: 'Laporan Tes Kesehatan', icon: 'health_and_safety', color: 'rose' },
       { key: 'rekap_tes_kesehatan' as const, label: 'Rekap Tes Kesehatan', icon: 'assignment_turned_in', color: 'teal' },
@@ -4481,12 +4530,43 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     const rekapKeseluruhanProdiOptions = rekapKeseluruhanProdiOrder.filter((label) =>
       prodiOptions.some((prodi) => normalizeRekapProdi(prodi) === label)
     );
-    const laporanProdiOptions = laporanView === 'rekap_keseluruhan' ? rekapKeseluruhanProdiOptions : prodiOptions;
+    const belumRegistrasiProdiOptions = [
+      'D3 REKAM MEDIS', 'PROFESI NERS', 'PROFESI BIDAN', 'S1 ILMU HUKUM', 'S1 ILMU KOMUNIKASI', 
+      'S1 TI PINDAHAN', 'S1 KESMAS PROGRAM REGULER', 'S1 KESMAS PROGRAM RPLA1', 'S1 KESMAS PROGRAM RPLA2', 
+      'S1 TI PROGRAM REGULER', 'S1 TI PROGRAM RPLA1', 'S1 TI PROGRAM RPLA2', 'S1 SI PROGRAM REGULER', 
+      'S1 SI PROGRAM RPLA1', 'S1 SI PROGRAM RPLA2', 'S2 KESMAS PROGRAM REGULER', 'S2 KESMAS PROGRAM RPLA2', 
+      'S1 KEBIDANAN PROGRAM REGULER', 'S1 KEBIDANAN PROGRAM RPLA1', 'S1 KEBIDANAN PROGRAM RPLA2', 
+      'S1 KEPERAWATAN PROGRAM REGULER', 'S1 KEPERAWATAN PROGRAM RPLA1', 'S1 KEPERAWATAN PROGRAM RPLA2', 
+      'S1 ILMU KOMUNIKASI PINDAHAN', 'D4 MANAJEMEN INFORMASI KESEHATAN', 'S1 KEBIDANAN PROGRAM PINDAHAN', 
+      'S1 KEPERAWATAN PINDAHAN'
+    ];
+
+    const ujianTulisProdiOptions = [
+      'D3 KEBIDANAN', 'D3 REKAM MEDIK', 'D3 Rekam Medis', 'D4 Manajemen Informasi Kesehatan', 
+      'ILMU KOMUNIKASI PINDAHAN', 'NERS', 'PROFESI BIDAN', 'PROFESI NERS', 'S1 ILMU HUKUM', 
+      'S1 ILMU KOMUNIKASI', 'S1 ILMU KOMUNIKASI PINDAHAN', 'S1 KEBIDANAN', 'S1 Kebidanan Program Reguler', 
+      'S1 KEBIDANAN PROGRAM RPLA1', 'S1 KEBIDANAN PROGRAM RPLA2', 'S1 KEPERAWATAN', 'S1 KEPERAWATAN B NON REGULER', 
+      'S1 KEPERAWATAN PINDAHAN', 'S1 Keperawatan Program Reguler', 'S1 Keperawatan Program RPLA1', 
+      'S1 KEPERAWATAN PROGRAM RPLA2', 'S1 KESMAS JALUR A NON REGULER', 'S1 KESMAS JALUR A REGULER', 
+      'S1 KESMAS JALUR B NON REGULER', 'S1 KESMAS JALUR B REGULER', 'S1 Kesmas Program Reguler', 
+      'S1 Kesmas Program RPLA1', 'S1 Kesmas Program RPLA2', 'S1 SI Program Reguler', 'S1 SI Program RPLA1', 
+      'S1 SI Program RPLA2', 'S1 SISTEM INFORMASI', 'S1 SISTEM INFORMASI B NON REGULER', 
+      'S1 SISTEM INFORMASI PINDAHAN', 'S1 SISTEM INFORMASI TRANSFER', 'S1 TEKNIK INFORMATIKA', 
+      'S1 TEKNIK INFORMATIKA B NON REGULER', 'S1 TEKNIK INFORMATIKA PINDAHAN', 'S1 TEKNIK INFORMATIKA REGULER', 
+      'S1 TEKNIK INFORMATIKA TRANSFER', 'S1 TI PINDAHAN', 'S1 TI Program Reguler', 'S1 TI Program RPLA1', 
+      'S1 TI Program RPLA2', 'S2 KESMAS', 'S2 KESMAS PROGRAM REGULER', 'S2 Kesmas Program RPLA2'
+    ];
+
+    const laporanProdiOptions = 
+      laporanView === 'rekap_keseluruhan' ? rekapKeseluruhanProdiOptions : 
+      laporanView === 'belum_registrasi' ? belumRegistrasiProdiOptions : 
+      (laporanView === 'laporan_ujian_tulis' || laporanView === 'laporan_tes_kesehatan') ? ujianTulisProdiOptions : 
+      prodiOptions;
 
     const buttonLabels: Record<string, string> = {
       rekap_keseluruhan: 'Cetak',
       belum_registrasi: 'Cetak',
-      siswa_prestasi: 'Cetak Siswa Prestasi',
+
       laporan_ujian_tulis: 'Cetak Hasil Ujian Tulis',
       laporan_tes_kesehatan: 'Cetak Hasil Tes Kesehatan',
       rekap_tes_kesehatan: 'Cetak Rekapitulasi',
@@ -4495,7 +4575,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     const titleLabels: Record<string, string> = {
       rekap_keseluruhan: 'Laporan SPMB Keseluruhan',
       belum_registrasi: 'Laporan SPMB Universitas Hang Tuah Pekanbaru',
-      siswa_prestasi: 'Laporan Siswa Prestasi 10 Besar',
+
       laporan_ujian_tulis: 'Laporan Hasil Ujian Tulis',
       laporan_tes_kesehatan: 'Laporan Hasil Tes Kesehatan',
       rekap_tes_kesehatan: 'Rekapitulasi Tes Kesehatan',
@@ -4503,14 +4583,31 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
     const filterLabel1 = usesPeriode ? 'Periode Penerimaan' : 'Gelombang';
     const filterLabel2 = 'Program Studi';
-    const normalizeLaporanItem = (item: any) => ({
-      ...item,
-      no_ujian: item.no_ujian || item.exam_number || item.registration?.biodata?.exam_number || '-',
-      nama: item.nama || item.registration?.name || '-',
-      pilihan: item.pilihan || item.registration?.program_studi || '-',
-      gelombang: item.gelombang || item.registration?.gelombang || '-',
-      no_hp: item.no_hp || item.registration?.no_hp || item.no_telp || '-',
-    });
+    const normalizeLaporanItem = (item: any) => {
+      const detailsArray = Array.isArray(item.details) ? item.details : [];
+      const hasDetails = detailsArray.length > 0;
+      const benar = item.benar ?? item.jumlah_benar ?? (hasDetails ? detailsArray.filter((d: any) => d.status === 'Betul').length : null);
+      const salah = item.salah ?? (hasDetails ? detailsArray.filter((d: any) => d.status !== 'Betul').length : null);
+      
+      let nilai = item.nilai ?? item.skor ?? item.total_score;
+      if (hasDetails) {
+        const total = detailsArray.length;
+        const correct = detailsArray.filter((d: any) => d.status === 'Betul').length;
+        nilai = total > 0 ? Math.round((correct / total) * 100) : 0;
+      }
+
+      return {
+        ...item,
+        no_ujian: item.no_ujian || item.exam_number || item.registration?.biodata?.exam_number || '-',
+        nama: item.nama || item.registration?.name || '-',
+        pilihan: item.pilihan || item.registration?.program_studi || '-',
+        gelombang: item.gelombang || item.registration?.gelombang || '-',
+        no_hp: item.no_hp || item.registration?.no_hp || item.no_telp || '-',
+        benar: benar,
+        salah: salah,
+        nilai: nilai,
+      };
+    };
 
     const handleFetchLaporan = () => {
       setLaporanLoading(true);
@@ -4535,14 +4632,12 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         }
       } else if (laporanView === 'belum_registrasi') {
         endpoint = `${API_BASE_URL}/api/admin/biodatas`;
-      } else if (laporanView === 'siswa_prestasi') {
-        endpoint = `${API_BASE_URL}/api/admin/wawancara?gelombang=${laporanFilterGelombang}`;
       } else if (laporanView === 'laporan_ujian_tulis') {
-        endpoint = `${API_BASE_URL}/api/admin/wawancara?gelombang=${laporanFilterGelombang}`;
+        endpoint = `${API_BASE_URL}/api/admin/wawancara?gelombang=${laporanFilterGelombang}&tpa_only=1`;
       } else if (laporanView === 'rekap_tes_kesehatan') {
         endpoint = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${laporanFilterGelombang}`;
       } else {
-        endpoint = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${laporanFilterGelombang}`;
+        endpoint = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${laporanFilterGelombang}&kesehatan_only=1`;
       }
 
       fetch(endpoint)
@@ -4558,13 +4653,25 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             });
           }
 
+          // Apply periode filter (gabungkan semua gelombang di tahun yang sama)
+          if (usesPeriode && laporanFilterPeriode && laporanFilterPeriode !== 'Semua') {
+            result = result.filter((m: any) => {
+              const gel = (m.gelombang || '').toString();
+              return gel.startsWith(laporanFilterPeriode);
+            });
+          }
+
           // Apply view-specific filtering
           if (laporanView === 'belum_registrasi') {
-            result = result.filter((m: any) => !m.is_finalized && !m.registration?.is_registered);
+            result = result.filter((m: any) => m.is_finalized && m.status_registrasi !== 'Sudah Registrasi');
           }
-          if (laporanView === 'siswa_prestasi') {
-            result = result.sort((a: any, b: any) => (b.total_score || b.score || 0) - (a.total_score || a.score || 0)).slice(0, 10);
+          if (laporanView === 'laporan_ujian_tulis') {
+            result = result.filter((m: any) => m.nilai !== null && m.nilai !== undefined && m.nilai !== '-');
           }
+          if (laporanView === 'laporan_tes_kesehatan') {
+            result = result.filter((m: any) => m.status_kesehatan !== null && m.status_kesehatan !== undefined);
+          }
+
 
           setLaporanData(result);
           setLaporanLoading(false);
@@ -4599,6 +4706,8 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     setLaporanView(tab.key);
                     setLaporanData([]);
                     setLaporanFilterProdi('');
+                    setLaporanFilterPeriode('2026');
+                    setLaporanFilterGelombang('');
                   }}
                   className={`flex items-center gap-2.5 px-6 py-4 text-[12px] font-bold uppercase tracking-wider whitespace-nowrap transition-all border-b-[3px] ${
                     isActive
@@ -4714,8 +4823,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     {laporanView === 'rekap_keseluruhan' && <th className="px-4 py-3 text-center">Status</th>}
                     {laporanView === 'belum_registrasi' && <th className="px-4 py-3 text-center">Gelombang</th>}
                     {laporanView === 'belum_registrasi' && <th className="px-4 py-3 text-center">No HP</th>}
-                    {laporanView === 'siswa_prestasi' && <th className="px-4 py-3 text-center">Nilai</th>}
-                    {laporanView === 'siswa_prestasi' && <th className="px-4 py-3 text-center">Gelombang</th>}
+
                     {laporanView === 'laporan_ujian_tulis' && <th className="px-4 py-3 text-center">Benar</th>}
                     {laporanView === 'laporan_ujian_tulis' && <th className="px-4 py-3 text-center">Salah</th>}
                     {laporanView === 'laporan_ujian_tulis' && <th className="px-4 py-3 text-center">Nilai</th>}
@@ -4747,8 +4855,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       )}
                       {laporanView === 'belum_registrasi' && <td className="px-4 py-3 text-center font-bold">{item.gelombang || '-'}</td>}
                       {laporanView === 'belum_registrasi' && <td className="px-4 py-3 text-center">{item.no_hp || '-'}</td>}
-                      {laporanView === 'siswa_prestasi' && <td className="px-4 py-3 text-center font-bold text-blue-600">{item.total_score || item.score || '-'}</td>}
-                      {laporanView === 'siswa_prestasi' && <td className="px-4 py-3 text-center">{item.gelombang || '-'}</td>}
+
                       {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold text-emerald-600">{item.benar ?? '-'}</td>}
                       {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold text-rose-500">{item.salah ?? '-'}</td>}
                       {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold">{item.nilai ?? item.total_score ?? '-'}</td>}
@@ -5466,7 +5573,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       {[
                         { key: 'rekap_keseluruhan', label: 'Rekap Keseluruhan' },
                         { key: 'belum_registrasi', label: 'Belum Registrasi' },
-                        { key: 'siswa_prestasi', label: 'Siswa Prestasi' },
+
                         { key: 'laporan_ujian_tulis', label: 'Laporan Ujian Tulis' },
                         { key: 'laporan_tes_kesehatan', label: 'Laporan Tes Kesehatan' },
                         { key: 'rekap_tes_kesehatan', label: 'Rekap Tes Kesehatan' },
@@ -5486,7 +5593,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   {[
                     { key: 'rekap_keseluruhan', label: 'Rekap Keseluruhan' },
                     { key: 'belum_registrasi', label: 'Belum Registrasi' },
-                    { key: 'siswa_prestasi', label: 'Siswa Prestasi' },
+
                     { key: 'laporan_ujian_tulis', label: 'Laporan Ujian Tulis' },
                     { key: 'laporan_tes_kesehatan', label: 'Laporan Tes Kesehatan' },
                     { key: 'rekap_tes_kesehatan', label: 'Rekap Tes Kesehatan' },
@@ -5584,12 +5691,32 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                         Opsi Pilihan Ganda
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {['pilihan_a', 'pilihan_b', 'pilihan_c', 'pilihan_d'].map((id) => (
-                          <div key={id} className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pilihan {id.replace('pilihan_', '').toUpperCase()}</label>
-                            <input type="text" placeholder={`Masukkan Pilihan ${id.replace('pilihan_', '').toUpperCase()}`} className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700 text-[13px]" value={(soalForm as any)[id]} onChange={e => setSoalForm({ ...soalForm, [id]: e.target.value })} />
-                          </div>
-                        ))}
+                        {['pilihan_a', 'pilihan_b', 'pilihan_c', 'pilihan_d'].map((id) => {
+                          const keyLetter = id.replace('pilihan_', '').toUpperCase();
+                          const theme = 
+                            keyLetter === 'A' ? { text: 'text-blue-600', bg: 'bg-blue-50/50', border: 'border-blue-100', focus: 'focus-within:border-blue-500 focus-within:ring-blue-500/5' } :
+                            keyLetter === 'B' ? { text: 'text-indigo-600', bg: 'bg-indigo-50/50', border: 'border-indigo-100', focus: 'focus-within:border-indigo-500 focus-within:ring-indigo-500/5' } :
+                            keyLetter === 'C' ? { text: 'text-purple-600', bg: 'bg-purple-50/50', border: 'border-purple-100', focus: 'focus-within:border-purple-500 focus-within:ring-purple-500/5' } :
+                                                { text: 'text-pink-600', bg: 'bg-pink-50/50', border: 'border-pink-100', focus: 'focus-within:border-pink-500 focus-within:ring-pink-500/5' };
+                          
+                          return (
+                            <div key={id} className="space-y-2">
+                              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pilihan {keyLetter}</label>
+                              <div className={`relative flex items-center bg-slate-50 border-2 border-slate-100 rounded-2xl transition-all ${theme.focus}`}>
+                                <div className={`absolute left-3 size-8 rounded-xl ${theme.bg} ${theme.text} ${theme.border} border flex items-center justify-center font-black text-xs shadow-sm select-none`}>
+                                  {keyLetter}
+                                </div>
+                                <input 
+                                  type="text" 
+                                  placeholder={`Masukkan Pilihan ${keyLetter}...`} 
+                                  className="w-full pl-14 pr-5 py-3.5 bg-transparent outline-none border-none font-bold text-slate-700 text-[13px]" 
+                                  value={(soalForm as any)[id]} 
+                                  onChange={e => setSoalForm({ ...soalForm, [id]: e.target.value })} 
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -5609,9 +5736,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kategori Wawancara</label>
-                            <div className="relative">
+                            <div className="relative flex items-center">
                               <select
-                                className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                                className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                                 value={soalForm.kategori}
                                 onChange={e => setSoalForm({ ...soalForm, kategori: e.target.value })}
                               >
@@ -5619,13 +5746,14 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                                 <option value="Tujuan dan Harapan">Tujuan dan Harapan</option>
                                 <option value="Kemampuan dan Kesiapan">Kemampuan dan Kesiapan</option>
                               </select>
+                              <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                             </div>
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prodi</label>
-                            <div className="relative">
+                            <div className="relative flex items-center">
                               <select
-                                className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                                className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                                 value={soalForm.prodi}
                                 onChange={e => setSoalForm({ ...soalForm, prodi: e.target.value })}
                               >
@@ -5642,6 +5770,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                                   </>
                                 )}
                               </select>
+                              <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                             </div>
                           </div>
                         </>
@@ -5649,39 +5778,43 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                         <>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kunci Jawaban</label>
-                            <div className="relative">
-                              <select className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.jawaban} onChange={e => setSoalForm({ ...soalForm, jawaban: e.target.value })}>
+                            <div className="relative flex items-center">
+                              <select className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.jawaban} onChange={e => setSoalForm({ ...soalForm, jawaban: e.target.value })}>
                                 <option value="A">Pilihan A</option><option value="B">Pilihan B</option><option value="C">Pilihan C</option><option value="D">Pilihan D</option>
                               </select>
+                              <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                             </div>
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tipe Soal</label>
-                            <div className="relative">
-                              <select className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.type_soal} onChange={e => setSoalForm({ ...soalForm, type_soal: e.target.value })}>
+                            <div className="relative flex items-center">
+                              <select className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.type_soal} onChange={e => setSoalForm({ ...soalForm, type_soal: e.target.value })}>
                                 <option value="TPA">TPA</option><option value="Bahasa Inggris">Bahasa Inggris</option>
                               </select>
+                              <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                             </div>
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Soal Untuk</label>
-                            <div className="relative">
-                              <select className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:ring-4 focus:ring-amber-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.soal_untuk} onChange={e => setSoalForm({ ...soalForm, soal_untuk: e.target.value })}>
+                            <div className="relative flex items-center">
+                              <select className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" value={soalForm.soal_untuk} onChange={e => setSoalForm({ ...soalForm, soal_untuk: e.target.value })}>
                                 <option value="Jalur A">Jalur A</option><option value="Jalur B">Jalur B</option><option value="Pasca">Pasca</option><option value="NERS">NERS</option><option value="Profesi Bidan">Profesi Bidan</option><option value="STMIK">STMIK</option><option value="Soal Wawancara">Soal Wawancara</option>
                               </select>
+                              <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                             </div>
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
-                            <div className="relative">
+                            <div className="relative flex items-center">
                               <select
-                                className="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                                className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-amber-500 focus:bg-white focus:ring-4 focus:ring-amber-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                                 value={(soalForm as any).status}
                                 onChange={e => setSoalForm({ ...soalForm, status: e.target.value })}
                               >
                                 <option value="aktif">Aktif</option>
                                 <option value="nonaktif">Nonaktif</option>
                               </select>
+                              <span className="absolute right-4 pointer-events-none material-symbols-outlined text-slate-400 text-[18px]">keyboard_arrow_down</span>
                             </div>
                           </div>
                         </>
@@ -5724,112 +5857,106 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       {/* Modal Proses Wawancara */}
       {showWawancaraModal && selectedWawancaraStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col animate-in slide-in-from-bottom-4 duration-300">
-            <div className="bg-[#00a65a] p-5 flex items-center justify-between shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl"></div>
-              <h3 className="text-white font-bold text-lg flex items-center gap-2 relative z-10">
-                <span className="material-symbols-outlined text-[22px]">assignment_ind</span>
-                Proses Hasil Wawancara
-              </h3>
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col animate-in slide-in-from-bottom-4 duration-300">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-200 bg-white flex items-center justify-between shrink-0">
+              <h3 className="text-slate-800 font-bold text-lg">Proses Hasil Wawancara</h3>
               <button
                 onClick={() => setShowWawancaraModal(false)}
-                className="text-white/80 hover:text-white hover:bg-white/20 p-1 rounded-full transition-colors relative z-10"
+                className="text-slate-400 hover:text-slate-600 transition-colors text-xl font-bold flex items-center justify-center size-8 cursor-pointer"
               >
-                <span className="material-symbols-outlined">close</span>
+                ×
               </button>
             </div>
 
-            <div className="p-6 bg-slate-50 flex-1 overflow-y-auto custom-content-scroll">
-              <div className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">No Ujian</label>
-                    <div className="text-slate-800 font-medium">{selectedWawancaraStudent.no_ujian || '-'}</div>
-                  </div>
-                  <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-                    <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Mahasiswa</label>
-                    <div className="text-slate-800 font-medium">{selectedWawancaraStudent.nama || '-'}</div>
-                  </div>
+            {/* Modal Body */}
+            <div className="p-6 bg-white flex-1 overflow-y-auto custom-content-scroll">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-slate-800 font-bold text-sm mb-1.5">No Ujian</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={selectedWawancaraStudent.no_ujian || '-'}
+                    className="w-full px-3 py-2 bg-[#eee] border border-slate-300 rounded text-[#555] text-sm focus:outline-none"
+                  />
                 </div>
 
-                <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-                  <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Pilihan Prodi</label>
-                  <div className="text-slate-800 font-medium">{selectedWawancaraStudent.pilihan || wawancaraFilterProdi || '-'}</div>
+                <div>
+                  <label className="block text-slate-800 font-bold text-sm mb-1.5">Nama Mahasiswa</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={selectedWawancaraStudent.nama || '-'}
+                    className="w-full px-3 py-2 bg-[#eee] border border-slate-300 rounded text-[#555] text-sm focus:outline-none uppercase"
+                  />
                 </div>
 
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <label className="block text-[13px] font-bold text-amber-800 mb-2 flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[16px]">info</span> Jawaban Wawancara :
-                  </label>
-                  <p className="text-amber-700/90 text-sm">Belum ada jawaban wawancara secara online untuk No Ujian ini.</p>
+                <div>
+                  <label className="block text-slate-800 font-bold text-sm mb-1.5">Pilihan</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={selectedWawancaraStudent.pilihan || wawancaraFilterProdi || '-'}
+                    className="w-full px-3 py-2 bg-[#eee] border border-slate-300 rounded text-[#555] text-sm focus:outline-none"
+                  />
                 </div>
 
-                <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm space-y-4">
-                  <div>
-                    <label className="block text-[13px] font-bold text-slate-700 mb-2">Hasil Wawancara</label>
-                    <div className="relative">
-                      <select
-                        value={wawancaraStatus}
-                        onChange={(e) => setWawancaraStatus(e.target.value)}
-                        className="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a65a]/20 focus:border-[#00a65a] text-slate-700 font-medium appearance-none"
-                      >
-                        <option value="LULUS">Lulus</option>
-                        <option value="TIDAK LULUS">Tidak Lulus</option>
-                      </select>
-                      <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
-                    </div>
-                  </div>
+                <h4 className="text-[17px] font-bold text-[#00a65a] mt-4 mb-2">Jawaban Wawancara :</h4>
+                <hr className="border-slate-200 mb-4" />
 
-                  <div>
-                    <label className="block text-[13px] font-bold text-slate-700 mb-2">Nilai Wawancara (0 - 100) *</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={nilaiWawancara}
-                      onChange={(e) => {
-                        const val = e.target.value === '' ? '' : parseInt(e.target.value, 10);
-                        if (val === '' || (val >= 0 && val <= 100)) {
-                          setNilaiWawancara(val);
-                        }
-                      }}
-                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a65a]/20 focus:border-[#00a65a] text-slate-700 font-medium"
-                      placeholder="Masukkan nilai (0-100)"
-                      required
-                    />
+                {selectedWawancaraStudent.interview_answers && selectedWawancaraStudent.interview_answers.length > 0 ? (
+                  <div className="space-y-4 mb-4">
+                    {selectedWawancaraStudent.interview_answers.map((ans: any, idx: number) => (
+                      <div key={ans.id} className="p-3.5 bg-slate-50 rounded border border-slate-200">
+                        <div className="text-sm font-bold text-slate-800 mb-2 flex gap-2">
+                          <span>{idx + 1}.</span>
+                          <div dangerouslySetInnerHTML={{ __html: ans.pertanyaan }}></div>
+                        </div>
+                        <div className="p-3 bg-white rounded border border-slate-200 shadow-inner">
+                          <p className="text-xs text-slate-700 whitespace-pre-wrap leading-relaxed">{ans.jawaban}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                ) : (
+                  <div className="bg-[#f39c12] text-white p-4 rounded mb-4 font-semibold text-[14px]">
+                    Belum ada jawaban wawancara untuk No Ujian ini.
+                  </div>
+                )}
 
-                  <div>
-                    <label className="block text-[13px] font-bold text-slate-700 mb-2">Catatan Wawancara</label>
-                    <textarea
-                      value={catatanWawancara}
-                      onChange={(e) => setCatatanWawancara(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00a65a]/20 focus:border-[#00a65a] text-slate-700 font-medium h-24 resize-none"
-                      placeholder="Masukkan catatan hasil wawancara..."
-                    />
-                  </div>
+                <div className="mb-6">
+                  <label className="block text-slate-800 font-bold text-sm mb-1.5">Hasil Wawancara</label>
+                  <select
+                    value={wawancaraStatus}
+                    onChange={(e) => setWawancaraStatus(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded text-slate-700 font-medium text-sm focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="LULUS">Lulus</option>
+                    <option value="TIDAK LULUS">Tidak Lulus</option>
+                  </select>
+                </div>
+
+                <div className="flex justify-start mb-2">
+                  <button
+                    onClick={handleSaveWawancara}
+                    className="px-4 py-2 bg-[#3c8dbc] hover:bg-[#367fa9] text-white rounded text-sm font-medium transition-colors shadow-sm cursor-pointer"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? 'Menyimpan...' : 'Simpan'}
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 bg-white flex justify-end gap-3">
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-slate-200 bg-white flex justify-end shrink-0">
               <button
                 onClick={() => setShowWawancaraModal(false)}
-                className="px-5 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-md font-bold text-sm transition-colors"
+                className="px-4 py-2 text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded text-sm font-medium transition-colors cursor-pointer"
                 disabled={isSaving}
               >
-                Tutup
-              </button>
-              <button
-                onClick={handleSaveWawancara}
-                className="px-5 py-2 bg-[#00a65a] hover:bg-[#008d4c] text-white rounded-md font-bold text-sm transition-all flex items-center gap-2 shadow-md shadow-[#00a65a]/20 hover:shadow-lg hover:-translate-y-0.5"
-                disabled={isSaving}
-              >
-                {isSaving ? (
-                  <><span className="material-symbols-outlined animate-spin text-[18px]">sync</span> Menyimpan...</>
-                ) : (
-                  <><span className="material-symbols-outlined text-[18px]">save</span> Simpan Hasil</>
-                )}
+                Close
               </button>
             </div>
           </div>

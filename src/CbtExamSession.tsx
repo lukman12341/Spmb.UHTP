@@ -15,13 +15,12 @@ interface Soal {
 interface CbtExamSessionProps {
   noUjian: string;
   studentName: string;
-  major: string;
   jalur: string;
   globalEndTime?: string; // ISO string or YYYY-MM-DDTHH:mm
   onFinish: (score: number, details: any[]) => void;
 }
 
-const CbtExamSession: React.FC<CbtExamSessionProps> = ({ noUjian, studentName, major, jalur, globalEndTime, onFinish }) => {
+const CbtExamSession: React.FC<CbtExamSessionProps> = ({ noUjian, studentName, jalur, globalEndTime, onFinish }) => {
   const [soalList, setSoalList] = useState<Soal[]>([]);
   
   const [currentIndex, setCurrentIndex] = useState<number>(() => {
@@ -81,7 +80,7 @@ const CbtExamSession: React.FC<CbtExamSessionProps> = ({ noUjian, studentName, m
 
   const fetchSoal = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/soal?soal_untuk=${jalur}&prodi=${encodeURIComponent(major)}`);
+      const response = await fetch(`${API_BASE_URL}/api/soal?soal_untuk=${jalur}`);
       const data = await response.json();
       
       // Menangani berbagai kemungkinan format response (Array atau Object)
@@ -95,7 +94,7 @@ const CbtExamSession: React.FC<CbtExamSessionProps> = ({ noUjian, studentName, m
     } finally {
       setIsLoading(false);
     }
-  }, [jalur, major]);
+  }, [jalur]);
 
   useEffect(() => {
     fetchSoal();

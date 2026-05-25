@@ -670,7 +670,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
   if (isFinalized) {
     return (
-      <div className="min-h-screen bg-slate-50 font-sans pb-20 selection:bg-primary/10">
+      <div className="min-h-screen bg-white font-sans pb-20 selection:bg-primary/10">
         {/* Simple & Clean Header */}
         <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50 print:hidden">
           <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -905,7 +905,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
   }
 
   return (
-    <div className="min-h-screen pb-10 bg-bg-soft font-sans selection:bg-primary/20 relative print:bg-white print:pb-0">
+    <div className="min-h-screen pb-10 bg-white font-sans selection:bg-primary/20 relative print:bg-white print:pb-0">
 
       {/* Header / Navbar */}
       <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
@@ -926,10 +926,10 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
               <button
                 onClick={checkPaymentStatus}
                 className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 text-slate-600 hover:bg-slate-100 font-bold text-xs rounded-lg transition-colors border border-slate-200"
-                title="Refresh Status"
+                title="Perbarui Status"
               >
                 <span className="material-symbols-outlined text-[16px]">refresh</span>
-                <span className="hidden sm:inline text-[11px] uppercase tracking-wider">Refresh</span>
+                <span className="hidden sm:inline text-[11px] uppercase tracking-wider">Perbarui</span>
               </button>
 
               <button
@@ -1006,7 +1006,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                   </div>
                   <h4 className={`text-xs font-bold ${paymentStatus === 'verified' ? 'text-slate-800' : 'text-slate-600'}`}>Pembayaran Formulir</h4>
                   <p className="text-[10px] text-slate-400 font-medium">
-                    {paymentStatus === 'verified' ? 'Lunas & Diverifikasi' : (paymentStatus === 'pending' ? 'Menunggu Konfirmasi' : 'Silahkan lakukan transfer')}
+                    {paymentStatus === 'verified' ? 'Lunas & Diverifikasi' : (paymentStatus === 'pending' ? 'Menunggu Konfirmasi' : 'Silakan lakukan transfer')}
                   </p>
                 </div>
 
@@ -1017,7 +1017,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                   </div>
                   <h4 className="text-xs font-bold text-slate-800">Pengisian Berkas</h4>
                   <p className="text-[10px] text-slate-400 font-medium">
-                    {isFinalized ? 'Data Terfinalisasi' : (isDataCompleted ? 'Data Lengkap' : (paymentStatus === 'verified' ? 'Silahkan lengkapi data' : 'Langkah selanjutnya'))}
+                    {isFinalized ? 'Data Terfinalisasi' : (isDataCompleted ? 'Data Lengkap' : (paymentStatus === 'verified' ? 'Silakan lengkapi data' : 'Langkah selanjutnya'))}
                   </p>
                 </div>
               </div>
@@ -1051,7 +1051,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                 <h2 className="text-2xl font-bold text-slate-800 mb-1">Selamat Datang di Portal SPMB</h2>
                 <p className="text-sm text-slate-500 leading-relaxed max-w-lg">
                   Terima kasih telah mendaftar di Universitas Hang Tuah Pekanbaru.
-                  {paymentStatus === 'verified' ? ' Pembayaran Anda telah kami verifikasi. Silahkan lengkapi data Anda di bawah ini.' : ' Silahkan ikuti langkah di bawah untuk menyelesaikan proses pendaftaran.'}
+                  {paymentStatus === 'verified' ? ' Pembayaran Anda telah kami verifikasi. Silakan lengkapi data Anda di bawah ini.' : ' Silakan ikuti langkah di bawah untuk menyelesaikan proses pendaftaran.'}
                 </p>
               </div>
             </div>
@@ -1066,10 +1066,34 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {[
-                    { id: 'biodata', label: 'BIODATA PRIBADI', icon: 'badge', bg: 'bg-[#3498db]' },
-                    { id: 'sekolah', label: 'ASAL SEKOLAH', icon: 'school', bg: 'bg-[#2ecc71]' },
-                    { id: 'orangtua', label: 'BIODATA ORANG TUA', icon: 'groups', bg: 'bg-[#e74c3c]' },
-                    { id: 'upload', label: 'UPLOAD SYARAT', icon: 'cloud_upload', bg: 'bg-[#f39c12]' }
+                    {
+                      id: 'biodata',
+                      label: 'BIODATA PRIBADI',
+                      icon: 'badge',
+                      bgActive: 'bg-[#3498db] ring-[#3498db]/20 shadow-[#3498db]/25',
+                      bgInactive: 'bg-[#3498db]/80 hover:bg-[#3498db]'
+                    },
+                    {
+                      id: 'sekolah',
+                      label: 'ASAL SEKOLAH',
+                      icon: 'school',
+                      bgActive: 'bg-[#2ecc71] ring-[#2ecc71]/20 shadow-[#2ecc71]/25',
+                      bgInactive: 'bg-[#2ecc71]/80 hover:bg-[#2ecc71]'
+                    },
+                    {
+                      id: 'orangtua',
+                      label: 'BIODATA ORANG TUA',
+                      icon: 'groups',
+                      bgActive: 'bg-[#e74c3c] ring-[#e74c3c]/20 shadow-[#e74c3c]/25',
+                      bgInactive: 'bg-[#e74c3c]/80 hover:bg-[#e74c3c]'
+                    },
+                    {
+                      id: 'upload',
+                      label: 'UNGGAH SYARAT',
+                      icon: 'cloud_upload',
+                      bgActive: 'bg-[#f39c12] ring-[#f39c12]/20 shadow-[#f39c12]/25',
+                      bgInactive: 'bg-[#f39c12]/80 hover:bg-[#f39c12]'
+                    }
                   ].map((cat) => {
                     const isActive = isDataCompleted ? visibleSections[cat.id as keyof typeof visibleSections] : activeTab === cat.id;
 
@@ -1107,7 +1131,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                             setActiveTab(activeTab === cat.id ? null : cat.id);
                           }
                         }}
-                        className={`flex flex-col items-center justify-center p-6 rounded-2xl transition-all shadow-md group ${isActive ? `${cat.bg} ring-4 ring-offset-2 ring-slate-100 scale-[1.02]` : `${cat.bg}/80 hover:bg-${cat.bg}`} text-white relative overflow-hidden`}
+                        className={`flex flex-col items-center justify-center p-6 rounded-2xl border border-transparent transition-all shadow-md group ${isActive ? `${cat.bgActive} ring-4 ring-offset-2 ring-slate-100 scale-[1.02]` : `${cat.bgInactive} hover:scale-[1.01] hover:shadow-lg`} text-white relative overflow-hidden`}
                       >
                         <div className={`absolute top-0 left-0 w-full h-1 bg-white/20 ${isActive ? 'block' : 'hidden'}`}></div>
                         <span className="material-symbols-outlined text-[32px] mb-3 group-hover:scale-110 transition-transform">{cat.icon}</span>
@@ -1268,7 +1292,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                       {visibleSections.upload && (
                         <div className="animate-in fade-in slide-in-from-top-4 duration-300">
                           <div className="flex items-center justify-between mb-4">
-                            <h4 className="text-[22px] text-slate-800">Upload Persyaratan</h4>
+                            <h4 className="text-[22px] text-slate-800">Unggah Persyaratan</h4>
                             <button
                               onClick={() => {
                                 if (examNumber) {
@@ -1290,13 +1314,13 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                                 <span className="material-symbols-outlined text-[16px]">close</span>
                               </button>
                               <p className="font-bold text-sm mb-1">Pemberitahuan</p>
-                              <p className="text-sm">Upload persyaratan sesuai program studi yang anda ambil, panitia tidak akan memverifikasi berkas yang tidak lengkap</p>
+                              <p className="text-sm">Unggah persyaratan sesuai program studi yang Anda ambil, panitia tidak akan memverifikasi berkas yang tidak lengkap</p>
                             </div>
                           )}
                           {photoUrl ? (
-                            <p className="text-[15px] text-[#333]">Anda sudah mengupload kelengkapan berkas</p>
+                            <p className="text-[15px] text-[#333]">Anda sudah mengunggah kelengkapan berkas</p>
                           ) : (
-                            <p className="text-[15px] text-slate-400 italic">Berkas persyaratan belum diupload.</p>
+                            <p className="text-[15px] text-slate-400 italic">Berkas persyaratan belum diunggah.</p>
                           )}
                         </div>
                       )}
@@ -1347,13 +1371,13 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                                  }
                                }} 
                                placeholder="Masukkan NISN" 
-                               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 transition-all outline-none" 
+                               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" 
                              />
-                            <p className="text-[9px] text-rose-500 font-bold mt-1 ml-1">*Untuk Tamatan D3 isi dengan tanda -</p>
+                            <p className="text-[9px] text-slate-400 font-semibold mt-1 ml-1">*Untuk Tamatan D3 isi dengan tanda -</p>
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Tempat Lahir</label>
-                            <input type="text" value={formPribadi.tempat_lahir} onChange={(e) => setFormPribadi({ ...formPribadi, tempat_lahir: e.target.value })} placeholder="Tempat Lahir" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formPribadi.tempat_lahir} onChange={(e) => setFormPribadi({ ...formPribadi, tempat_lahir: e.target.value })} placeholder="Tempat Lahir" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Tanggal Lahir</label>
@@ -1363,11 +1387,11 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                                  type="date" 
                                  value={formPribadi.tanggal_lahir} 
                                  onChange={(e) => setFormPribadi({ ...formPribadi, tanggal_lahir: e.target.value })} 
-                                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 transition-all pr-12 appearance-none" 
+                                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300 pr-12 appearance-none" 
                                />
                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                                  <span className="material-symbols-outlined text-slate-400 text-[20px]">calendar_month</span>
-                               </div>
+                                </div>
                                <button 
                                  type="button"
                                  onClick={() => {
@@ -1380,50 +1404,62 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Jenis Kelamin</label>
-                            <select value={formPribadi.jenis_kelamin} onChange={(e) => setFormPribadi({ ...formPribadi, jenis_kelamin: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
-                              <option>Laki-Laki</option>
-                              <option>Perempuan</option>
-                            </select>
+                            <div className="relative">
+                              <select value={formPribadi.jenis_kelamin} onChange={(e) => setFormPribadi({ ...formPribadi, jenis_kelamin: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                                <option>Laki-Laki</option>
+                                <option>Perempuan</option>
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                            </div>
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Agama</label>
-                            <select value={formPribadi.agama} onChange={(e) => setFormPribadi({ ...formPribadi, agama: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
-                              <option>Islam</option>
-                              <option>Kristen</option>
-                              <option>Katolik</option>
-                              <option>Budha</option>
-                              <option>Hindu</option>
-                            </select>
+                            <div className="relative">
+                              <select value={formPribadi.agama} onChange={(e) => setFormPribadi({ ...formPribadi, agama: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                                <option>Islam</option>
+                                <option>Kristen</option>
+                                <option>Katolik</option>
+                                <option>Budha</option>
+                                <option>Hindu</option>
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                            </div>
                           </div>
                           <div className="md:col-span-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Alamat</label>
-                            <input type="text" value={formPribadi.alamat} onChange={(e) => setFormPribadi({ ...formPribadi, alamat: e.target.value })} placeholder="Alamat Sesuai KTP" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formPribadi.alamat} onChange={(e) => setFormPribadi({ ...formPribadi, alamat: e.target.value })} placeholder="Alamat Sesuai KTP" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Kabupaten</label>
-                            <select value={formPribadi.kabupaten} onChange={(e) => setFormPribadi({ ...formPribadi, kabupaten: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
-                              <option value="">Pilih Kabupaten</option>
-                              {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
-                            </select>
+                            <div className="relative">
+                              <select value={formPribadi.kabupaten} onChange={(e) => setFormPribadi({ ...formPribadi, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                                <option value="">Pilih Kabupaten</option>
+                                {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                            </div>
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Provinsi</label>
-                            <select value={formPribadi.provinsi} onChange={(e) => setFormPribadi({ ...formPribadi, provinsi: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
-                              <option value="">Pilih Provinsi</option>
-                              {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
+                            <div className="relative">
+                              <select value={formPribadi.provinsi} onChange={(e) => setFormPribadi({ ...formPribadi, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                                <option value="">Pilih Provinsi</option>
+                                {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                            </div>
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">No. Telepon</label>
-                            <input type="text" value={formPribadi.no_telp} onChange={(e) => setFormPribadi({ ...formPribadi, no_telp: e.target.value })} placeholder="No. Telepon" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formPribadi.no_telp} onChange={(e) => setFormPribadi({ ...formPribadi, no_telp: e.target.value })} placeholder="No. Telepon" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">No. Handphone</label>
-                            <input type="text" value={formPribadi.no_hp} onChange={(e) => setFormPribadi({ ...formPribadi, no_hp: e.target.value })} placeholder="No. Handphone" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formPribadi.no_hp} onChange={(e) => setFormPribadi({ ...formPribadi, no_hp: e.target.value })} placeholder="No. Handphone" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div className="flex items-end gap-3">
                             <button onClick={handleSubmitBiodata} disabled={isSubmitting} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md shadow-emerald-100 disabled:opacity-50">
-                              {isSubmitting ? 'Saving...' : 'Simpan'}
+                              {isSubmitting ? 'Menyimpan...' : 'Simpan'}
                             </button>
                             <button
                               onClick={() => {
@@ -1458,41 +1494,47 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                           <div className="md:col-span-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Asal Sekolah</label>
-                            <input type="text" value={formSekolah.nama_sekolah} onChange={(e) => setFormSekolah({ ...formSekolah, nama_sekolah: e.target.value })} placeholder="Asal Sekolah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formSekolah.nama_sekolah} onChange={(e) => setFormSekolah({ ...formSekolah, nama_sekolah: e.target.value })} placeholder="Asal Sekolah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Jurusan</label>
-                            <input type="text" value={formSekolah.jurusan} onChange={(e) => setFormSekolah({ ...formSekolah, jurusan: e.target.value })} placeholder="Jurusan" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formSekolah.jurusan} onChange={(e) => setFormSekolah({ ...formSekolah, jurusan: e.target.value })} placeholder="Jurusan" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Tahun Tamat</label>
-                            <input type="text" value={formSekolah.tahun_tamat} onChange={(e) => setFormSekolah({ ...formSekolah, tahun_tamat: e.target.value })} placeholder="Tahun Tamat" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formSekolah.tahun_tamat} onChange={(e) => setFormSekolah({ ...formSekolah, tahun_tamat: e.target.value })} placeholder="Tahun Tamat" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Nilai</label>
-                            <input type="text" value={formSekolah.nilai} onChange={(e) => setFormSekolah({ ...formSekolah, nilai: e.target.value })} placeholder="Nilai" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formSekolah.nilai} onChange={(e) => setFormSekolah({ ...formSekolah, nilai: e.target.value })} placeholder="Nilai" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div className="md:col-span-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Alamat Sekolah</label>
-                            <input type="text" value={formSekolah.alamat_sekolah} onChange={(e) => setFormSekolah({ ...formSekolah, alamat_sekolah: e.target.value })} placeholder="Alamat Sekolah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formSekolah.alamat_sekolah} onChange={(e) => setFormSekolah({ ...formSekolah, alamat_sekolah: e.target.value })} placeholder="Alamat Sekolah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Kabupaten</label>
-                            <select value={formSekolah.kabupaten} onChange={(e) => setFormSekolah({ ...formSekolah, kabupaten: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
-                              <option value="">Pilih Kabupaten</option>
-                              {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
-                            </select>
+                            <div className="relative">
+                              <select value={formSekolah.kabupaten} onChange={(e) => setFormSekolah({ ...formSekolah, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                                <option value="">Pilih Kabupaten</option>
+                                {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                            </div>
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Provinsi</label>
-                            <select value={formSekolah.provinsi} onChange={(e) => setFormSekolah({ ...formSekolah, provinsi: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
-                              <option value="">Pilih Provinsi</option>
-                              {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
+                            <div className="relative">
+                              <select value={formSekolah.provinsi} onChange={(e) => setFormSekolah({ ...formSekolah, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                                <option value="">Pilih Provinsi</option>
+                                {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                            </div>
                           </div>
                           <div className="flex items-end gap-3">
                             <button onClick={handleSubmitBiodata} disabled={isSubmitting} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md shadow-emerald-100 disabled:opacity-50">
-                              {isSubmitting ? 'Saving...' : 'Simpan'}
+                              {isSubmitting ? 'Menyimpan...' : 'Simpan'}
                             </button>
                             <button
                               onClick={() => {
@@ -1527,49 +1569,55 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Nama Ayah</label>
-                            <input type="text" value={formOrangTua.nama_ayah} onChange={(e) => setFormOrangTua({ ...formOrangTua, nama_ayah: e.target.value })} placeholder="Nama Ayah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formOrangTua.nama_ayah} onChange={(e) => setFormOrangTua({ ...formOrangTua, nama_ayah: e.target.value })} placeholder="Nama Ayah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Nama Ibu</label>
-                            <input type="text" value={formOrangTua.nama_ibu} onChange={(e) => setFormOrangTua({ ...formOrangTua, nama_ibu: e.target.value })} placeholder="Nama Ibu" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formOrangTua.nama_ibu} onChange={(e) => setFormOrangTua({ ...formOrangTua, nama_ibu: e.target.value })} placeholder="Nama Ibu" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pekerjaan Ayah</label>
-                            <input type="text" value={formOrangTua.pekerjaan_ayah} onChange={(e) => setFormOrangTua({ ...formOrangTua, pekerjaan_ayah: e.target.value })} placeholder="Pekerjaan Ayah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formOrangTua.pekerjaan_ayah} onChange={(e) => setFormOrangTua({ ...formOrangTua, pekerjaan_ayah: e.target.value })} placeholder="Pekerjaan Ayah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pekerjaan Ibu</label>
-                            <input type="text" value={formOrangTua.pekerjaan_ibu} onChange={(e) => setFormOrangTua({ ...formOrangTua, pekerjaan_ibu: e.target.value })} placeholder="Pekerjaan Ibu" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formOrangTua.pekerjaan_ibu} onChange={(e) => setFormOrangTua({ ...formOrangTua, pekerjaan_ibu: e.target.value })} placeholder="Pekerjaan Ibu" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div className="md:col-span-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Alamat Orang Tua</label>
-                            <input type="text" value={formOrangTua.alamat} onChange={(e) => setFormOrangTua({ ...formOrangTua, alamat: e.target.value })} placeholder="Alamat Orang Tua" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formOrangTua.alamat} onChange={(e) => setFormOrangTua({ ...formOrangTua, alamat: e.target.value })} placeholder="Alamat Orang Tua" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Kabupaten</label>
-                            <select value={formOrangTua.kabupaten} onChange={(e) => setFormOrangTua({ ...formOrangTua, kabupaten: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
-                              <option value="">Pilih Kabupaten</option>
-                              {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
-                            </select>
+                            <div className="relative">
+                              <select value={formOrangTua.kabupaten} onChange={(e) => setFormOrangTua({ ...formOrangTua, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                                <option value="">Pilih Kabupaten</option>
+                                {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                            </div>
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Provinsi</label>
-                            <select value={formOrangTua.provinsi} onChange={(e) => setFormOrangTua({ ...formOrangTua, provinsi: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none">
-                              <option value="">Pilih Provinsi</option>
-                              {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
+                            <div className="relative">
+                              <select value={formOrangTua.provinsi} onChange={(e) => setFormOrangTua({ ...formOrangTua, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                                <option value="">Pilih Provinsi</option>
+                                {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                            </div>
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">No. Hp Ayah</label>
-                            <input type="text" value={formOrangTua.no_hp_ayah} onChange={(e) => setFormOrangTua({ ...formOrangTua, no_hp_ayah: e.target.value })} placeholder="No. Hp Ayah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formOrangTua.no_hp_ayah} onChange={(e) => setFormOrangTua({ ...formOrangTua, no_hp_ayah: e.target.value })} placeholder="No. Hp Ayah" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">No. Hp Ibu</label>
-                            <input type="text" value={formOrangTua.no_hp_ibu} onChange={(e) => setFormOrangTua({ ...formOrangTua, no_hp_ibu: e.target.value })} placeholder="No. Hp Ibu" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium outline-none" />
+                            <input type="text" value={formOrangTua.no_hp_ibu} onChange={(e) => setFormOrangTua({ ...formOrangTua, no_hp_ibu: e.target.value })} placeholder="No. Hp Ibu" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 hover:border-slate-300" />
                           </div>
                           <div className="flex items-end gap-3">
                             <button onClick={handleSubmitBiodata} disabled={isSubmitting} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md shadow-emerald-100 disabled:opacity-50">
-                              {isSubmitting ? 'Saving...' : 'Simpan'}
+                              {isSubmitting ? 'Menyimpan...' : 'Simpan'}
                             </button>
                             <button
                               onClick={() => {
@@ -1587,7 +1635,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                     {activeTab === 'upload' && (
                       <div className="space-y-6">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                          <h4 className="text-lg font-bold text-slate-800">Upload Persyaratan</h4>
+                          <h4 className="text-lg font-bold text-slate-800">Unggah Persyaratan</h4>
                           <button
                             onClick={() => {
                               setActiveTab(null);
@@ -1599,7 +1647,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                         </div>
                         <div className="bg-amber-50 border border-amber-100 p-4 rounded-xl flex gap-3">
                           <span className="material-symbols-outlined text-amber-500">info</span>
-                          <p className="text-xs text-amber-800 leading-relaxed">Upload persyaratan sesuai program studi yang anda ambil, panitia tidak akan memverifikasi berkas yang tidak lengkap</p>
+                          <p className="text-xs text-amber-800 leading-relaxed">Unggah persyaratan sesuai program studi yang Anda ambil, panitia tidak akan memverifikasi berkas yang tidak lengkap</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                           {/* Pas Photo */}
@@ -1611,13 +1659,13 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                                 </div>
                                 <div>
                                   <h5 className="text-xs font-bold text-slate-800">Pas Photo</h5>
-                                  <p className="text-[9px] text-rose-500 font-bold">File: (.jpg, .png) maksimal 5MB</p>
+                                  <p className="text-[9px] text-slate-400 font-semibold">File: (.jpg, .png) maksimal 5MB</p>
                                 </div>
                               </div>
                               {existingFiles.pas_photo && (
                                 <span className="flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[9px] font-black uppercase">
                                   <span className="material-symbols-outlined text-[12px]">check_circle</span>
-                                  Ter-upload
+                                  Terunggah
                                 </span>
                               )}
                             </div>
@@ -1633,13 +1681,13 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                                 </div>
                                 <div>
                                   <h5 className="text-xs font-bold text-slate-800">KTP</h5>
-                                  <p className="text-[9px] text-rose-500 font-bold">File: (.jpg, .png) maksimal 5MB</p>
+                                  <p className="text-[9px] text-slate-400 font-semibold">File: (.jpg, .png) maksimal 5MB</p>
                                 </div>
                               </div>
                               {existingFiles.ktp && (
                                 <span className="flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[9px] font-black uppercase">
                                   <span className="material-symbols-outlined text-[12px]">check_circle</span>
-                                  Ter-upload
+                                  Terunggah
                                 </span>
                               )}
                             </div>
@@ -1655,13 +1703,13 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                                 </div>
                                 <div>
                                   <h5 className="text-xs font-bold text-slate-800">Ijazah / SKL</h5>
-                                  <p className="text-[9px] text-rose-500 font-bold">File: (.jpg, .png) maksimal 5MB</p>
+                                  <p className="text-[9px] text-slate-400 font-semibold">File: (.jpg, .png) maksimal 5MB</p>
                                 </div>
                               </div>
                               {existingFiles.ijazah && (
                                 <span className="flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[9px] font-black uppercase">
                                   <span className="material-symbols-outlined text-[12px]">check_circle</span>
-                                  Ter-upload
+                                  Terunggah
                                 </span>
                               )}
                             </div>
@@ -1677,13 +1725,13 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                                 </div>
                                 <div>
                                   <h5 className="text-xs font-bold text-slate-800">Transkrip Nilai</h5>
-                                  <p className="text-[9px] text-rose-500 font-bold">File: (.jpg, .png) maksimal 5MB</p>
+                                  <p className="text-[9px] text-slate-400 font-semibold">File: (.jpg, .png) maksimal 5MB</p>
                                 </div>
                               </div>
                               {existingFiles.transkrip && (
                                 <span className="flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[9px] font-black uppercase">
                                   <span className="material-symbols-outlined text-[12px]">check_circle</span>
-                                  Ter-upload
+                                  Terunggah
                                 </span>
                               )}
                             </div>
@@ -1692,7 +1740,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
                           <div className="md:col-span-2 flex justify-end gap-3">
                             <button onClick={handleSubmitBiodata} disabled={isSubmitting} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-12 rounded-xl transition-all shadow-md shadow-emerald-100 disabled:opacity-50">
-                              {isSubmitting ? 'Saving...' : 'Simpan Berkas'}
+                              {isSubmitting ? 'Menyimpan...' : 'Simpan Berkas'}
                             </button>
                             <button
                               onClick={() => {
@@ -1786,7 +1834,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                     <div className="space-y-4 relative z-10">
                       {[
                         { num: '1', text: `Wajib tulis kode bayar <strong class="text-rose-600 font-black underline decoration-rose-200 underline-offset-4">${paymentCode}</strong> pada slip setoran jika Anda melakukan setor tunai di Bank.` },
-                        { num: '2', text: 'Sertakan tulisan kode bayar pada struk transfer ATM atau screenshot M-Banking sebelum di-upload.' }
+                        { num: '2', text: 'Sertakan tulisan kode bayar pada struk transfer ATM atau screenshot M-Banking sebelum diunggah.' }
                       ].map((item, idx) => (
                         <div key={idx} className="p-5 bg-slate-50/50 hover:bg-white hover:shadow-md hover:shadow-slate-200/40 border border-slate-100 rounded-2xl flex gap-5 transition-all duration-300 group/item">
                           <span className="size-8 shrink-0 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-xs font-black text-rose-500 shadow-sm group-hover/item:bg-rose-500 group-hover/item:text-white group-hover/item:border-rose-500 transition-all">{item.num}</span>
@@ -1934,7 +1982,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
               <div className="bg-blue-50 border border-blue-100 text-blue-800 px-4 py-3 rounded-xl flex items-start gap-3">
                 <span className="material-symbols-outlined text-blue-500 shrink-0 mt-0.5">info</span>
                 <p className="text-xs font-medium leading-relaxed">
-                  Pastikan menulis Kode Pembayaran <strong className="font-mono bg-white px-1 py-0.5 rounded shadow-sm text-blue-700">{paymentCode}</strong> pada slip setoran atau struk ATM sebelum di-upload.
+                  Pastikan menulis Kode Pembayaran <strong className="font-mono bg-white px-1 py-0.5 rounded shadow-sm text-blue-700">{paymentCode}</strong> pada slip setoran atau struk ATM sebelum diunggah.
                 </p>
               </div>
 
@@ -1974,7 +2022,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
               </div>
 
               <div className="space-y-1.5 min-w-0">
-                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Upload Bukti</label>
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Unggah Bukti</label>
                 <div className={`relative border-2 ${buktiFile ? 'border-primary bg-primary/5' : 'border-dashed border-slate-200 bg-slate-50'} rounded-xl hover:bg-slate-100 transition-colors cursor-pointer flex flex-col items-center justify-center p-6 group`}>
                   <input type="file" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*,.pdf" />
                   {buktiFile ? (

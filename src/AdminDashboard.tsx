@@ -212,8 +212,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
         if (!b.is_finalized) return false;
         const name = b.registration?.name || '';
         const examNumber = b.exam_number || '';
+        const programStudi = b.registration?.program_studi || '';
         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            examNumber.toLowerCase().includes(searchTerm.toLowerCase());
+                            examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            programStudi.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || b.status_kesehatan === statusFilter;
         return matchesSearch && matchesStatus;
       });
@@ -224,12 +226,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
       }
 
       const headers = [
-        "Nama Pendaftar", "Nomor Ujian", "Tinggi Badan", "Gol. Darah", 
+        "Nama Pendaftar", "Nomor Ujian", "Program Studi", "Tinggi Badan", "Gol. Darah", 
         "Tes Warna", "Visus Mata", "Tekanan Darah", "Riwayat Penyakit", "Status Kesehatan"
       ];
       const rows = filtered.map(b => [
         b.registration?.name || '-',
         b.exam_number || '-',
+        b.registration?.program_studi || '-',
         b.tinggi_badan || '-',
         b.golongan_darah || '-',
         b.buta_warna || '-',
@@ -244,8 +247,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
         if (!b.status_registrasi) return false;
         const name = b.registration?.name || '';
         const examNumber = b.exam_number || '';
+        const programStudi = b.registration?.program_studi || '';
         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            examNumber.toLowerCase().includes(searchTerm.toLowerCase());
+                            examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            programStudi.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || b.status_registrasi === statusFilter;
         return matchesSearch && matchesStatus;
       });
@@ -255,10 +260,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
         return;
       }
 
-      const headers = ["Nama Pendaftar", "Nomor Ujian", "Status Registrasi"];
+      const headers = ["Nama Pendaftar", "Nomor Ujian", "Program Studi", "Status Registrasi"];
       const rows = filtered.map(b => [
         b.registration?.name || '-',
         b.exam_number || '-',
+        b.registration?.program_studi || '-',
         b.status_registrasi || '-'
       ]);
       downloadCSV(headers, rows, "Laporan_Registrasi_Ulang_SPMB");
@@ -611,8 +617,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                       .filter(b => {
                         const name = b.registration?.name || '';
                         const examNumber = b.exam_number || '';
+                        const programStudi = b.registration?.program_studi || '';
                         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                            examNumber.toLowerCase().includes(searchTerm.toLowerCase());
+                                            examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                            programStudi.toLowerCase().includes(searchTerm.toLowerCase());
                         
                         const isFinalized = (b.is_finalized === true || b.is_finalized === 1 || b.is_finalized === "1");
                         const matchesStatus = statusFilter === 'all' || 
@@ -672,6 +680,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                   <tr className="bg-slate-50/50 border-b border-slate-100 text-slate-400 text-[11px] uppercase tracking-wider font-extrabold">
                     <th className="px-6 py-5">Nama Pendaftar</th>
                     <th className="px-6 py-5">Nomor Ujian</th>
+                    <th className="px-6 py-5">Program Studi</th>
                     <th className="px-6 py-5">Status Kesehatan</th>
                     <th className="px-6 py-5 text-center">Aksi</th>
                   </tr>
@@ -679,7 +688,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                 <tbody className="divide-y divide-slate-100 text-sm">
                   {biodatas.filter(b => b.is_finalized).length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center text-slate-400 font-medium">
+                      <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
                         <span className="material-symbols-outlined text-4xl mb-2 opacity-50">health_and_safety</span>
                         <p>Belum ada pendaftar yang memfinalisasi data.</p>
                       </td>
@@ -690,8 +699,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                         if (!b.is_finalized) return false;
                         const name = b.registration?.name || '';
                         const examNumber = b.exam_number || '';
+                        const programStudi = b.registration?.program_studi || '';
                         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                            examNumber.toLowerCase().includes(searchTerm.toLowerCase());
+                                            examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                            programStudi.toLowerCase().includes(searchTerm.toLowerCase());
                         const matchesStatus = statusFilter === 'all' || b.status_kesehatan === statusFilter;
                         return matchesSearch && matchesStatus;
                       })
@@ -708,8 +719,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                         <td className="px-6 py-5 whitespace-nowrap">
                           <span className="font-mono font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 shadow-sm">{b.exam_number}</span>
                         </td>
+                        <td className="px-6 py-5 font-bold text-slate-500 text-xs whitespace-nowrap uppercase tracking-tight">{b.registration?.program_studi}</td>
                         <td className="px-6 py-5">
-                          <span className={`px-3.5 py-1.5 rounded-full text-[10px] font-black border shadow-sm tracking-wider ${!b.status_kesehatan ? 'bg-slate-50 text-slate-400 border-slate-200' :
+                          <span className={`px-3.5 py-1.5 rounded-full text-[10px] font-black border shadow-sm tracking-wider whitespace-nowrap ${!b.status_kesehatan ? 'bg-slate-50 text-slate-400 border-slate-200' :
                               (b.status_kesehatan === 'Sehat' || b.status_kesehatan === 'Lulus') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
                               (b.status_kesehatan === 'Menunggu') ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200'
                             }`}>
@@ -769,6 +781,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                   <tr className="bg-slate-50/50 border-b border-slate-100 text-slate-400 text-[11px] uppercase tracking-wider font-extrabold">
                     <th className="px-6 py-5">Nama Pendaftar</th>
                     <th className="px-6 py-5">Nomor Ujian</th>
+                    <th className="px-6 py-5">Program Studi</th>
                     <th className="px-6 py-5">Bukti Registrasi</th>
                     <th className="px-6 py-5">Status Registrasi</th>
                     <th className="px-6 py-5 text-center">Aksi</th>
@@ -777,7 +790,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                 <tbody className="divide-y divide-slate-100 text-sm">
                   {biodatas.filter(b => b.status_registrasi).length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
+                      <td colSpan={6} className="px-6 py-12 text-center text-slate-400 font-medium">
                         <span className="material-symbols-outlined text-4xl mb-2 opacity-50">app_registration</span>
                         <p>Belum ada data registrasi ulang.</p>
                       </td>
@@ -788,8 +801,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                         if (!b.status_registrasi) return false;
                         const name = b.registration?.name || '';
                         const examNumber = b.exam_number || '';
+                        const programStudi = b.registration?.program_studi || '';
                         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                            examNumber.toLowerCase().includes(searchTerm.toLowerCase());
+                                            examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                            programStudi.toLowerCase().includes(searchTerm.toLowerCase());
                         const matchesStatus = statusFilter === 'all' || b.status_registrasi === statusFilter;
                         return matchesSearch && matchesStatus;
                       })
@@ -806,6 +821,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                         <td className="px-6 py-5 whitespace-nowrap">
                           <span className="font-mono font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 shadow-sm">{b.exam_number}</span>
                         </td>
+                        <td className="px-6 py-5 font-bold text-slate-500 text-xs whitespace-nowrap uppercase tracking-tight">{b.registration?.program_studi}</td>
                         <td className="px-6 py-4">
                           {b.bukti_registrasi_path ? (
                             <button 
@@ -816,11 +832,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                               <span>Bukti</span>
                             </button>
                           ) : (
-                            <span className="text-xs text-slate-400 italic font-medium">Belum Upload</span>
+                            <span className="text-xs text-slate-400 italic font-medium">Belum Unggah</span>
                           )}
                         </td>
                         <td className="px-6 py-5">
-                          <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm border ${
+                          <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm border whitespace-nowrap ${
                             b.status_registrasi === 'Sudah Registrasi' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
                             b.status_registrasi === 'Menunggu Verifikasi' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200'
                           }`}>
@@ -912,10 +928,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2 mb-3">Info Pribadi</p>
                         <div className="space-y-3">
                           {[
+                            { label: 'Program Studi', val: selectedBiodata.registration?.program_studi },
                             { label: 'NISN', val: selectedBiodata.nisn },
-                            { label: 'TTL', val: `${selectedBiodata.tempat_lahir}, ${selectedBiodata.tanggal_lahir}` },
+                            { label: 'TTL', val: `${selectedBiodata.tempat_lahir || '-'}, ${selectedBiodata.tanggal_lahir || '-'}` },
                             { label: 'Gender', val: selectedBiodata.jenis_kelamin },
                             { label: 'Agama', val: selectedBiodata.agama },
+                            { label: 'Kontak', val: selectedBiodata.no_hp || selectedBiodata.no_telp || '-' },
+                            { label: 'Alamat', val: [selectedBiodata.alamat, selectedBiodata.kabupaten, selectedBiodata.provinsi].filter(Boolean).join(', ') || '-' },
                           ].map(item => (
                             <div key={item.label} className="flex flex-col">
                               <span className="text-[9px] font-bold text-slate-400 uppercase">{item.label}</span>
@@ -935,6 +954,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                             { label: 'Jurusan', val: selectedBiodata.jurusan },
                             { label: 'Tahun Tamat', val: selectedBiodata.tahun_tamat },
                             { label: 'Rata-rata Nilai', val: selectedBiodata.nilai },
+                            { label: 'Alamat Sekolah', val: [selectedBiodata.alamat_sekolah, selectedBiodata.kabupaten_sekolah, selectedBiodata.provinsi_sekolah].filter(Boolean).join(', ') || '-' },
                           ].map(item => (
                             <div key={item.label} className="flex flex-col">
                               <span className="text-[9px] font-bold text-slate-400 uppercase">{item.label}</span>
@@ -954,19 +974,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                     <div>
                       <h4 className="text-xs font-black text-slate-800 mb-3 uppercase tracking-wider">Ayah Kandung</h4>
                       <div className="space-y-2">
-                        <p className="text-sm text-slate-600 font-bold">{selectedBiodata.nama_ayah}</p>
-                        <p className="text-xs text-slate-500 font-medium">{selectedBiodata.pekerjaan_ayah}</p>
-                        <p className="text-xs text-primary font-bold">{selectedBiodata.no_hp_ayah}</p>
+                        <p className="text-sm text-slate-600 font-bold">{selectedBiodata.nama_ayah || '-'}</p>
+                        <p className="text-xs text-slate-500 font-medium">{selectedBiodata.pekerjaan_ayah || '-'}</p>
+                        <p className="text-xs text-primary font-bold">{selectedBiodata.no_hp_ayah || '-'}</p>
                       </div>
                     </div>
                     <div>
                       <h4 className="text-xs font-black text-slate-800 mb-3 uppercase tracking-wider">Ibu Kandung</h4>
                       <div className="space-y-2">
-                        <p className="text-sm text-slate-600 font-bold">{selectedBiodata.nama_ibu}</p>
-                        <p className="text-xs text-slate-500 font-medium">{selectedBiodata.pekerjaan_ibu}</p>
-                        <p className="text-xs text-primary font-bold">{selectedBiodata.no_hp_ibu}</p>
+                        <p className="text-sm text-slate-600 font-bold">{selectedBiodata.nama_ibu || '-'}</p>
+                        <p className="text-xs text-slate-500 font-medium">{selectedBiodata.pekerjaan_ibu || '-'}</p>
+                        <p className="text-xs text-primary font-bold">{selectedBiodata.no_hp_ibu || '-'}</p>
                       </div>
                     </div>
+                 </div>
+                 <div className="mt-6 pt-5 border-t border-slate-200/60">
+                    <h4 className="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Alamat Lengkap Orang Tua</h4>
+                    <p className="text-sm text-slate-700 font-medium leading-relaxed">
+                      {[selectedBiodata.alamat_orang_tua, selectedBiodata.kabupaten_orang_tua, selectedBiodata.provinsi_orang_tua].filter(Boolean).join(', ') || '-'}
+                    </p>
                  </div>
               </div>
 
@@ -1053,7 +1079,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                 </div>
                 <div>
                   <h3 className="font-extrabold text-slate-800 text-lg uppercase tracking-tight">Detail Hasil Kesehatan</h3>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{selectedHealthStudent.nama} <span className="mx-2 opacity-30">|</span> {selectedHealthStudent.no_ujian}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{selectedHealthStudent.registration?.name} <span className="mx-2 opacity-30">|</span> {selectedHealthStudent.exam_number} <span className="mx-2 opacity-30">|</span> {selectedHealthStudent.registration?.program_studi}</p>
                 </div>
               </div>
               <button onClick={() => setShowHealthModal(false)} className="p-2 bg-white text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-all active:scale-95 shadow-sm border border-slate-200">

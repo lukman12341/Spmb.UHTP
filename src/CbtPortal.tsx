@@ -77,6 +77,18 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
   const displayStudentName = realStudentName || studentName || "M LUKMAN HAKIM";
   const displayMajor = realMajor || major || "S1 SI Program Reguler";
 
+  const getExamJalur = (majorName: string) => {
+    if (!majorName) return "Jalur A";
+    const name = majorName.toLowerCase();
+    if (name.includes("ners")) return "NERS";
+    if (name.includes("profesi bidan")) return "Profesi Bidan";
+    if (name.includes("pasca") || name.includes("s2") || name.includes("magister")) return "Pasca";
+    if (name.includes("stmik")) return "STMIK";
+    if (name.includes("beasiswa") || name.includes("jalur b")) return "Jalur B";
+    return "Jalur A";
+  };
+  const displayJalur = getExamJalur(displayMajor);
+
   const handleSelectRole = (role: 'peserta' | 'panitia') => {
     setView(role === 'peserta' ? 'login-peserta' : 'login-panitia');
   };
@@ -264,8 +276,7 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
             <CbtExamSession 
               noUjian={examNumber}
               studentName={displayStudentName}
-              major={displayMajor}
-              jalur="Jalur A" // Disinkronkan dengan kategori di Admin
+              jalur={displayJalur} // Disinkronkan dengan kategori di Admin
               globalEndTime={schedule ? `${schedule.tanggal_ujian}T${schedule.jam_berakhir}` : undefined}
               onFinish={(score, details) => {
                 saveExamResult(score, details);

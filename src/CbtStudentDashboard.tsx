@@ -278,7 +278,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                     <input 
                       type="number" 
                       placeholder="170"
-                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:border-emerald-500 transition-all outline-none font-bold text-slate-700"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700"
                       value={healthForm.tinggi_badan}
                       onChange={e => setHealthForm({...healthForm, tinggi_badan: e.target.value})}
                       required
@@ -286,15 +286,18 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tes Warna</label>
-                    <select 
-                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:border-emerald-500 transition-all outline-none font-bold text-slate-700 appearance-none cursor-pointer"
-                      value={healthForm.buta_warna}
-                      onChange={e => setHealthForm({...healthForm, buta_warna: e.target.value})}
-                    >
-                      <option value="Tidak Buta Warna">Tidak Buta Warna</option>
-                      <option value="Buta Warna Parsial">Buta Warna Parsial</option>
-                      <option value="Buta Warna Total">Buta Warna Total</option>
-                    </select>
+                    <div className="relative">
+                      <select 
+                        className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700 appearance-none cursor-pointer pr-12"
+                        value={healthForm.buta_warna}
+                        onChange={e => setHealthForm({...healthForm, buta_warna: e.target.value})}
+                      >
+                        <option value="Tidak Buta Warna">Tidak Buta Warna</option>
+                        <option value="Buta Warna Parsial">Buta Warna Parsial</option>
+                        <option value="Buta Warna Total">Buta Warna Total</option>
+                      </select>
+                      <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                    </div>
                   </div>
                 </div>
 
@@ -306,25 +309,28 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Golongan Darah</label>
-                    <select 
-                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:border-emerald-500 transition-all outline-none font-bold text-slate-700 appearance-none cursor-pointer"
-                      value={healthForm.golongan_darah}
-                      onChange={e => setHealthForm({...healthForm, golongan_darah: e.target.value})}
-                      required
-                    >
-                      <option value="">== Pilih ==</option>
-                      <option value="A">A</option>
-                      <option value="B">B</option>
-                      <option value="AB">AB</option>
-                      <option value="O">O</option>
-                    </select>
+                    <div className="relative">
+                      <select 
+                        className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700 appearance-none cursor-pointer pr-12"
+                        value={healthForm.golongan_darah}
+                        onChange={e => setHealthForm({...healthForm, golongan_darah: e.target.value})}
+                        required
+                      >
+                        <option value="">== Pilih ==</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="AB">AB</option>
+                        <option value="O">O</option>
+                      </select>
+                      <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tekanan Darah (mmHg)</label>
                     <input 
                       type="text" 
                       placeholder="120/80"
-                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:border-emerald-500 transition-all outline-none font-bold text-slate-700"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700"
                       value={healthForm.tekanan_darah}
                       onChange={e => setHealthForm({...healthForm, tekanan_darah: e.target.value})}
                       required
@@ -333,7 +339,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Riwayat Penyakit</label>
                     <textarea 
-                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:border-emerald-500 transition-all outline-none font-bold text-slate-700 resize-none h-[115px]"
+                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700 resize-none h-[115px]"
                       placeholder="Masukkan riwayat penyakit jika ada..."
                       value={healthForm.riwayat_penyakit}
                       onChange={e => setHealthForm({...healthForm, riwayat_penyakit: e.target.value})}
@@ -344,7 +350,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
               {/* File Upload */}
               <div className="bg-slate-50 p-8 rounded-[24px] border border-slate-100 space-y-4">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Upload Bukti Tes Kesehatan</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Unggah Bukti Tes Kesehatan</label>
                 <div className="flex flex-col gap-3">
                   <input 
                     type="file" 
@@ -504,7 +510,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <button 
                     type="submit"
                     disabled={isSubmittingWawancara}
-                    className="flex-1 py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px] shadow-xl shadow-emerald-500/20 font-black text-xs uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+                    className="px-12 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px] shadow-xl shadow-emerald-500/20 font-black text-xs uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     {isSubmittingWawancara ? (
                       <>
@@ -525,7 +531,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                         setCurrentView('dashboard');
                       }
                     }}
-                    className="px-10 py-5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-[24px] font-black text-xs uppercase tracking-[0.2em] transition-all"
+                    className="px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-[24px] font-black text-xs uppercase tracking-[0.2em] transition-all"
                   >
                     Batal
                   </button>
@@ -558,11 +564,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
       });
 
       if (response.ok) {
-        alert('Bukti registrasi berhasil diupload! Mohon tunggu verifikasi admin.');
+        alert('Bukti registrasi berhasil diunggah! Mohon tunggu verifikasi admin.');
         setCurrentView('dashboard');
         window.location.reload();
       } else {
-        alert('Gagal mengupload bukti registrasi.');
+        alert('Gagal mengunggah bukti registrasi.');
       }
     } catch (err) {
       console.error(err);
@@ -620,6 +626,33 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
             </div>
 
             <div className="space-y-6">
+              {/* Registration Period Info Box */}
+              {schedule && schedule.tanggal_registrasi_mulai && schedule.tanggal_registrasi_akhir && (
+                <div className="p-6 bg-amber-50 rounded-[24px] border border-amber-200/80 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="flex items-center gap-3 text-amber-700">
+                    <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Batas Waktu Registrasi Ulang</span>
+                  </div>
+                  <div className="space-y-2 text-[13px] text-slate-700 font-medium">
+                    <div className="flex items-center justify-between border-b border-amber-100/50 pb-2">
+                      <span className="text-slate-500 font-semibold">Tanggal Mulai</span>
+                      <span className="font-bold text-slate-800">
+                        {new Date(schedule.tanggal_registrasi_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-slate-500 font-semibold">Tanggal Akhir</span>
+                      <span className="font-bold text-rose-600">
+                        {new Date(schedule.tanggal_registrasi_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-amber-600 font-bold uppercase tracking-wider mt-3 text-center bg-amber-100/30 py-1.5 rounded-lg border border-amber-200/40">
+                      ⚠️ Harap lakukan registrasi ulang sebelum batas waktu
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="p-6 bg-slate-50 rounded-[24px] border border-slate-100 space-y-4">
                 <div className="flex items-center gap-3 text-blue-600">
                   <span className="material-symbols-outlined text-[20px]">check_circle</span>
@@ -664,7 +697,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                     <div className="size-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
                       <span className="material-symbols-outlined text-[20px]">upload_file</span>
                     </div>
-                    <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Upload Dokumen</h4>
+                    <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Unggah Dokumen</h4>
                   </div>
                   <span className="text-[9px] font-bold text-blue-600 uppercase bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">Wajib</span>
                 </div>
@@ -1190,7 +1223,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <p className={`text-[10px] font-bold uppercase tracking-widest ${
                     statusRegistrasi !== 'Belum Registrasi' ? 'text-slate-400' : (hasilWawancara === 'LULUS' ? 'text-blue-600' : 'text-slate-400')
                   }`}>
-                    {statusRegistrasi === 'Belum Registrasi' ? (hasilWawancara === 'LULUS' ? 'Upload Bukti' : 'Menunggu') : 'Selesai'}
+                    {statusRegistrasi === 'Belum Registrasi' ? (hasilWawancara === 'LULUS' ? 'Unggah Bukti' : 'Menunggu') : 'Selesai'}
                   </p>
                   {statusRegistrasi !== 'Belum Registrasi' && (
                     <span className={`mt-3 inline-block px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest w-fit shadow-sm ${
@@ -1212,6 +1245,30 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                     </a>
                   )}
                 </div>
+
+                {/* Registration Dates Period */}
+                {schedule && schedule.tanggal_registrasi_mulai && schedule.tanggal_registrasi_akhir ? (
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-1 text-left w-full">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px] text-blue-500">calendar_month</span>
+                      Periode Registrasi
+                    </span>
+                    <div className="flex flex-col gap-0.5 mt-1 pl-5">
+                      <span className="text-[11px] font-bold text-slate-700">
+                        {new Date(schedule.tanggal_registrasi_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest my-0.5">s/d</span>
+                      <span className="text-[11px] font-bold text-slate-700">
+                        {new Date(schedule.tanggal_registrasi_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-1 text-left w-full text-[10px] font-semibold text-slate-400">
+                    <span className="material-symbols-outlined text-[14px]">calendar_month</span>
+                    <span>Jadwal belum ditentukan</span>
+                  </div>
+                )}
               </button>
             </section>
 

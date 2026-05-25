@@ -2,7 +2,7 @@ import React from 'react';
 
 const LoadingSpinner: React.FC = () => {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-sans">
       <div className="relative">
         {/* Outer Ring */}
         <div className="size-20 rounded-full border-4 border-emerald-100 border-t-emerald-600 animate-spin"></div>

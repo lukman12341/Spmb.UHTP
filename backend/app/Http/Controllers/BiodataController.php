@@ -94,21 +94,59 @@ class BiodataController extends Controller
 
     public function index()
     {
-        // Ambil semua registrasi beserta relasi biodata dan healthTest-nya
-        $registrations = Registration::with(['biodata', 'healthTest'])->get();
+        // Ambil semua registrasi beserta relasi biodata, healthTest, dan examResult-nya
+        $registrations = Registration::with(['biodata', 'healthTest', 'examResult'])->get();
         
         $mapped = $registrations->map(function (Registration $r) {
             $b = $r->biodata;
             $health = $r->healthTest;
-            $status_kesehatan = $health->status_kesehatan ?? null;
+            $isS2Kesmas = stripos($r->program_studi, 'kesmas') !== false;
             
-            // Logika status keseluruhan
-            $overall_status = ($status_kesehatan && !in_array($status_kesehatan, ['Sehat', 'Lulus', 'Menunggu'])) 
-                ? 'Tidak Lulus' 
-                : ($b && $b->hasil_wawancara ? ($b->hasil_wawancara === 'LULUS' ? 'Lulus' : 'Tidak Lulus') : 'Proses');
+            // Logic for Final Status
+            $status_kesehatan = $health->status_kesehatan ?? null;
+            $hasil_wawancara = $b->hasil_wawancara ?? null;
+            $status_cbt = $r->examResult->status_kelulusan ?? null;
+
+            $isHealthFailed = ($status_kesehatan && !in_array($status_kesehatan, ['Sehat', 'Lulus', 'Menunggu']));
+            
+            $finalStatus = 'Proses';
+
+            // List of manual statuses that should override the automatic logic
+            $manualStatuses = [
+                'Cadangan', 
+                'Lulus Di S1 Kesmas Jalur A Reguler', 
+                'Lulus Di S1 Kesmas Jalur B (Transfer)',
+                'Lulus Di S1 Keperawatan',
+                'Lulus Di Profesi Ners',
+                'Lulus Di S1 Kebidanan',
+                'Lulus Di Profesi Bidan',
+                'S1 Kesmas Jalur A Reguler', 
+                'S1 Kesmas Jalur B (Transfer)',
+                'S1 Keperawatan',
+                'Profesi Ners',
+                'S1 Kebidanan',
+                'Profesi Bidan'
+            ];
+
+            if ($status_cbt && in_array($status_cbt, $manualStatuses)) {
+                $finalStatus = $status_cbt;
+            } elseif ($isHealthFailed) {
+                $finalStatus = 'Tidak Lulus';
+            } elseif ($status_cbt === 'Lulus' && ($isS2Kesmas || in_array($status_kesehatan, ['Sehat', 'Lulus'])) && (!$hasil_wawancara || $hasil_wawancara === 'LULUS')) {
+                // If it requires interview but hasil is null, it's still 'Proses'
+                if (!$isS2Kesmas && in_array(strtolower($r->program_studi), ['profesi ners', 's1 keperawatan', 's1 kebidanan', 'profesi bidan'])) {
+                    $finalStatus = $hasil_wawancara === 'LULUS' ? 'Lulus' : 'Proses';
+                } else {
+                    $finalStatus = 'Lulus';
+                }
+            } elseif ($status_cbt === 'Tidak Lulus' || $hasil_wawancara === 'TIDAK LULUS') {
+                $finalStatus = 'Tidak Lulus';
+            }
 
             // Jika biodata ada, gunakan array-nya, jika tidak buat array default
-            $biodataData = $b ? $b->toArray() : [
+            $biodataData = $b ? array_merge($b->toArray(), [
+                'status_registrasi' => $b->status_registrasi ?? 'Belum Registrasi'
+            ]) : [
                 'id' => null,
                 'registration_id' => $r->id,
                 'nisn' => null,
@@ -119,14 +157,14 @@ class BiodataController extends Controller
                 'is_finalized' => false,
                 'exam_number' => null,
                 'pas_photo_path' => null,
-                'status_registrasi' => null,
+                'status_registrasi' => 'Belum Registrasi',
                 'bukti_registrasi_path' => null,
             ];
 
             return array_merge($biodataData, [
                 'registration' => $r->toArray(),
                 'status_kesehatan' => $status_kesehatan,
-                'status' => $overall_status,
+                'status' => $finalStatus,
                 'tinggi_badan' => $health->tinggi_badan ?? null,
                 'golongan_darah' => $health->golongan_darah ?? null,
                 'buta_warna' => $health->buta_warna ?? null,
