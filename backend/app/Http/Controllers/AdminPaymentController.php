@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PaymentConfirmation;
+use Illuminate\Support\Facades\Cache;
 
 class AdminPaymentController extends Controller
 {
@@ -16,8 +17,12 @@ class AdminPaymentController extends Controller
         ]);
 
         if (($request->email === 'admin@spmb.com' || $request->email === 'admin123') && $request->password === 'admin123') {
+            $token = bin2hex(random_bytes(32));
+            Cache::put('admin_token_' . $token, true, now()->addHours(8));
+
             return response()->json([
                 'message' => 'Login success',
+                'token' => $token,
                 'user' => [
                     'name' => 'Administrator',
                     'email' => 'admin@spmb.com'

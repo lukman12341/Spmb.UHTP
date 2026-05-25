@@ -3,6 +3,29 @@ import { API_BASE_URL } from './config';
 import { IconBarOptionCategorized } from './IconBarOptions';
 import LoadingSpinner from './components/LoadingSpinner';
 
+// Fetch Interceptor to automatically add X-Admin-Token header if admin is logged in
+const originalFetch = window.fetch;
+window.fetch = async (input, init) => {
+  const token = sessionStorage.getItem('admin_token');
+  if (token) {
+    init = init || {};
+    const headers = init.headers || {};
+    if (headers instanceof Headers) {
+      headers.set('X-Admin-Token', token);
+      init.headers = headers;
+    } else if (Array.isArray(headers)) {
+      headers.push(['X-Admin-Token', token]);
+      init.headers = headers;
+    } else {
+      init.headers = {
+        ...headers,
+        'X-Admin-Token': token
+      } as Record<string, string>;
+    }
+  }
+  return originalFetch(input, init);
+};
+
 const UserDashboard = lazy(() => import('./UserDashboard'));
 const AdminDashboard = lazy(() => import('./AdminDashboard'));
 const CbtPortal = lazy(() => import('./CbtPortal'));
@@ -287,6 +310,9 @@ function App() {
 
       if (response.ok) {
         if (data.role === 'admin') {
+          if (data.token) {
+            sessionStorage.setItem('admin_token', data.token);
+          }
           setLoggedInUser(data);
           setIsAdminLoggedIn(true);
         } else {
@@ -327,6 +353,9 @@ function App() {
       const data = await response.json();
 
       if (response.ok) {
+        if (data.token) {
+          sessionStorage.setItem('admin_token', data.token);
+        }
         setLoggedInUser(data.user || data);
         setIsAdminLoggedIn(true);
         setIsAdminLoginModalOpen(false);

@@ -8,6 +8,7 @@ use App\Models\Registration;
 use App\Models\Prodi;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class RegistrationController extends Controller
 {
@@ -43,10 +44,14 @@ class RegistrationController extends Controller
 
         // 1. Check for Admin Login First
         if (($request->email === 'admin@spmb.com' || $request->email === 'admin123') && $request->password === 'admin123') {
+            $token = bin2hex(random_bytes(32));
+            Cache::put('admin_token_' . $token, true, now()->addHours(8));
+
             return response()->json([
                 'name' => 'Administrator',
                 'email' => 'admin@spmb.com',
-                'role' => 'admin'
+                'role' => 'admin',
+                'token' => $token
             ]);
         }
 
