@@ -1620,9 +1620,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     ];
 
     return (
-      <div className="h-[340px] flex items-end gap-2.5 pb-10 pl-12 pr-4 relative">
+      <div className="h-[340px] flex items-end gap-2.5 pl-12 pr-4 relative">
         {/* Y-axis grid lines */}
-        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pl-12 pr-4 pb-10">
+        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pl-12 pr-4 pb-8">
           {[max, max * 0.75, max * 0.5, max * 0.25, 0].map(val => (
             <div key={val} className="border-b border-dashed border-slate-200/80 w-full h-0 flex items-center">
               <span className="text-[10px] -ml-12 font-semibold w-10 text-right text-slate-400 tabular-nums">{Math.round(val)}</span>
@@ -1637,33 +1637,39 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           return (
             <div
               key={b.label}
-              className="flex-1 flex flex-col items-center group relative z-10 h-full justify-end cursor-pointer"
+              className="flex-1 flex flex-col h-full cursor-pointer"
               onClick={() => setActiveBar(isActive ? null : { chart: chartKey, index: i })}
             >
-              {/* Tooltip */}
-              <div
-                className={`absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg shadow-sm transition-all duration-300 flex flex-col items-center z-30 border border-slate-100 whitespace-nowrap ${isActive ? 'opacity-100 -translate-y-1' : 'opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:-translate-y-1'}`}
-                style={{ backgroundColor: color.light, color: color.text }}
-              >
-                <span className="text-[13px] font-black">{b.val}</span>
+              {/* Bar Area: aligns bar to bottom */}
+              <div className="flex-1 flex flex-col justify-end relative">
+                {/* Tooltip */}
+                <div
+                  className={`absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg shadow-sm transition-all duration-300 flex flex-col items-center z-30 border border-slate-100 whitespace-nowrap ${isActive ? 'opacity-100 -translate-y-1' : 'opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:-translate-y-1'}`}
+                  style={{ backgroundColor: color.light, color: color.text }}
+                >
+                  <span className="text-[13px] font-black">{b.val}</span>
+                </div>
+                {/* Bar */}
+                <div
+                  className="w-full max-w-[48px] mx-auto rounded-t-lg transition-all duration-500 ease-out group-hover:opacity-100"
+                  style={{
+                    height: `${heightPct}%`,
+                    minHeight: b.val > 0 ? '8px' : '0px',
+                    backgroundColor: isActive ? color.hover : color.bar,
+                    opacity: isActive ? 1 : 0.85,
+                  }}
+                ></div>
               </div>
-              {/* Bar */}
-              <div
-                className="w-full max-w-[48px] mx-auto rounded-t-lg transition-all duration-700 ease-out group-hover:opacity-100"
-                style={{
-                  height: `${heightPct}%`,
-                  minHeight: b.val > 0 ? '4px' : '0px',
-                  backgroundColor: isActive ? color.hover : color.bar,
-                  opacity: isActive ? 1 : 0.85,
-                }}
-              ></div>
-              {/* Label */}
-              <div className="flex flex-col items-center mt-2.5 absolute -bottom-10 left-1/2 -translate-x-1/2">
+              
+              {/* Label Area */}
+              <div className="h-8 flex items-center justify-center mt-2">
                 <span
-                  className="text-[11px] font-bold whitespace-nowrap max-w-[70px] truncate transition-colors duration-200"
+                  className="text-[10px] font-bold text-center truncate max-w-[65px] transition-colors duration-200"
                   style={{ color: isActive ? color.text : '#64748b' }}
                   title={b.label}
-                >{b.label}</span>
+                >
+                  {b.label}
+                </span>
               </div>
             </div>
           );
@@ -1845,13 +1851,13 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 <span className="material-symbols-outlined text-[20px]">person_add</span>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-slate-700">Grafik Pendaftaran Mahasiswa Baru 2025</h3>
+                <h3 className="text-sm font-semibold text-slate-700">Grafik Pendaftaran Mahasiswa Baru {new Date().getFullYear()}</h3>
                 <p className="text-[10px] font-medium text-slate-400 mt-0.5">Total Pendaftar: <span className="text-blue-600 font-bold">{totals.pendaftaran}</span></p>
               </div>
             </div>
           </div>
           <div className="px-6 py-8 bg-slate-50/40">
-            {pendaftaranData.length > 0 ? renderBarChart(pendaftaranData, Math.max(...pendaftaranData.map(d => d.val), 50), 'pendaftaran') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
+            {pendaftaranData.length > 0 ? renderBarChart(pendaftaranData, Math.max(...pendaftaranData.map(d => Number(d.val)), 8), 'pendaftaran') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
           </div>
         </div>
 
@@ -1863,13 +1869,13 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-slate-700">Grafik Registrasi Mahasiswa Baru 2025</h3>
+                <h3 className="text-sm font-semibold text-slate-700">Grafik Registrasi Mahasiswa Baru {new Date().getFullYear()}</h3>
                 <p className="text-[10px] font-medium text-slate-400 mt-0.5">Total Registrasi: <span className="text-emerald-600 font-bold">{totals.registrasi}</span></p>
               </div>
             </div>
           </div>
           <div className="px-6 py-8 bg-slate-50/40">
-            {registrasiData.length > 0 ? renderBarChart(registrasiData, Math.max(...registrasiData.map(d => d.val), 50), 'registrasi') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
+            {registrasiData.length > 0 ? renderBarChart(registrasiData, Math.max(...registrasiData.map(d => Number(d.val)), 8), 'registrasi') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
           </div>
         </div>
 
@@ -1887,7 +1893,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
           </div>
           <div className="px-6 py-8 bg-slate-50/40">
-            {sumberData.length > 0 ? renderBarChart(sumberData, Math.max(...sumberData.map(d => d.val), 50), 'sumber') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
+            {sumberData.length > 0 ? renderBarChart(sumberData, Math.max(...sumberData.map(d => Number(d.val)), 8), 'sumber') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
           </div>
         </div>
       </div>
