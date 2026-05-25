@@ -43,14 +43,22 @@ class RegistrationController extends Controller
         ]);
 
         // 1. Check for Admin Login First
-        if (($request->email === 'admin@spmb.com' || $request->email === 'admin123') && $request->password === 'admin123') {
+        $isSpmbAdmin = (
+            ($request->email === 'admin@spmb.com' || $request->email === 'admin123' || $request->email === 'admin@uhtp.ac.id') && $request->password === 'admin123'
+        );
+
+        $isCbtAdmin = (
+            $request->email === 'admincbt@uhtp.ac.id' && $request->password === 'admincbt123'
+        );
+
+        if ($isSpmbAdmin || $isCbtAdmin) {
             $token = bin2hex(random_bytes(32));
             Cache::put('admin_token_' . $token, true, now()->addHours(8));
 
             return response()->json([
-                'name' => 'Administrator',
-                'email' => 'admin@spmb.com',
-                'role' => 'admin',
+                'name' => $isCbtAdmin ? 'Administrator CBT' : 'Administrator',
+                'email' => $request->email,
+                'role' => $isCbtAdmin ? 'admin_cbt' : 'admin',
                 'token' => $token
             ]);
         }

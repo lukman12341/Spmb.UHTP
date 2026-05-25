@@ -250,30 +250,9 @@ function App() {
       return;
     }
 
-    // --- AKSES JALUR CEPAT (KHUSUS ADMIN/MAHASISWA) ---
+    // --- AKSES JALUR CEPAT (KHUSUS MAHASISWA TEST) ---
     
-    // 1. Admin Pertama (SPMB Utama)
-    if (loginEmail === 'admin@uhtp.ac.id' && loginPassword === 'admin123') {
-      setLoggedInUser({ id: 999, name: 'Admin Utama SPMB', program_studi: '-', gelombang: '-', role: 'admin' } as any);
-      setIsAdminLoggedIn(true);
-      setIsLoginModalOpen(false);
-      setLoginEmail('');
-      setLoginPassword('');
-      return;
-    }
-
-    // 2. Admin Kedua (CBT Ujian)
-    if (loginEmail === 'admincbt@uhtp.ac.id' && loginPassword === 'admincbt123') {
-      sessionStorage.setItem('cbt_view', 'admin-dashboard');
-      sessionStorage.setItem('cbt_admin_name', 'Administrator CBT');
-      setShowCbt(true);
-      setIsLoginModalOpen(false);
-      setLoginEmail('');
-      setLoginPassword('');
-      return;
-    }
-
-    // 3. User Mahasiswa (Jalur Cepat Offline)
+    // 1. User Mahasiswa (Jalur Cepat Offline)
     if (loginEmail === 'student@uhtp.ac.id' && loginPassword === 'student123') {
       setLoggedInUser({
         id: 123,
@@ -315,6 +294,13 @@ function App() {
           }
           setLoggedInUser(data);
           setIsAdminLoggedIn(true);
+        } else if (data.role === 'admin_cbt') {
+          if (data.token) {
+            sessionStorage.setItem('admin_token', data.token);
+          }
+          sessionStorage.setItem('cbt_view', 'admin-dashboard');
+          sessionStorage.setItem('cbt_admin_name', 'Administrator CBT');
+          setShowCbt(true);
         } else {
           setLoggedInUser(data);
           setIsLoggedIn(true);
