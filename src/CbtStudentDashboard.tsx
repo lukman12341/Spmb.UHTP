@@ -236,7 +236,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
         <div className="max-w-7xl mx-auto space-y-6">
           
           {/* Modern Softer Info Box */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-blue-500/95 to-sky-500/90 rounded-2xl p-6 text-white shadow-sm">
+          <div className="relative overflow-hidden bg-blue-600 rounded-2xl p-6 text-white shadow-sm">
             <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-2xl -mr-24 -mt-24"></div>
             
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
