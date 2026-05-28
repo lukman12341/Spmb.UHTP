@@ -232,72 +232,137 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
   const renderHealthForm = () => {
     return (
-    <div className="flex-1 overflow-y-auto p-6 lg:p-10 bg-white custom-scrollbar animate-in fade-in duration-700">
-      <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Info Box */}
-        <div className="relative overflow-hidden bg-blue-600 rounded-[32px] p-8 lg:p-10 text-white shadow-sm">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+      <div className="flex-1 overflow-y-auto p-6 lg:p-10 bg-[#fafafa] custom-scrollbar animate-in fade-in duration-700">
+        <div className="max-w-7xl mx-auto space-y-6">
           
-          <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-            <div className="size-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-              <span className="material-symbols-outlined text-[28px]">medical_information</span>
-            </div>
-            <div className="flex-1 text-center md:text-left space-y-2">
-              <h4 className="text-xl font-bold uppercase tracking-tight">Informasi Tes Kesehatan</h4>
-              <p className="text-blue-50 text-sm font-medium leading-relaxed mb-3">
-                Silakan lakukan pemeriksaan kesehatan di Klinik/Puskesmas/Rumah Sakit terdekat, lalu unggah hasilnya di bawah ini. 
-                Pastikan data akurat sesuai dengan surat keterangan medis yang Anda terima.
-              </p>
-              <a 
-                href="/contoh-tes-kesehatan.jpg" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/25 rounded-xl font-bold text-xs transition-colors shadow-sm"
+          {/* Modern Softer Info Box */}
+          <div className="relative overflow-hidden bg-gradient-to-r from-blue-50/90 to-sky-50/70 border border-blue-100/80 rounded-2xl p-6 text-slate-700 shadow-sm">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-blue-100/30 rounded-full blur-2xl -mr-24 -mt-24"></div>
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="size-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <span className="material-symbols-outlined text-[24px]">medical_information</span>
+              </div>
+              <div className="flex-1 space-y-1">
+                <h4 className="text-base font-bold text-slate-800 tracking-tight uppercase">Informasi Tes Kesehatan</h4>
+                <p className="text-slate-600 text-xs md:text-sm leading-relaxed font-medium">
+                  Silakan lakukan pemeriksaan kesehatan di Klinik/Puskesmas/Rumah Sakit terdekat, lalu unggah hasilnya di bawah ini. 
+                  Pastikan data akurat sesuai dengan surat keterangan medis yang Anda terima.
+                </p>
+                <div className="pt-2">
+                  <a 
+                    href="/contoh-tes-kesehatan.jpg" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-blue-50 text-blue-600 border border-blue-200 rounded-xl font-semibold text-xs transition-colors shadow-sm"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">download</span>
+                    Unduh / Lihat Contoh Surat Kesehatan
+                  </a>
+                </div>
+              </div>
+              <button 
+                onClick={() => setCurrentView('dashboard')} 
+                className="size-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all self-start md:self-center"
               >
-                <span className="material-symbols-outlined text-[16px]">download</span>
-                Unduh / Lihat Contoh Surat Kesehatan
-              </a>
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
             </div>
-            <button 
-              onClick={() => setCurrentView('dashboard')} 
-              className="size-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-xl transition-all"
-            >
-              <span className="material-symbols-outlined text-[20px]">close</span>
-            </button>
           </div>
-        </div>
 
-        <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-          <div className="p-10">
-            <form onSubmit={handleHealthSubmit} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                {/* Left Column */}
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">No Ujian</label>
-                    <input type="text" readOnly value={noUjian} className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 outline-none" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            
+            {/* Column 1: Student Information Summary (Read-Only Info Card) */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden p-6 space-y-6">
+              <div className="border-b border-slate-100 pb-4">
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                  <span className="material-symbols-outlined text-slate-400 text-[20px]">badge</span>
+                  Profil Calon Mahasiswa
+                </h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">No Ujian</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl">
+                    <span className="material-symbols-outlined text-slate-400 text-[18px]">qr_code</span>
+                    <span className="text-sm font-semibold text-slate-600">{noUjian}</span>
+                    <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nama Peserta</label>
-                    <input type="text" readOnly value={studentName} className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 outline-none" />
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nama Lengkap</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl">
+                    <span className="material-symbols-outlined text-slate-400 text-[18px]">person</span>
+                    <span className="text-sm font-semibold text-slate-600 uppercase truncate">{studentName}</span>
+                    <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tinggi Badan (cm)</label>
-                    <input 
-                      type="number" 
-                      placeholder="170"
-                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700"
-                      value={healthForm.tinggi_badan}
-                      onChange={e => setHealthForm({...healthForm, tinggi_badan: e.target.value})}
-                      required
-                    />
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Program Studi</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl">
+                    <span className="material-symbols-outlined text-slate-400 text-[18px]">school</span>
+                    <span className="text-sm font-semibold text-slate-600 uppercase truncate">{major}</span>
+                    <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tes Warna</label>
+                </div>
+              </div>
+            </div>
+
+            {/* Column 2 & 3: Main Editable Health Form */}
+            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-6 lg:p-8">
+              <div className="border-b border-slate-100 pb-4 mb-6">
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                  <span className="material-symbols-outlined text-slate-400 text-[20px]">edit_note</span>
+                  Formulir Data Kesehatan
+                </h3>
+              </div>
+
+              <form onSubmit={handleHealthSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600 ml-0.5">Tinggi Badan (cm)</label>
+                    <div className="relative flex items-center">
+                      <span className="material-symbols-outlined absolute left-4 text-slate-400 text-[18px]">height</span>
+                      <input 
+                        type="number" 
+                        placeholder="Contoh: 170"
+                        className="w-full pl-11 pr-5 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400"
+                        value={healthForm.tinggi_badan}
+                        onChange={e => setHealthForm({...healthForm, tinggi_badan: e.target.value})}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600 ml-0.5">Golongan Darah</label>
                     <div className="relative">
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">bloodtype</span>
                       <select 
-                        className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700 appearance-none cursor-pointer pr-12"
+                        className="w-full pl-11 pr-10 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
+                        value={healthForm.golongan_darah}
+                        onChange={e => setHealthForm({...healthForm, golongan_darah: e.target.value})}
+                        required
+                      >
+                        <option value="">Pilih Golongan Darah</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="AB">AB</option>
+                        <option value="O">O</option>
+                      </select>
+                      <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">keyboard_arrow_down</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600 ml-0.5">Tes Buta Warna</label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">visibility</span>
+                      <select 
+                        className="w-full pl-11 pr-10 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
                         value={healthForm.buta_warna}
                         onChange={e => setHealthForm({...healthForm, buta_warna: e.target.value})}
                       >
@@ -305,107 +370,127 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                         <option value="Buta Warna Parsial">Buta Warna Parsial</option>
                         <option value="Buta Warna Total">Buta Warna Total</option>
                       </select>
-                      <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
+                      <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">keyboard_arrow_down</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600 ml-0.5">Tekanan Darah (mmHg)</label>
+                    <div className="relative flex items-center">
+                      <span className="material-symbols-outlined absolute left-4 text-slate-400 text-[18px]">monitor_heart</span>
+                      <input 
+                        type="text" 
+                        placeholder="Contoh: 120/80"
+                        className="w-full pl-11 pr-5 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400"
+                        value={healthForm.tekanan_darah}
+                        onChange={e => setHealthForm({...healthForm, tekanan_darah: e.target.value})}
+                        required
+                      />
                     </div>
                   </div>
                 </div>
 
-                {/* Right Column */}
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Pilihan Prodi</label>
-                    <input type="text" readOnly value={major} className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-500 outline-none" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Golongan Darah</label>
-                    <div className="relative">
-                      <select 
-                        className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700 appearance-none cursor-pointer pr-12"
-                        value={healthForm.golongan_darah}
-                        onChange={e => setHealthForm({...healthForm, golongan_darah: e.target.value})}
-                        required
-                      >
-                        <option value="">== Pilih ==</option>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="AB">AB</option>
-                        <option value="O">O</option>
-                      </select>
-                      <span className="material-symbols-outlined absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tekanan Darah (mmHg)</label>
-                    <input 
-                      type="text" 
-                      placeholder="120/80"
-                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700"
-                      value={healthForm.tekanan_darah}
-                      onChange={e => setHealthForm({...healthForm, tekanan_darah: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Riwayat Penyakit</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-600 ml-0.5">Riwayat Penyakit (Opsional)</label>
+                  <div className="relative flex">
+                    <span className="material-symbols-outlined absolute left-4 top-3.5 text-slate-400 text-[18px]">medical_services</span>
                     <textarea 
-                      className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-200 hover:border-slate-300 font-bold text-slate-700 resize-none h-[115px]"
-                      placeholder="Masukkan riwayat penyakit jika ada..."
+                      className="w-full pl-11 pr-5 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400 resize-none h-24"
+                      placeholder="Masukkan riwayat penyakit penting jika ada..."
                       value={healthForm.riwayat_penyakit}
                       onChange={e => setHealthForm({...healthForm, riwayat_penyakit: e.target.value})}
                     />
                   </div>
                 </div>
-              </div>
 
-              {/* File Upload */}
-              <div className="bg-slate-50 p-8 rounded-[24px] border border-slate-100 space-y-4">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Unggah Bukti Tes Kesehatan</label>
-                <div className="flex flex-col gap-3">
-                  <input 
-                    type="file" 
-                    onChange={e => {
-                      const file = e.target.files ? e.target.files[0] : null;
-                      if (file && file.size > 5 * 1024 * 1024) {
-                        alert('Ukuran file terlalu besar. Maksimal 5 MB.');
-                        e.target.value = '';
-                      } else {
-                        setBuktiFile(file);
-                      }
-                    }}
-                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:uppercase file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-all cursor-pointer"
-                    accept="image/*,.pdf"
-                    required
-                  />
-                  <p className="text-[10px] text-slate-400 font-medium tracking-tight italic">Format: JPG, PNG, PDF (Max 5MB)</p>
+                {/* File Upload Zone */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-600 ml-0.5">Unggah Bukti Tes Kesehatan</label>
+                  <div 
+                    onClick={() => document.getElementById('bukti_kesehatan_input')?.click()}
+                    className="group relative border-2 border-dashed border-slate-200 hover:border-[#00857A]/60 bg-slate-50/50 hover:bg-slate-50 rounded-xl p-6 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center"
+                  >
+                    <input 
+                      id="bukti_kesehatan_input"
+                      type="file" 
+                      onChange={e => {
+                        const file = e.target.files ? e.target.files[0] : null;
+                        if (file && file.size > 5 * 1024 * 1024) {
+                          alert('Ukuran file terlalu besar. Maksimal 5 MB.');
+                          e.target.value = '';
+                        } else {
+                          setBuktiFile(file);
+                        }
+                      }}
+                      className="hidden"
+                      accept="image/*,.pdf"
+                      required={!buktiFile}
+                    />
+                    {buktiFile ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="size-12 rounded-xl bg-teal-50 text-[#00857A] flex items-center justify-center">
+                          <span className="material-symbols-outlined text-[28px]">description</span>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-semibold text-slate-700 max-w-xs md:max-w-md truncate">{buktiFile.name}</p>
+                          <p className="text-xs text-slate-400">{(buktiFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setBuktiFile(null);
+                            const input = document.getElementById('bukti_kesehatan_input') as HTMLInputElement;
+                            if (input) input.value = '';
+                          }}
+                          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs font-semibold transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[14px]">delete</span>
+                          Hapus File
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="size-12 rounded-xl bg-slate-100 group-hover:bg-teal-50 text-slate-400 group-hover:text-[#00857A] flex items-center justify-center transition-colors">
+                          <span className="material-symbols-outlined text-[28px]">cloud_upload</span>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-semibold text-slate-700">Pilih file atau seret ke sini</p>
+                          <p className="text-xs text-slate-400">Format: JPG, PNG, PDF (Maksimal 5MB)</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex justify-start gap-4">
-                <button 
-                  type="submit" 
-                  disabled={isSubmittingHealth}
-                  className="px-10 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg shadow-emerald-600/20 font-bold text-[11px] uppercase tracking-widest transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50"
-                >
-                  {isSubmittingHealth ? (
-                    <span className="material-symbols-outlined animate-spin text-[18px]">sync</span>
-                  ) : (
-                    <span className="material-symbols-outlined text-[18px]">save</span>
-                  )}
-                  {isSubmittingHealth ? 'Menyimpan...' : 'Simpan Data'}
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => setCurrentView('dashboard')}
-                  className="px-8 py-4 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all"
-                >
-                  Batal
-                </button>
-              </div>
-            </form>
+                {/* Submit and Cancel Actions */}
+                <div className="flex flex-col sm:flex-row items-center gap-3 pt-4">
+                  <button 
+                    type="submit" 
+                    disabled={isSubmittingHealth}
+                    className="w-full sm:w-auto px-8 py-3.5 bg-[#00857A] hover:bg-[#006d64] disabled:bg-[#00857A]/50 text-white rounded-xl shadow-lg shadow-teal-700/10 font-bold text-xs uppercase tracking-wider transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isSubmittingHealth ? (
+                      <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
+                    ) : (
+                      <span className="material-symbols-outlined text-[16px]">save</span>
+                    )}
+                    {isSubmittingHealth ? 'Menyimpan...' : 'Simpan Data'}
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setCurrentView('dashboard')}
+                    className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-wider transition-all text-center"
+                  >
+                    Batal
+                  </button>
+                </div>
+              </form>
+            </div>
+
           </div>
         </div>
       </div>
-    </div>
     );
   };
 
