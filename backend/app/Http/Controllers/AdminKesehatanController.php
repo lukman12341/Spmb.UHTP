@@ -217,7 +217,8 @@ class AdminKesehatanController extends Controller
             'details' => 'nullable|array'
         ]);
 
-        $biodata = Biodata::where('exam_number', $request->no_ujian)->first();
+        $no_ujian = $this->normalizeExamNumber($request->no_ujian);
+        $biodata = Biodata::where('exam_number', $no_ujian)->first();
 
         if (!$biodata) {
             return response()->json(['status' => 'error', 'message' => 'Mahasiswa tidak ditemukan'], 404);
@@ -246,7 +247,8 @@ class AdminKesehatanController extends Controller
             'no_ujian' => 'required|string'
         ]);
 
-        $biodata = Biodata::where('exam_number', $request->no_ujian)->first();
+        $no_ujian = $this->normalizeExamNumber($request->no_ujian);
+        $biodata = Biodata::where('exam_number', $no_ujian)->first();
 
         if ($biodata) {
             ExamResult::where('registration_id', $biodata->registration_id)->delete();
@@ -258,7 +260,8 @@ class AdminKesehatanController extends Controller
 
     public function checkStatus($no_ujian)
     {
-        $biodata = Biodata::where('exam_number', $no_ujian)->first();
+        $no_ujian_norm = $this->normalizeExamNumber($no_ujian);
+        $biodata = Biodata::where('exam_number', $no_ujian_norm)->first();
 
         if (!$biodata) {
             return response()->json(['is_finished' => false]);
@@ -291,7 +294,8 @@ class AdminKesehatanController extends Controller
             'answers' => 'required|array',
         ]);
 
-        $biodata = Biodata::where('exam_number', $request->no_ujian)->first();
+        $no_ujian = $this->normalizeExamNumber($request->no_ujian);
+        $biodata = Biodata::where('exam_number', $no_ujian)->first();
 
         if (!$biodata) {
             return response()->json(['status' => 'error', 'message' => 'Mahasiswa tidak ditemukan'], 404);
@@ -326,7 +330,8 @@ class AdminKesehatanController extends Controller
             'bukti_kesehatan' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120'
         ]);
 
-        $biodata = Biodata::where('exam_number', $request->no_ujian)->first();
+        $no_ujian = $this->normalizeExamNumber($request->no_ujian);
+        $biodata = Biodata::where('exam_number', $no_ujian)->first();
 
         if (!$biodata) {
             return response()->json(['status' => 'error', 'message' => 'Mahasiswa tidak ditemukan'], 404);
@@ -399,5 +404,31 @@ class AdminKesehatanController extends Controller
             'status' => 'success',
             'message' => 'Hasil wawancara berhasil diupdate'
         ]);
+    }
+
+    private function normalizeExamNumber($examNumber)
+    {
+        $val = strtoupper(trim($examNumber));
+        if (strlen($val) === 12) {
+            $chars = str_split($val);
+            if ($chars[5] === '0') {
+                $chars[5] = 'O';
+            }
+            if ($chars[6] === '0') {
+                $chars[6] = 'O';
+            }
+            for ($i = 0; $i < 5; $i++) {
+                if ($chars[$i] === 'O') {
+                    $chars[$i] = '0';
+                }
+            }
+            for ($i = 8; $i < 12; $i++) {
+                if ($chars[$i] === 'O') {
+                    $chars[$i] = '0';
+                }
+            }
+            $val = implode('', $chars);
+        }
+        return $val;
     }
 }

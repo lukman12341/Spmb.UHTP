@@ -418,7 +418,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
     if (!user?.id) return;
 
     const randomDigits = Math.floor(1000 + Math.random() * 9000);
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // Excluded I and O to prevent user confusion with 1 and 0
     const randomLetters = chars.charAt(Math.floor(Math.random() * chars.length)) +
       chars.charAt(Math.floor(Math.random() * chars.length));
     const newExamNumber = `${gelombang}${randomLetters}-${randomDigits}`;
@@ -672,7 +672,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
     return (
       <div className="min-h-screen bg-white font-sans pb-20 selection:bg-primary/10">
         {/* Simple & Clean Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50 print:hidden">
+        <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 print:hidden shadow-sm">
           <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-6">
               <button
@@ -685,7 +685,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
             </div>
             <button
               onClick={() => setShowLogoutModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 border border-rose-100 rounded-xl text-[11px] font-bold transition-all hover:bg-rose-100 active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white border border-rose-700 rounded-xl text-[11px] font-bold transition-all active:scale-95 shadow-md shadow-rose-950/10"
             >
               <span className="material-symbols-outlined text-[18px]">logout</span>
               <span>KELUAR</span>
@@ -908,16 +908,16 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
     <div className="min-h-screen pb-10 bg-white font-sans selection:bg-primary/20 relative print:bg-white print:pb-0">
 
       {/* Header / Navbar */}
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+      <header className="sticky top-0 z-40 bg-primary border-b border-primary-dark shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-18">
             {/* Logo / Brand */}
             <div className="flex items-center gap-3">
-              <div className="size-9 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+              <div className="size-9 bg-white/20 rounded-lg flex items-center justify-center text-white">
                 <span className="material-symbols-outlined shrink-0 text-[22px]">school</span>
               </div>
               <div>
-                <h1 className="font-bold text-slate-800 text-base leading-tight tracking-tight uppercase">SPMB UHTP</h1>
+                <h1 className="font-bold text-white text-base leading-tight tracking-tight uppercase">SPMB UHTP</h1>
               </div>
             </div>
 
@@ -925,7 +925,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
             <div className="flex items-center gap-2">
               <button
                 onClick={checkPaymentStatus}
-                className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 text-slate-600 hover:bg-slate-100 font-bold text-xs rounded-lg transition-colors border border-slate-200"
+                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white hover:bg-white/20 font-bold text-xs rounded-lg transition-colors border border-white/20"
                 title="Perbarui Status"
               >
                 <span className="material-symbols-outlined text-[16px]">refresh</span>
@@ -934,7 +934,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
               <button
                 onClick={() => setShowLogoutModal(true)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold text-xs rounded-lg transition-colors border border-rose-100"
+                className="flex items-center gap-2 px-3 py-1.5 bg-rose-600 text-white hover:bg-rose-700 font-bold text-xs rounded-lg transition-colors border border-rose-700 shadow-md shadow-rose-950/20"
               >
                 <span className="material-symbols-outlined text-[16px]">logout</span>
                 <span className="hidden sm:inline text-[11px] uppercase tracking-wider">Keluar</span>

@@ -1637,17 +1637,25 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           return (
             <div
               key={b.label}
-              className="flex-1 flex flex-col h-full cursor-pointer"
+              className="flex-1 flex flex-col h-full cursor-pointer group"
               onClick={() => setActiveBar(isActive ? null : { chart: chartKey, index: i })}
+              onMouseEnter={() => setActiveBar({ chart: chartKey, index: i })}
+              onMouseLeave={() => setActiveBar(null)}
             >
               {/* Bar Area: aligns bar to bottom */}
               <div className="flex-1 flex flex-col justify-end relative">
                 {/* Tooltip */}
                 <div
-                  className={`absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg shadow-sm transition-all duration-300 flex flex-col items-center z-30 border border-slate-100 whitespace-nowrap ${isActive ? 'opacity-100 -translate-y-1' : 'opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:-translate-y-1'}`}
-                  style={{ backgroundColor: color.light, color: color.text }}
+                  className={`absolute left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-xl shadow-lg transition-all duration-300 flex flex-col items-center z-30 border border-slate-200/50 whitespace-nowrap ${isActive ? 'opacity-100 -translate-y-1' : 'opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:-translate-y-1'}`}
+                  style={{ bottom: `calc(${heightPct}% + 12px)`, backgroundColor: color.light, color: color.text }}
                 >
-                  <span className="text-[13px] font-black">{b.val}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider opacity-75">{b.label}</span>
+                  <span className="text-[14px] font-black leading-tight mt-0.5">{b.val}</span>
+                  {/* Tooltip Arrow */}
+                  <div 
+                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 border-r border-b border-slate-200/50"
+                    style={{ backgroundColor: color.light }}
+                  />
                 </div>
                 {/* Bar */}
                 <div
@@ -2174,47 +2182,50 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden mb-10">
-        <div className="px-10 py-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-          <h3 className="font-black text-slate-700 uppercase tracking-widest text-sm">{editingJadwalId ? 'Edit Jadwal' : 'Tambah Jadwal Baru'}</h3>
+      <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden mb-10">
+        <div className="px-8 py-5 border-b border-slate-100 bg-white flex items-center gap-3">
+          <div className="size-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
+            <span className="material-symbols-outlined text-[18px]">{editingJadwalId ? 'edit_calendar' : 'add_circle'}</span>
+          </div>
+          <h3 className="font-bold text-slate-800 text-sm tracking-wide">{editingJadwalId ? 'Edit Jadwal Ujian' : 'Tambah Jadwal Baru'}</h3>
         </div>
 
-        <form onSubmit={editingJadwalId ? handleUpdateJadwal : handleJadwalSubmit} className="p-8 space-y-8">
+        <form onSubmit={editingJadwalId ? handleUpdateJadwal : handleJadwalSubmit} className="p-8 space-y-6">
           {/* Group: Identitas & Tanggal */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Gelombang</label>
-              <input type="text" placeholder="Contoh: 20261" className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all text-sm font-semibold text-slate-700" value={jadwalForm.gelombang} onChange={e => setJadwalForm({ ...jadwalForm, gelombang: e.target.value })} />
+              <label className="text-xs font-semibold text-slate-500 ml-0.5">Gelombang</label>
+              <input type="text" placeholder="Contoh: 20261" className="w-full px-4 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 shadow-inner/5" value={jadwalForm.gelombang} onChange={e => setJadwalForm({ ...jadwalForm, gelombang: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tanggal Ujian</label>
+              <label className="text-xs font-semibold text-slate-500 ml-0.5">Tanggal Ujian</label>
               <div className="relative group/field">
                 <input
                   type="date"
                   onClick={(e) => {
                     try { (e.target as HTMLInputElement).showPicker(); } catch { }
                   }}
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+                  className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
                   value={jadwalForm.tanggal_ujian}
                   onChange={e => setJadwalForm({ ...jadwalForm, tanggal_ujian: e.target.value })}
                 />
-                <div className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-slate-300 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                  <span className="material-symbols-outlined text-[20px]">calendar_today</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
             {/* Group: Waktu Pelaksanaan */}
-            <div className="space-y-4 p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
-              <h4 className="text-[11px] font-black text-slate-700 uppercase tracking-widest flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px] text-emerald-500">schedule</span>
+            <div className="space-y-4 p-6 bg-slate-50/30 rounded-2xl border border-slate-100">
+              <h4 className="text-xs font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+                <span className="material-symbols-outlined text-[20px] text-emerald-600">schedule</span>
                 Waktu Pelaksanaan
               </h4>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Jam Mulai</label>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Jam Mulai</label>
                   <div className="relative group/field">
                     <input
                       type="text"
@@ -2222,15 +2233,15 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       readOnly
                       onClick={() => setActiveTimePicker({ field: 'jam_mulai', label: 'Pilih Jam Mulai' })}
                       placeholder="08:00:00"
-                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
                     />
-                    <div className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-slate-300 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                      <span className="material-symbols-outlined text-[16px]">schedule</span>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                      <span className="material-symbols-outlined text-[18px]">schedule</span>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Jam Berakhir</label>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Jam Berakhir</label>
                   <div className="relative group/field">
                     <input
                       type="text"
@@ -2238,10 +2249,10 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       readOnly
                       onClick={() => setActiveTimePicker({ field: 'jam_berakhir', label: 'Pilih Jam Berakhir' })}
                       placeholder="21:00:00"
-                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
                     />
-                    <div className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-slate-300 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                      <span className="material-symbols-outlined text-[16px]">schedule</span>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                      <span className="material-symbols-outlined text-[18px]">schedule</span>
                     </div>
                   </div>
                 </div>
@@ -2249,43 +2260,43 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
 
             {/* Group: Periode Pendaftaran */}
-            <div className="space-y-4 p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
-              <h4 className="text-[11px] font-black text-slate-700 uppercase tracking-widest flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px] text-emerald-500">app_registration</span>
+            <div className="space-y-4 p-6 bg-slate-50/30 rounded-2xl border border-slate-100">
+              <h4 className="text-xs font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+                <span className="material-symbols-outlined text-[20px] text-emerald-600">app_registration</span>
                 Periode Registrasi
               </h4>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tgl Mulai</label>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Tgl Mulai</label>
                   <div className="relative group/field">
                     <input
                       type="date"
                       onClick={(e) => {
                         try { (e.target as HTMLInputElement).showPicker(); } catch { }
                       }}
-                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all text-[13px] font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
                       value={jadwalForm.tanggal_registrasi_mulai}
                       onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_mulai: e.target.value })}
                     />
-                    <div className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-slate-300 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                      <span className="material-symbols-outlined text-[16px]">calendar_month</span>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                      <span className="material-symbols-outlined text-[18px]">calendar_today</span>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tgl Akhir</label>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Tgl Akhir</label>
                   <div className="relative group/field">
                     <input
                       type="date"
                       onClick={(e) => {
                         try { (e.target as HTMLInputElement).showPicker(); } catch { }
                       }}
-                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all text-[13px] font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
                       value={jadwalForm.tanggal_registrasi_akhir}
                       onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_akhir: e.target.value })}
                     />
-                    <div className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-slate-300 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                      <span className="material-symbols-outlined text-[16px]">calendar_month</span>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                      <span className="material-symbols-outlined text-[18px]">calendar_today</span>
                     </div>
                   </div>
                 </div>
@@ -2293,12 +2304,22 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-slate-100/60 mt-4">
+          <div className="pt-5 flex justify-end gap-3 border-t border-slate-100 mt-6">
             {editingJadwalId && (
-              <button type="button" onClick={() => { setEditingJadwalId(null); setJadwalForm({ gelombang: '', tanggal_ujian: '', jam_mulai: '', jam_berakhir: '', tanggal_registrasi_mulai: '', tanggal_registrasi_akhir: '' }); }} className="px-8 py-3 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all">Batal</button>
+              <button type="button" onClick={() => { setEditingJadwalId(null); setJadwalForm({ gelombang: '', tanggal_ujian: '', jam_mulai: '', jam_berakhir: '', tanggal_registrasi_mulai: '', tanggal_registrasi_akhir: '' }); }} className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all duration-200 active:scale-95">Batal</button>
             )}
-            <button type="submit" disabled={isSaving} className="px-10 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg shadow-emerald-500/20 font-bold text-[11px] uppercase tracking-widest transition-all disabled:opacity-50">
-              {isSaving ? 'Memproses...' : (editingJadwalId ? 'Update Jadwal' : 'Simpan Jadwal')}
+            <button type="submit" disabled={isSaving} className="px-8 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 font-bold text-[11px] uppercase tracking-wider active:scale-95 disabled:opacity-50 flex items-center gap-2">
+              {isSaving ? (
+                <>
+                  <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
+                  Memproses...
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-[16px]">{editingJadwalId ? 'save' : 'add_task'}</span>
+                  {editingJadwalId ? 'Update Jadwal' : 'Simpan Jadwal'}
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -2306,20 +2327,20 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="size-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
-            <span className="material-symbols-outlined">event_available</span>
+          <div className="size-9 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-100/50">
+            <span className="material-symbols-outlined text-[18px]">event_available</span>
           </div>
-          <h2 className="text-lg font-black text-slate-800 tracking-tight">Daftar Jadwal Aktif</h2>
+          <h2 className="text-base font-bold text-slate-800 tracking-wide">Daftar Jadwal Aktif</h2>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-white px-4 py-2 rounded-xl border border-slate-100">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-white px-3.5 py-2.5 rounded-xl border border-slate-100 shadow-sm">
             <span>Total:</span>
-            <span className="font-black text-emerald-600">{jadwalList.length}</span>
+            <span className="font-bold text-emerald-600">{jadwalList.length}</span>
           </div>
           <div className="relative group/search">
-            <input type="text" placeholder="Cari jadwal..." className="pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all w-64 shadow-sm" />
-            <div className="absolute left-0 top-0 h-full w-11 flex items-center justify-center text-slate-400 group-focus-within/search:text-emerald-500 transition-colors pointer-events-none">
-              <span className="material-symbols-outlined text-[20px]">search</span>
+            <input type="text" placeholder="Cari jadwal..." className="pl-10 pr-4 py-2.5 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl text-xs focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all w-56 shadow-sm/5 font-semibold text-slate-700" />
+            <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center text-slate-400 group-focus-within/search:text-emerald-500 transition-colors pointer-events-none">
+              <span className="material-symbols-outlined text-[18px]">search</span>
             </div>
           </div>
         </div>
@@ -2338,61 +2359,88 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {jadwalList.map((j) => (
-            <div
-              key={j.id}
-              onClick={() => fetchPesertaByJadwal(j.gelombang)}
-              className={`group bg-white rounded-2xl p-4 border ${selectedJadwalGelombang === j.gelombang ? 'border-emerald-500 ring-2 ring-emerald-500/10' : 'border-slate-200'} shadow-sm hover:shadow-md hover:border-emerald-200 transition-all duration-300 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4`}
-            >
-              {/* Gelombang Badge */}
-              <div className="flex items-center gap-4 min-w-[120px]">
-                <div className="px-4 py-2 bg-emerald-50 text-emerald-700 text-xs font-black uppercase tracking-widest rounded-xl border border-emerald-100">
-                  Gel. {j.gelombang}
+          {jadwalList.map((j) => {
+            const isSelected = selectedJadwalGelombang === j.gelombang;
+            return (
+              <div
+                key={j.id}
+                onClick={() => fetchPesertaByJadwal(j.gelombang)}
+                className={`group bg-white rounded-2xl p-5 border transition-all duration-300 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md hover:-translate-y-0.5 ${
+                  isSelected 
+                    ? 'border-emerald-500 shadow-md shadow-emerald-500/5 ring-1 ring-emerald-500/20' 
+                    : 'border-slate-200/80 hover:border-emerald-200'
+                }`}
+              >
+                {/* Gelombang Badge */}
+                <div className="flex items-center gap-4">
+                  <div className="px-3.5 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-100/80 flex items-center gap-2">
+                    <span className={`size-1.5 rounded-full ${isSelected ? 'bg-emerald-500 animate-ping' : 'bg-emerald-400'}`}></span>
+                    Gelombang {j.gelombang}
+                  </div>
                 </div>
+
+                {/* Ujian Info */}
+                <div className="flex flex-wrap items-center gap-6 md:gap-8 flex-1">
+                  <div className="flex items-center gap-3">
+                    <div className="size-9 bg-slate-50 group-hover:bg-emerald-50/50 rounded-xl flex items-center justify-center text-emerald-600 transition-colors shrink-0">
+                      <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Tanggal Ujian</p>
+                      <p className="text-sm font-semibold text-slate-700">{new Date(j.tanggal_ujian).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                    </div>
+                  </div>
+
+                  <div className="hidden sm:block h-8 w-px bg-slate-100"></div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="size-9 bg-slate-50 group-hover:bg-indigo-50/50 rounded-xl flex items-center justify-center text-indigo-600 transition-colors shrink-0">
+                      <span className="material-symbols-outlined text-[18px]">schedule</span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Waktu Ujian</p>
+                      <p className="text-sm font-semibold text-slate-700">{j.jam_mulai.substring(0, 5)} - {j.jam_berakhir.substring(0, 5)} WIB</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Registrasi Info & Actions */}
+                <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="size-9 bg-slate-50 group-hover:bg-amber-50/50 rounded-xl flex items-center justify-center text-amber-600 transition-colors shrink-0">
+                      <span className="material-symbols-outlined text-[18px]">date_range</span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 text-left">Periode Registrasi</p>
+                      <div className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                        <span>{new Date(j.tanggal_registrasi_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+                        <span className="text-slate-300">→</span>
+                        <span>{new Date(j.tanggal_registrasi_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 ml-4">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleEditJadwalClick(j); }} 
+                      className="size-9 bg-amber-50 hover:bg-amber-500 text-amber-600 hover:text-white rounded-xl border border-amber-100/50 hover:border-transparent transition-all flex items-center justify-center shadow-sm"
+                      title="Edit Jadwal"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">edit</span>
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleDeleteJadwal(j.id); }} 
+                      className="size-9 bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white rounded-xl border border-rose-100/50 hover:border-transparent transition-all flex items-center justify-center shadow-sm"
+                      title="Hapus Jadwal"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">delete</span>
+                    </button>
+                  </div>
+                </div>
+
               </div>
-
-              {/* Ujian Info */}
-              <div className="flex items-center gap-6 flex-1">
-                <div className="flex items-center gap-3">
-                  <div className="size-10 bg-slate-50 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
-                    <span className="material-symbols-outlined text-[20px]">calendar_today</span>
-                  </div>
-                  <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Tanggal Ujian</p>
-                    <p className="text-sm font-bold text-slate-800">{new Date(j.tanggal_ujian).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                  </div>
-                </div>
-
-                <div className="hidden sm:block h-8 w-px bg-slate-200"></div>
-
-                <div className="flex items-center gap-3">
-                  <div className="size-10 bg-slate-50 rounded-xl flex items-center justify-center text-indigo-600 shrink-0">
-                    <span className="material-symbols-outlined text-[20px]">schedule</span>
-                  </div>
-                  <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Waktu</p>
-                    <p className="text-sm font-bold text-slate-700">{j.jam_mulai.substring(0, 5)} - {j.jam_berakhir.substring(0, 5)}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Registrasi Info & Actions */}
-              <div className="flex items-center justify-between md:justify-end gap-6">
-                <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5 text-right md:text-left">Periode Registrasi</p>
-                  <div className="text-xs font-bold text-slate-600">
-                    {j.tanggal_registrasi_mulai} <span className="text-slate-300 mx-1">→</span> {j.tanggal_registrasi_akhir}
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <button onClick={(e) => { e.stopPropagation(); handleEditJadwalClick(j); }} className="size-9 bg-amber-50 border border-amber-100 text-amber-600 rounded-xl flex items-center justify-center hover:bg-amber-500 hover:text-white transition-all shadow-sm"><span className="material-symbols-outlined text-[18px]">edit</span></button>
-                  <button onClick={(e) => { e.stopPropagation(); handleDeleteJadwal(j.id); }} className="size-9 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm"><span className="material-symbols-outlined text-[18px]">delete</span></button>
-                </div>
-              </div>
-
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -2400,25 +2448,30 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       {selectedJadwalGelombang && (
         <div className="mt-12 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="bg-white rounded-[32px] shadow-xl border border-slate-100 overflow-hidden">
-            <div className="px-10 py-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-              <div>
-                <h3 className="font-black text-slate-700 uppercase tracking-widest text-sm">Daftar Peserta Gelombang {selectedJadwalGelombang}</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Total Peserta: {pesertaJadwalData.length}</p>
+            <div className="px-8 py-5 border-b border-slate-100 bg-white flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="size-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[18px]">group</span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm tracking-wide">Daftar Peserta Gelombang {selectedJadwalGelombang}</h3>
+                  <p className="text-[11px] font-medium text-slate-400 mt-0.5">Total Peserta: <span className="text-emerald-600 font-bold">{pesertaJadwalData.length}</span></p>
+                </div>
               </div>
               <button
                 onClick={() => setSelectedJadwalGelombang(null)}
-                className="size-8 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all"
+                className="size-8 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all active:scale-95"
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
 
-            <div className="p-8">
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-500 text-[11px] font-black uppercase tracking-widest border-b border-slate-200">
+                      <tr className="bg-slate-50 text-slate-400 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
                         <th className="px-6 py-4 w-16 text-center">No</th>
                         <th className="px-6 py-4">Nama Mahasiswa</th>
                         <th className="px-6 py-4">No Ujian</th>
@@ -2443,11 +2496,11 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                         </tr>
                       ) : (
                         pesertaJadwalData.map((mhs, i) => (
-                          <tr key={mhs.id} className="hover:bg-slate-50/80 even:bg-slate-50/30 transition-colors group">
-                            <td className="px-6 py-4 text-center font-bold text-slate-400">{i + 1}</td>
-                            <td className="px-6 py-4 font-bold text-slate-700">{mhs.nama}</td>
-                            <td className="px-6 py-4 font-mono text-emerald-600 font-bold">{mhs.no_ujian}</td>
-                            <td className="px-6 py-4">
+                          <tr key={mhs.id} className="hover:bg-slate-50/50 even:bg-slate-50/10 transition-colors group">
+                            <td className="px-6 py-3.5 text-center font-semibold text-slate-400">{i + 1}</td>
+                            <td className="px-6 py-3.5 font-semibold text-slate-700">{mhs.nama}</td>
+                            <td className="px-6 py-3.5 font-mono text-emerald-600 font-semibold">{mhs.no_ujian}</td>
+                            <td className="px-6 py-3.5">
                               <div className="flex justify-center">
                                 <button
                                   onClick={() => {
@@ -2457,9 +2510,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                                     setView('detail_hasil_ujian');
                                     window.scrollTo(0, 0);
                                   }}
-                                  className="px-4 py-1.5 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                  className="px-4 py-1.5 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-1.5"
                                 >
-                                  <span className="material-symbols-outlined text-[16px]">visibility</span>
+                                  <span className="material-symbols-outlined text-[14px]">visibility</span>
                                   Detail
                                 </button>
                               </div>

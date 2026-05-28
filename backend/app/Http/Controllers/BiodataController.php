@@ -192,6 +192,10 @@ class BiodataController extends Controller
 
     public function storeRegistrasi(Request $request)
     {
+        if ($request->has('no_ujian')) {
+            $request->merge(['no_ujian' => $this->normalizeExamNumber($request->no_ujian)]);
+        }
+
         $validator = Validator::make($request->all(), [
             'no_ujian' => 'required|exists:biodatas,exam_number',
             'bukti_registrasi' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
@@ -232,5 +236,31 @@ class BiodataController extends Controller
             'status' => 'success',
             'message' => 'Status registrasi berhasil diupdate.'
         ]);
+    }
+
+    private function normalizeExamNumber($examNumber)
+    {
+        $val = strtoupper(trim($examNumber));
+        if (strlen($val) === 12) {
+            $chars = str_split($val);
+            if ($chars[5] === '0') {
+                $chars[5] = 'O';
+            }
+            if ($chars[6] === '0') {
+                $chars[6] = 'O';
+            }
+            for ($i = 0; $i < 5; $i++) {
+                if ($chars[$i] === 'O') {
+                    $chars[$i] = '0';
+                }
+            }
+            for ($i = 8; $i < 12; $i++) {
+                if ($chars[$i] === 'O') {
+                    $chars[$i] = '0';
+                }
+            }
+            $val = implode('', $chars);
+        }
+        return $val;
     }
 }

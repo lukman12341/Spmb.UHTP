@@ -34,6 +34,11 @@ const CbtExamSession: React.FC<CbtExamSessionProps> = ({ noUjian, studentName, j
   });
   
   const [timeLeft, setTimeLeft] = useState<number>(() => {
+    if (globalEndTime) {
+      const now = new Date().getTime();
+      const end = new Date(globalEndTime).getTime();
+      return Math.max(0, Math.floor((end - now) / 1000));
+    }
     const saved = localStorage.getItem(`cbt_time_left_${noUjian}`);
     return saved ? parseInt(saved, 10) : 7200; // 120 menit dalam detik
   });
@@ -98,32 +103,48 @@ const CbtExamSession: React.FC<CbtExamSessionProps> = ({ noUjian, studentName, j
 
   useEffect(() => {
     fetchSoal();
-    const timer = setInterval(() => {
-      // 1. Sisa waktu lokal (120 menit)
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          autoFinish();
-          return 0;
-        }
-        const nextTime = prev - 1;
-        localStorage.setItem(`cbt_time_left_${noUjian}`, nextTime.toString());
-        return nextTime;
-      });
+  }, [fetchSoal]);
 
-      // 2. Batas waktu global dari Jadwal Admin
+  // Synchronize timeLeft state with globalEndTime when it changes/loads
+  useEffect(() => {
+    if (globalEndTime) {
+      const now = new Date().getTime();
+      const end = new Date(globalEndTime).getTime();
+      const diff = Math.max(0, Math.floor((end - now) / 1000));
+      setTimeLeft(diff);
+    }
+  }, [globalEndTime]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
       if (globalEndTime) {
-        const now = new Date();
-        const end = new Date(globalEndTime);
-        if (now >= end) {
+        const now = new Date().getTime();
+        const end = new Date(globalEndTime).getTime();
+        const diff = Math.max(0, Math.floor((end - now) / 1000));
+        
+        setTimeLeft(diff);
+        
+        if (diff <= 0) {
           clearInterval(timer);
           alert("Waktu ujian telah berakhir berdasarkan jadwal. Ujian Anda akan dikumpulkan otomatis.");
           autoFinish();
         }
+      } else {
+        // Fallback to local countdown
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            autoFinish();
+            return 0;
+          }
+          const nextTime = prev - 1;
+          localStorage.setItem(`cbt_time_left_${noUjian}`, nextTime.toString());
+          return nextTime;
+        });
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [globalEndTime, fetchSoal, autoFinish, noUjian]);
+  }, [globalEndTime, autoFinish, noUjian]);
 
   const handleAnswerSelect = (jawaban: string) => {
     const updatedAnswers = { ...answers, [soalList[currentIndex].id]: jawaban };

@@ -42,7 +42,6 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/admin/kesehatan', [AdminKesehatanController::class, 'index']);
     Route::get('/admin/kesehatan/options', [AdminKesehatanController::class, 'getOptions']);
     Route::post('/admin/kesehatan/{id}/status', [AdminKesehatanController::class, 'updateStatus']);
-    Route::post('/admin/kesehatan/update-skor', [AdminKesehatanController::class, 'updateSkor']);
     Route::get('/admin/wawancara', [AdminKesehatanController::class, 'index']);
     Route::post('/admin/wawancara/{id}/status', [AdminKesehatanController::class, 'updateWawancara']);
     Route::post('/admin/registrasi/{id}/verify', [BiodataController::class, 'verifyRegistrasi']);
@@ -66,3 +65,4 @@ Route::get('/exam/check-status/{no_ujian}', [AdminKesehatanController::class, 'c
 Route::post('/exam/registrasi/store', [BiodataController::class, 'storeRegistrasi']);
 Route::get('/soal', [SoalController::class, 'index']);
 Route::get('/jadwal', [\App\Http\Controllers\JadwalUjianController::class, 'index']);
+Route::post('/admin/kesehatan/update-skor', [AdminKesehatanController::class, 'updateSkor']);

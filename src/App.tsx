@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import { API_BASE_URL } from './config';
 import { IconBarOptionCategorized } from './IconBarOptions';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -490,6 +490,20 @@ function App() {
     }
   }, [studentPhoto]);
 
+  // Scroll reveal callback ref for robust DOM observation
+  const revealRef = useCallback((node: HTMLElement | null) => {
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        node.classList.add('revealed');
+        observer.disconnect(); // Stop observing once it has been revealed
+      }
+    }, {
+      threshold: 0.05
+    });
+    observer.observe(node);
+  }, []);
+
   // Render Dashboard instead if logged in
   if (showCbt) {
     return (
@@ -519,6 +533,8 @@ function App() {
           user={loggedInUser} 
           onOpenCbt={(photoUrl) => {
             setStudentPhoto(photoUrl);
+            sessionStorage.removeItem('cbt_exam_number');
+            sessionStorage.setItem('cbt_view', 'selection');
             setShowCbt(true);
           }}
         />
@@ -616,7 +632,7 @@ function App() {
       {/* Quick Access Section - Bento Grid Layout */}
       <section className="py-16 md:py-24 bg-white relative z-10">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
+          <div ref={revealRef} className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8 reveal-on-scroll">
             <div className="max-w-2xl">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-8 h-1 bg-primary rounded-full"></span>
@@ -632,12 +648,14 @@ function App() {
             </p>
           </div>
           
-          <IconBarOptionCategorized />
+          <div ref={revealRef} className="reveal-on-scroll reveal-delay-200">
+            <IconBarOptionCategorized />
+          </div>
         </div>
       </section>
 
       {/* Mobile view for Quick Access - immediately follows Hero */}
-      <div className="md:hidden py-8 bg-slate-50/50">
+      <div ref={revealRef} className="md:hidden py-8 bg-slate-50/50 reveal-on-scroll">
         <div className="px-4">
           <IconBarOptionCategorized />
         </div>
@@ -670,7 +688,7 @@ function App() {
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px]"></div>
         
         <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10 text-center">
-          <div className="space-y-8">
+          <div ref={revealRef} className="space-y-8 reveal-on-scroll">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-150 text-[#00857A] font-semibold text-xs mx-auto shadow-xs">
               <span className="material-symbols-outlined text-[16px]">verified</span>
               Sistem Pendaftaran Terintegrasi
@@ -730,7 +748,7 @@ function App() {
         <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          <div className="text-center mb-16 md:mb-20 animate-slide-up">
+          <div ref={revealRef} className="text-center mb-16 md:mb-20 reveal-on-scroll">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-bold text-sm mb-6">
               <span className="material-symbols-outlined text-[18px]">collections_bookmark</span>
               Brosur & Biaya Kuliah
@@ -761,8 +779,9 @@ function App() {
           <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 relative z-10">
             {/* Brosur Depan */}
             <div
+              ref={revealRef}
               onClick={() => setActiveImage('/brosurdepan2026(1).jpg')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(0,133,122,0.2)] hover:border-emerald-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(0,133,122,0.2)] hover:border-emerald-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-100"
             >
               <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-slate-100 shadow-inner border border-slate-100">
                 <div className="absolute top-3 left-3 z-20 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm border border-emerald-400/20">
@@ -796,8 +815,9 @@ function App() {
 
             {/* Brosur Belakang */}
             <div
+              ref={revealRef}
               onClick={() => setActiveImage('/brosurbelakang2026(2).jpg')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(212,175,55,0.25)] hover:border-amber-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(212,175,55,0.25)] hover:border-amber-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-200"
             >
               <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-slate-100 shadow-inner border border-slate-100">
                 <div className="absolute top-3 left-3 z-20 bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm border border-amber-400/20">
@@ -831,8 +851,9 @@ function App() {
 
             {/* Biaya */}
             <div
+              ref={revealRef}
               onClick={() => setActiveImage('/biaya26.jpg')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(59,130,246,0.2)] hover:border-blue-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(59,130,246,0.2)] hover:border-blue-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-300"
             >
               <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-slate-100 shadow-inner border border-slate-100">
                 <div className="absolute top-3 left-3 z-20 bg-blue-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm border border-blue-400/20">
@@ -873,7 +894,7 @@ function App() {
         style={{ backgroundImage: 'linear-gradient(to bottom, #a6e1da 0%, #ffffff 100%)' }}
       >
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-6">
+          <div ref={revealRef} className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-6 reveal-on-scroll">
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-bold text-sm mb-4">
                 <span className="material-symbols-outlined text-[16px]">smart_display</span>
@@ -903,8 +924,9 @@ function App() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {/* Video 1 */}
             <div 
+              ref={revealRef}
               onClick={() => setActiveVideoId('ghTNfJnyRQg')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-3 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-red-500/20 transition-all duration-500 hover:-translate-y-1.5"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-3 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-red-500/20 transition-all duration-500 hover:-translate-y-1.5 reveal-on-scroll reveal-delay-100"
             >
               <div className="relative rounded-2xl overflow-hidden aspect-video shadow-inner bg-slate-950 mb-3.5 border border-slate-100">
                 <div className="absolute top-2.5 right-2.5 z-20 bg-slate-900/75 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded">
@@ -939,8 +961,9 @@ function App() {
 
             {/* Video 2 */}
             <div 
+              ref={revealRef}
               onClick={() => setActiveVideoId('Ody81H1pK68')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-3 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-red-500/20 transition-all duration-500 hover:-translate-y-1.5"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-3 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-red-500/20 transition-all duration-500 hover:-translate-y-1.5 reveal-on-scroll reveal-delay-200"
             >
               <div className="relative rounded-2xl overflow-hidden aspect-video shadow-inner bg-slate-950 mb-3.5 border border-slate-100">
                 <div className="absolute top-2.5 right-2.5 z-20 bg-slate-900/75 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded">
@@ -975,8 +998,9 @@ function App() {
 
             {/* Video 3 */}
             <div 
+              ref={revealRef}
               onClick={() => setActiveVideoId('lgjxMAQqt70')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-3 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-red-500/20 transition-all duration-500 hover:-translate-y-1.5"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-3 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-red-500/20 transition-all duration-500 hover:-translate-y-1.5 reveal-on-scroll reveal-delay-300"
             >
               <div className="relative rounded-2xl overflow-hidden aspect-video shadow-inner bg-slate-950 mb-3.5 border border-slate-100">
                 <div className="absolute top-2.5 right-2.5 z-20 bg-slate-900/75 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded">
@@ -1011,8 +1035,9 @@ function App() {
 
             {/* Video 4 */}
             <div 
+              ref={revealRef}
               onClick={() => setActiveVideoId('aktuYTD5Slo')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-3 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-red-500/20 transition-all duration-500 hover:-translate-y-1.5"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-3 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-red-500/20 transition-all duration-500 hover:-translate-y-1.5 reveal-on-scroll reveal-delay-400"
             >
               <div className="relative rounded-2xl overflow-hidden aspect-video shadow-inner bg-slate-950 mb-3.5 border border-slate-100">
                 <div className="absolute top-2.5 right-2.5 z-20 bg-slate-900/75 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded">

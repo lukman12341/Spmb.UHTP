@@ -97,6 +97,7 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
     console.log('Logging in with:', identifier);
     if (view === 'login-peserta') {
       setExamNumber(identifier);
+      setHasFinishedExam(sessionStorage.getItem(`cbt_finished_${identifier}`) === 'true');
       setView('student-dashboard');
     } else if (view === 'login-panitia') {
       setAdminName(identifier);
@@ -110,6 +111,7 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
     setView('selection');
     setExamNumber('');
     setAdminName('Administrator');
+    setHasFinishedExam(false);
     sessionStorage.removeItem('cbt_view');
     sessionStorage.removeItem('cbt_exam_number');
     sessionStorage.removeItem('cbt_admin_name');
@@ -278,8 +280,8 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
               studentName={displayStudentName}
               jalur={displayJalur} // Disinkronkan dengan kategori di Admin
               globalEndTime={schedule ? `${schedule.tanggal_ujian}T${schedule.jam_berakhir}` : undefined}
-              onFinish={(score, details) => {
-                saveExamResult(score, details);
+              onFinish={async (score, details) => {
+                await saveExamResult(score, details);
                 alert('Ujian Selesai! Jawaban Anda telah tersimpan.');
                 setHasFinishedExam(true);
                 setView('student-dashboard');

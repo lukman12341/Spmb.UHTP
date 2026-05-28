@@ -245,10 +245,19 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
             </div>
             <div className="flex-1 text-center md:text-left space-y-2">
               <h4 className="text-xl font-bold uppercase tracking-tight">Informasi Tes Kesehatan</h4>
-              <p className="text-blue-50 text-sm font-medium leading-relaxed">
+              <p className="text-blue-50 text-sm font-medium leading-relaxed mb-3">
                 Silakan lakukan pemeriksaan kesehatan di Klinik/Puskesmas/Rumah Sakit terdekat, lalu unggah hasilnya di bawah ini. 
                 Pastikan data akurat sesuai dengan surat keterangan medis yang Anda terima.
               </p>
+              <a 
+                href="/contoh-tes-kesehatan.jpg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/25 rounded-xl font-bold text-xs transition-colors shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[16px]">download</span>
+                Unduh / Lihat Contoh Surat Kesehatan
+              </a>
             </div>
             <button 
               onClick={() => setCurrentView('dashboard')} 

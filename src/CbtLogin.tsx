@@ -48,13 +48,33 @@ const CbtLogin: React.FC<CbtLoginProps> = ({ role, onBack, onLogin }) => {
       return;
     }
 
-    if (noUjian !== password) {
+    const normalizeExamNumber = (num: string): string => {
+      let val = num.trim().toUpperCase();
+      if (val.length === 12) {
+        const chars = val.split('');
+        if (chars[5] === '0') chars[5] = 'O';
+        if (chars[6] === '0') chars[6] = 'O';
+        for (let i = 0; i < 5; i++) {
+          if (chars[i] === 'O') chars[i] = '0';
+        }
+        for (let i = 8; i < 12; i++) {
+          if (chars[i] === 'O') chars[i] = '0';
+        }
+        val = chars.join('');
+      }
+      return val;
+    };
+
+    const normalizedNoUjian = normalizeExamNumber(noUjian);
+    const normalizedPassword = normalizeExamNumber(password);
+
+    if (normalizedNoUjian !== normalizedPassword) {
       setError(`No Ujian dan Password harus sama`);
       return;
     }
 
     // Success logic for peserta
-    onLogin(noUjian);
+    onLogin(normalizedNoUjian);
   };
 
   return (
