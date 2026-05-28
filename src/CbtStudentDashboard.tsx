@@ -232,7 +232,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
   const renderHealthForm = () => {
     return (
-      <div className="flex-1 overflow-y-auto p-6 lg:p-10 bg-[#fafafa] custom-scrollbar animate-in fade-in duration-700">
+      <div className="flex-1 overflow-y-auto p-6 lg:p-10 bg-gradient-to-tr from-[#00857A]/5 via-white to-slate-50 custom-scrollbar animate-in fade-in duration-700">
         <div className="max-w-7xl mx-auto space-y-6">
           
           {/* Modern Softer Info Box */}
@@ -273,10 +273,12 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             
             {/* Column 1: Student Information Summary (Read-Only Info Card) */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden p-6 space-y-6">
-              <div className="border-b border-slate-100 pb-4">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                  <span className="material-symbols-outlined text-slate-400 text-[20px]">badge</span>
+            <div className="bg-gradient-to-br from-slate-50/80 via-slate-50/30 to-white rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-[#00857A] p-6 space-y-6">
+              <div className="border-b border-slate-100 pb-4 flex items-center gap-2.5">
+                <div className="size-8 rounded-lg bg-[#00857A]/10 text-[#00857A] flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">badge</span>
+                </div>
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
                   Profil Calon Mahasiswa
                 </h3>
               </div>
@@ -284,8 +286,8 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
               <div className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">No Ujian</span>
-                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="material-symbols-outlined text-slate-400 text-[18px]">qr_code</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-white border border-[#00857A]/15 rounded-xl">
+                    <span className="material-symbols-outlined text-[#00857A] text-[18px]">qr_code</span>
                     <span className="text-sm font-semibold text-slate-600">{noUjian}</span>
                     <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
                   </div>
@@ -293,8 +295,8 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nama Lengkap</span>
-                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="material-symbols-outlined text-slate-400 text-[18px]">person</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-white border border-[#00857A]/15 rounded-xl">
+                    <span className="material-symbols-outlined text-[#00857A] text-[18px]">person</span>
                     <span className="text-sm font-semibold text-slate-600 uppercase truncate">{studentName}</span>
                     <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
                   </div>
@@ -302,8 +304,8 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Program Studi</span>
-                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="material-symbols-outlined text-slate-400 text-[18px]">school</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-white border border-[#00857A]/15 rounded-xl">
+                    <span className="material-symbols-outlined text-[#00857A] text-[18px]">school</span>
                     <span className="text-sm font-semibold text-slate-600 uppercase truncate">{major}</span>
                     <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
                   </div>
@@ -312,10 +314,12 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
             </div>
 
             {/* Column 2 & 3: Main Editable Health Form */}
-            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-6 lg:p-8">
-              <div className="border-b border-slate-100 pb-4 mb-6">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                  <span className="material-symbols-outlined text-slate-400 text-[20px]">edit_note</span>
+            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 border-t-4 border-t-[#00857A] p-6 lg:p-8">
+              <div className="border-b border-slate-100 pb-4 mb-6 flex items-center gap-2.5">
+                <div className="size-8 rounded-lg bg-[#00857A]/10 text-[#00857A] flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">edit_note</span>
+                </div>
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
                   Formulir Data Kesehatan
                 </h3>
               </div>
@@ -325,11 +329,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-slate-600 ml-0.5">Tinggi Badan (cm)</label>
                     <div className="relative flex items-center">
-                      <span className="material-symbols-outlined absolute left-4 text-slate-400 text-[18px]">height</span>
+                      <span className="material-symbols-outlined absolute left-4 text-[#00857A] text-[18px]">height</span>
                       <input 
                         type="number" 
                         placeholder="Contoh: 170"
-                        className="w-full pl-11 pr-5 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400"
+                        className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400"
                         value={healthForm.tinggi_badan}
                         onChange={e => setHealthForm({...healthForm, tinggi_badan: e.target.value})}
                         required
@@ -340,9 +344,9 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-slate-600 ml-0.5">Golongan Darah</label>
                     <div className="relative">
-                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">bloodtype</span>
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#00857A] text-[18px]">bloodtype</span>
                       <select 
-                        className="w-full pl-11 pr-10 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
+                        className="w-full pl-11 pr-10 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
                         value={healthForm.golongan_darah}
                         onChange={e => setHealthForm({...healthForm, golongan_darah: e.target.value})}
                         required
@@ -360,9 +364,9 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-slate-600 ml-0.5">Tes Buta Warna</label>
                     <div className="relative">
-                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">visibility</span>
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#00857A] text-[18px]">visibility</span>
                       <select 
-                        className="w-full pl-11 pr-10 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
+                        className="w-full pl-11 pr-10 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
                         value={healthForm.buta_warna}
                         onChange={e => setHealthForm({...healthForm, buta_warna: e.target.value})}
                       >
@@ -377,11 +381,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-slate-600 ml-0.5">Tekanan Darah (mmHg)</label>
                     <div className="relative flex items-center">
-                      <span className="material-symbols-outlined absolute left-4 text-slate-400 text-[18px]">monitor_heart</span>
+                      <span className="material-symbols-outlined absolute left-4 text-[#00857A] text-[18px]">monitor_heart</span>
                       <input 
                         type="text" 
                         placeholder="Contoh: 120/80"
-                        className="w-full pl-11 pr-5 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400"
+                        className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400"
                         value={healthForm.tekanan_darah}
                         onChange={e => setHealthForm({...healthForm, tekanan_darah: e.target.value})}
                         required
@@ -393,9 +397,9 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-600 ml-0.5">Riwayat Penyakit (Opsional)</label>
                   <div className="relative flex">
-                    <span className="material-symbols-outlined absolute left-4 top-3.5 text-slate-400 text-[18px]">medical_services</span>
+                    <span className="material-symbols-outlined absolute left-4 top-3.5 text-[#00857A] text-[18px]">medical_services</span>
                     <textarea 
-                      className="w-full pl-11 pr-5 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400 resize-none h-24"
+                      className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400 resize-none h-24"
                       placeholder="Masukkan riwayat penyakit penting jika ada..."
                       value={healthForm.riwayat_penyakit}
                       onChange={e => setHealthForm({...healthForm, riwayat_penyakit: e.target.value})}
@@ -408,7 +412,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <label className="text-xs font-semibold text-slate-600 ml-0.5">Unggah Bukti Tes Kesehatan</label>
                   <div 
                     onClick={() => document.getElementById('bukti_kesehatan_input')?.click()}
-                    className="group relative border-2 border-dashed border-slate-200 hover:border-[#00857A]/60 bg-slate-50/50 hover:bg-slate-50 rounded-xl p-6 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center"
+                    className="group relative border-2 border-dashed border-[#00857A]/20 hover:border-[#00857A] bg-[#00857A]/5 hover:bg-[#00857A]/10 rounded-xl p-6 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center"
                   >
                     <input 
                       id="bukti_kesehatan_input"
@@ -451,11 +455,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                       </div>
                     ) : (
                       <div className="flex flex-col items-center gap-2">
-                        <div className="size-12 rounded-xl bg-slate-100 group-hover:bg-teal-50 text-slate-400 group-hover:text-[#00857A] flex items-center justify-center transition-colors">
+                        <div className="size-12 rounded-xl bg-[#00857A]/10 group-hover:bg-[#00857A]/20 text-[#00857A] flex items-center justify-center transition-colors">
                           <span className="material-symbols-outlined text-[28px]">cloud_upload</span>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm font-semibold text-slate-700">Pilih file atau seret ke sini</p>
+                          <p className="text-sm font-semibold text-[#00857A]">Pilih file atau seret ke sini</p>
                           <p className="text-xs text-slate-400">Format: JPG, PNG, PDF (Maksimal 5MB)</p>
                         </div>
                       </div>
