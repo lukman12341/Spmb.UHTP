@@ -1091,15 +1091,12 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       const matchesSearch = (mhs.nama?.toLowerCase() || '').includes(wawancaraSearch.toLowerCase()) ||
         (mhs.no_ujian?.toLowerCase() || '').includes(wawancaraSearch.toLowerCase());
 
-      const healthFailed = mhs.status_kesehatan && !['Sehat', 'Lulus', 'Menunggu'].includes(mhs.status_kesehatan);
-      const wawancaraGraded = mhs.hasil_wawancara === 'LULUS' || mhs.hasil_wawancara === 'TIDAK LULUS' || healthFailed;
-
       const statusLower = (mhs.status || '').toLowerCase();
-      const isFinalStatus = statusLower === 'lulus' || statusLower === 'tidak lulus' || statusLower.includes('lulus di');
+      const isFinalStatus = statusLower !== 'proses' && statusLower !== '';
 
       let isCorrectView = true;
-      if (view === 'rekap_wawancara') isCorrectView = wawancaraGraded;
-      else if (view === 'proses_wawancara') isCorrectView = !wawancaraGraded;
+      if (view === 'rekap_wawancara') isCorrectView = isFinalStatus;
+      else if (view === 'proses_wawancara') isCorrectView = !isFinalStatus;
       else if (view === 'rekap_kelulusan') isCorrectView = isFinalStatus;
       else if (view === 'proses_kelulusan') isCorrectView = !isFinalStatus;
 
