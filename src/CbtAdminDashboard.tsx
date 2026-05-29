@@ -3059,7 +3059,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                           <td className="px-4 py-2 border-r border-slate-200">{mhs.nama}</td>
                           <td className="px-4 py-2 border-r border-slate-200">{mhs.no_ujian}</td>
                           <td className="px-4 py-2 border-r border-slate-200 text-center">
-                            <span className={`px-2 py-0.5 rounded-sm text-[11px] font-bold ${!mhs.status_kesehatan ? 'bg-slate-200 text-slate-600' :
+                            <span className={`px-2 py-0.5 rounded-sm text-[11px] font-bold whitespace-nowrap ${!mhs.status_kesehatan ? 'bg-slate-200 text-slate-600' :
                               (mhs.status_kesehatan === 'Sehat' || mhs.status_kesehatan === 'Lulus') ? 'bg-[#00a65a] text-white' :
                                 (mhs.status_kesehatan === 'Menunggu') ? 'bg-amber-500 text-white' : 'bg-rose-500 text-white'
                               }`}>
@@ -3391,7 +3391,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                             {mhs.status_kesehatan}
                           </button>
                         ) : (
-                          <span className="px-2.5 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-full text-[10px] font-black shadow-sm uppercase tracking-wider">
+                          <span className="px-2.5 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-full text-[10px] font-black shadow-sm uppercase tracking-wider whitespace-nowrap">
                             Belum Tes
                           </span>
                         )}
@@ -3400,7 +3400,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                         {isS2Kesmas ? (
                           <span className="text-[10px] font-black uppercase text-slate-400 italic">N/A</span>
                         ) : (mhs.status_kesehatan && !['Sehat', 'Lulus', 'Menunggu'].includes(mhs.status_kesehatan)) ? (
-                          <span className="text-[10px] font-black uppercase text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-100">Gagal Kes.</span>
+                          <span className="text-[10px] font-black uppercase text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-100 whitespace-nowrap">Gagal Kes.</span>
                         ) : (
                           <div className="flex flex-col items-center gap-1">
                             <span className={`text-[10px] font-black uppercase px-2.5 py-1.5 rounded-full border shadow-sm tracking-wide whitespace-nowrap ${mhs.hasil_wawancara === 'LULUS'
