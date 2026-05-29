@@ -100,14 +100,14 @@ class BiodataController extends Controller
         $mapped = $registrations->map(function (Registration $r) {
             $b = $r->biodata;
             $health = $r->healthTest;
-            $isS2Kesmas = stripos($r->program_studi, 'kesmas') !== false;
+            $hasKesehatan = $this->checkHasKesehatan($r->program_studi);
             
             // Logic for Final Status
             $status_kesehatan = $health->status_kesehatan ?? null;
             $hasil_wawancara = $b->hasil_wawancara ?? null;
             $status_cbt = $r->examResult->status_kelulusan ?? null;
 
-            $isHealthFailed = ($status_kesehatan && !in_array($status_kesehatan, ['Sehat', 'Lulus', 'Menunggu']));
+            $isHealthFailed = $hasKesehatan && ($status_kesehatan && !in_array($status_kesehatan, ['Sehat', 'Lulus', 'Menunggu']));
             
             $finalStatus = 'Proses';
 
@@ -128,19 +128,11 @@ class BiodataController extends Controller
                 'Profesi Bidan'
             ];
 
-            if ($status_cbt && in_array($status_cbt, $manualStatuses)) {
+            $isManualApproval = ($r->examResult->keterangan ?? '') === 'Update Status Manual oleh Admin';
+            if ($status_cbt && ($isManualApproval || in_array($status_cbt, $manualStatuses))) {
                 $finalStatus = $status_cbt;
-            } elseif ($isHealthFailed) {
-                $finalStatus = 'Tidak Lulus';
-            } elseif ($status_cbt === 'Lulus' && ($isS2Kesmas || in_array($status_kesehatan, ['Sehat', 'Lulus'])) && (!$hasil_wawancara || $hasil_wawancara === 'LULUS')) {
-                // If it requires interview but hasil is null, it's still 'Proses'
-                if (!$isS2Kesmas && in_array(strtolower($r->program_studi), ['profesi ners', 's1 keperawatan', 's1 kebidanan', 'profesi bidan'])) {
-                    $finalStatus = $hasil_wawancara === 'LULUS' ? 'Lulus' : 'Proses';
-                } else {
-                    $finalStatus = 'Lulus';
-                }
-            } elseif ($status_cbt === 'Tidak Lulus' || $hasil_wawancara === 'TIDAK LULUS') {
-                $finalStatus = 'Tidak Lulus';
+            } else {
+                $finalStatus = 'Proses';
             }
 
             // Jika biodata ada, gunakan array-nya, jika tidak buat array default
@@ -236,6 +228,22 @@ class BiodataController extends Controller
             'status' => 'success',
             'message' => 'Status registrasi berhasil diupdate.'
         ]);
+    }
+
+    private function checkHasKesehatan($prodi)
+    {
+        if (!$prodi) return false;
+        $lower = strtolower($prodi);
+        
+        $isS1Kesmas = (strpos($lower, 's1') !== false) && (strpos($lower, 'kesmas') !== false || strpos($lower, 'kesehatan masyarakat') !== false || strpos($lower, 'ikm') !== false);
+        $isS1Bidan = (strpos($lower, 's1') !== false) && (strpos($lower, 'bidan') !== false || strpos($lower, 'kebidanan') !== false);
+        $isS1Keperawatan = (strpos($lower, 's1') !== false) && (strpos($lower, 'keperawatan') !== false || strpos($lower, 'kperwatan') !== false || strpos($lower, 'kpr') !== false);
+        $isD3Rmik = (strpos($lower, 'd3') !== false) && (strpos($lower, 'rmik') !== false || strpos($lower, 'rekam medis') !== false || strpos($lower, 'perekam medis') !== false || strpos($lower, 'mik') !== false);
+        $isD4Rmik = (strpos($lower, 'd4') !== false) && (strpos($lower, 'rmik') !== false || strpos($lower, 'mik') !== false || strpos($lower, 'rekam medis') !== false || strpos($lower, 'perekam medis') !== false || strpos($lower, 'manajemen informasi kesehatan') !== false);
+        $isProfesiNers = (strpos($lower, 'profesi') !== false) && (strpos($lower, 'ners') !== false);
+        $isProfesiBidan = (strpos($lower, 'profesi') !== false) && (strpos($lower, 'bidan') !== false || strpos($lower, 'kebidanan') !== false);
+        
+        return $isS1Kesmas || $isS1Bidan || $isS1Keperawatan || $isD3Rmik || $isD4Rmik || $isProfesiNers || $isProfesiBidan;
     }
 
     private function normalizeExamNumber($examNumber)

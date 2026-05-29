@@ -697,9 +697,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                     biodatas
                       .filter(b => {
                         if (!b.is_finalized) return false;
+                        
+                        const programStudi = b.registration?.program_studi || '';
+                        const pilihanLower = programStudi.toLowerCase();
+                        
+                        const isS1Kesmas = pilihanLower.includes('s1') && (pilihanLower.includes('kesmas') || pilihanLower.includes('kesehatan masyarakat') || pilihanLower.includes('ikm'));
+                        const isS1Bidan = pilihanLower.includes('s1') && (pilihanLower.includes('bidan') || pilihanLower.includes('kebidanan'));
+                        const isS1Keperawatan = pilihanLower.includes('s1') && (pilihanLower.includes('keperawatan') || pilihanLower.includes('kperwatan') || pilihanLower.includes('kpr'));
+                        const isD3Rmik = pilihanLower.includes('d3') && (pilihanLower.includes('rmik') || pilihanLower.includes('rekam medis') || pilihanLower.includes('perekam medis') || pilihanLower.includes('mik'));
+                        const isD4Rmik = pilihanLower.includes('d4') && (pilihanLower.includes('rmik') || pilihanLower.includes('mik') || pilihanLower.includes('rekam medis') || pilihanLower.includes('perekam medis') || pilihanLower.includes('manajemen informasi kesehatan'));
+                        const isProfesiNers = pilihanLower.includes('profesi') && pilihanLower.includes('ners');
+                        const isProfesiBidan = pilihanLower.includes('profesi') && (pilihanLower.includes('bidan') || pilihanLower.includes('kebidanan'));
+                        
+                        const hasHealthTest = isS1Kesmas || isS1Bidan || isS1Keperawatan || isD3Rmik || isD4Rmik || isProfesiNers || isProfesiBidan;
+                        if (!hasHealthTest) return false;
+
                         const name = b.registration?.name || '';
                         const examNumber = b.exam_number || '';
-                        const programStudi = b.registration?.program_studi || '';
                         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                             examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                             programStudi.toLowerCase().includes(searchTerm.toLowerCase());

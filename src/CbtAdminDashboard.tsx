@@ -168,6 +168,32 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     hour: '2-digit', minute: '2-digit'
   });
 
+  const checkHasKesehatan = (prodi: string): boolean => {
+    if (!prodi) return false;
+    const lower = prodi.toLowerCase();
+    const isS1Kesmas = lower.includes('s1') && (lower.includes('kesmas') || lower.includes('kesehatan masyarakat') || lower.includes('ikm'));
+    const isS1Bidan = lower.includes('s1') && (lower.includes('bidan') || lower.includes('kebidanan'));
+    const isS1Keperawatan = lower.includes('s1') && (lower.includes('keperawatan') || lower.includes('kperwatan') || lower.includes('kpr'));
+    const isD3Rmik = lower.includes('d3') && (lower.includes('rmik') || lower.includes('rekam medis') || lower.includes('perekam medis') || lower.includes('mik'));
+    const isD4Rmik = lower.includes('d4') && (lower.includes('rmik') || lower.includes('mik') || lower.includes('rekam medis') || lower.includes('perekam medis') || lower.includes('manajemen informasi kesehatan'));
+    const isProfesiNers = lower.includes('profesi') && lower.includes('ners');
+    const isProfesiBidan = lower.includes('profesi') && (lower.includes('bidan') || lower.includes('kebidanan'));
+    return isS1Kesmas || isS1Bidan || isS1Keperawatan || isD3Rmik || isD4Rmik || isProfesiNers || isProfesiBidan;
+  };
+
+  const checkHasWawancara = (prodi: string): boolean => {
+    if (!prodi) return false;
+    const lower = prodi.toLowerCase();
+    const allowedWawancaraProdi = [
+      's2 kesmas',
+      's1 keperawatan',
+      'profesi ners',
+      's1 kebidanan',
+      'profesi bidan'
+    ];
+    return allowedWawancaraProdi.some(wProdi => lower.includes(wProdi));
+  };
+
   // Navigation State
   const [view, setView] = useState<string>('dashboard');
   const [backView, setBackView] = useState<string>('proses_kesehatan');
@@ -188,6 +214,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   const [wawancaraLoading, setWawancaraLoading] = useState(false);
   const [wawancaraFilterGelombang, setWawancaraFilterGelombang] = useState('');
   const [wawancaraFilterProdi, setWawancaraFilterProdi] = useState('');
+  const [hasSearchedWawancara, setHasSearchedWawancara] = useState(false);
   const [wawancaraSearch, setWawancaraSearch] = useState('');
   const [wawancaraEntries, setWawancaraEntries] = useState(10);
   const [wawancaraCurrentPage, setWawancaraCurrentPage] = useState(1);
@@ -395,13 +422,15 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     setKesehatanLoading(true);
     setHasSearchedKesehatan(true);
     try {
-      const url = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${kesehatanFilterGelombang}`;
+      const url = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${kesehatanFilterGelombang}&filter_health_test=1`;
 
 
       const response = await fetch(url);
       const data = await response.json();
       if (data.status === 'success') {
-        setKesehatanData(data.data);
+        const rawList = Array.isArray(data.data) ? data.data : Object.values(data.data || {});
+        const healthTestStudents = rawList.filter((mhs: any) => checkHasKesehatan(mhs.pilihan));
+        setKesehatanData(healthTestStudents);
       }
     } catch (error) {
       console.error('Error fetching kesehatan data:', error);
@@ -433,6 +462,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     }
 
     setWawancaraLoading(true);
+    setHasSearchedWawancara(true);
     try {
       const url = isKelulusanView
         ? `${API_BASE_URL}/api/admin/wawancara?gelombang=${wawancaraFilterGelombang}`
@@ -3144,6 +3174,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 onChange={(e) => {
                   setWawancaraFilterGelombang(e.target.value);
                   setWawancaraCurrentPage(1);
+                  setHasSearchedWawancara(false);
                 }}
               >
                 <option value="">Pilih Gelombang</option>
@@ -3160,6 +3191,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 onChange={(e) => {
                   setWawancaraFilterProdi(e.target.value);
                   setWawancaraCurrentPage(1);
+                  setHasSearchedWawancara(false);
                 }}
               >
                 <option value="">Pilih Prodi</option>
@@ -3178,7 +3210,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           </div>
         </div>
 
-        {wawancaraData.length > 0 || wawancaraLoading ? (
+        {hasSearchedWawancara || wawancaraLoading ? (
           <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-slate-200 mt-4">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="flex flex-col">
@@ -3225,14 +3257,18 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   setWawancaraCurrentPage(1);
                   // Auto fetch when gelombang changes for rekap
                   if (e.target.value) {
+                    setHasSearchedWawancara(true);
                     setWawancaraLoading(true);
                     fetch(`${API_BASE_URL}/api/admin/wawancara?gelombang=${e.target.value}`)
                       .then(res => res.json())
                       .then(data => {
                         if (data.status === 'success') setWawancaraData(data.data);
+                        else setWawancaraData([]);
                         setWawancaraLoading(false);
                       })
                       .catch(() => setWawancaraLoading(false));
+                  } else {
+                    setHasSearchedWawancara(false);
                   }
                 }}
               >
@@ -3245,7 +3281,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           </div>
         </div>
 
-        {wawancaraData.length > 0 || wawancaraLoading ? (
+        {hasSearchedWawancara || wawancaraLoading ? (
           <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-slate-200 mt-4">
             <div className="p-4 border-b border-slate-100 bg-slate-50/50">
               <h4 className="text-[18px] font-bold text-slate-700">Gelombang: <span className="font-medium text-slate-500">{wawancaraFilterGelombang}</span></h4>
@@ -3471,6 +3507,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 onChange={(e) => {
                   setWawancaraFilterGelombang(e.target.value);
                   setWawancaraCurrentPage(1);
+                  setHasSearchedWawancara(false);
                 }}
               >
                 <option value="">Pilih Gelombang</option>
@@ -3488,7 +3525,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           </div>
         </div>
 
-        {wawancaraData.length > 0 || wawancaraLoading ? (
+        {hasSearchedWawancara || wawancaraLoading ? (
           <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-slate-200 mt-4">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="flex flex-col">
@@ -3990,14 +4027,18 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   setWawancaraFilterGelombang(e.target.value);
                   setWawancaraCurrentPage(1);
                   if (e.target.value) {
+                    setHasSearchedWawancara(true);
                     setWawancaraLoading(true);
                     fetch(`${API_BASE_URL}/api/admin/wawancara?gelombang=${e.target.value}`)
                       .then(res => res.json())
                       .then(data => {
                         if (data.status === 'success') setWawancaraData(data.data);
+                        else setWawancaraData([]);
                         setWawancaraLoading(false);
                       })
                       .catch(() => setWawancaraLoading(false));
+                  } else {
+                    setHasSearchedWawancara(false);
                   }
                 }}
               >
@@ -4010,7 +4051,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           </div>
         </div>
 
-        {wawancaraData.length > 0 || wawancaraLoading ? (
+        {hasSearchedWawancara || wawancaraLoading ? (
           <div className="bg-white shadow-lg rounded-xl overflow-hidden border border-slate-200 mt-4">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <h4 className="text-[15px] font-bold text-slate-700">Gelombang: <span className="font-medium text-slate-500">{wawancaraFilterGelombang}</span></h4>
@@ -4279,7 +4320,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     <td className="px-4 py-4 border-r border-slate-50 text-slate-700 font-black text-center whitespace-nowrap">{mhs.jumlah_benar || '-'}</td>
 
                     <td className="px-4 py-4 border-r border-slate-50 uppercase text-[10px] font-black tracking-wide whitespace-nowrap">
-                      {mhs.status_kesehatan ? (
+                      {!checkHasKesehatan(mhs.pilihan) ? (
+                        <span className="text-slate-400 italic">PRODI INI TIDAK ADA TES KESEHATAN</span>
+                      ) : mhs.status_kesehatan ? (
                         <span className={mhs.status_kesehatan === 'Sehat' || mhs.status_kesehatan === 'Lulus' ? 'text-emerald-500' : mhs.status_kesehatan === 'Menunggu' ? 'text-amber-500' : 'text-rose-500'}>
                           {mhs.status_kesehatan === 'Menunggu' ? 'MENUNGGU KONFIRMASI' : mhs.status_kesehatan}
                         </span>
@@ -4289,14 +4332,16 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     </td>
 
                     <td className="px-4 py-4 border-r border-slate-50 uppercase text-[10px] font-black tracking-wide whitespace-nowrap">
-                      {mhs.hasil_wawancara === 'BELUM UJIAN' ? (
+                      {!checkHasWawancara(mhs.pilihan) ? (
+                        <span className="text-slate-400 italic">PRODI INI TIDAK ADA TES WAWANCARA</span>
+                      ) : mhs.hasil_wawancara === 'BELUM UJIAN' ? (
                         <span className="text-rose-500">BELUM WAWANCARA</span>
                       ) : mhs.hasil_wawancara ? (
                         <span className={mhs.hasil_wawancara === 'LULUS' ? 'text-emerald-500' : 'text-indigo-500'}>
                           {mhs.hasil_wawancara}
                         </span>
                       ) : (
-                        <span className="text-indigo-500">PRODI INI TIDAK ADA TES WAWANCARA</span>
+                        <span className="text-rose-500">BELUM WAWANCARA</span>
                       )}
                     </td>
 
@@ -4490,65 +4535,129 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     if (!showInputHasilModal || !selectedKesehatanStudent) return null;
 
     return (
-      <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300 px-4">
-        <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col animate-in zoom-in duration-300 max-h-[90vh]">
+      <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 px-4">
+        <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden flex flex-col animate-in zoom-in duration-200 max-h-[85vh] border border-slate-100">
           {/* Header Section */}
-          <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-white relative">
-            <div className="flex items-center gap-6">
-              <div className="size-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center shadow-inner ring-1 ring-blue-100">
-                <span className="material-symbols-outlined text-[32px]">health_and_safety</span>
+          <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white">
+            <div className="flex items-center gap-4">
+              <div className="size-11 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-100">
+                <span className="material-symbols-outlined text-[22px]">health_and_safety</span>
               </div>
               <div>
-                <h3 className="font-extrabold text-slate-800 text-2xl uppercase tracking-tight">VERIFIKASI KESEHATAN</h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 flex items-center gap-2">
-                  {selectedKesehatanStudent.nama}
-                  <span className="text-slate-300">—</span>
-                  <span className="text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">{selectedKesehatanStudent.no_ujian}</span>
+                <h3 className="font-semibold text-slate-800 text-lg tracking-tight">Verifikasi Kesehatan</h3>
+                <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5 font-medium">
+                  <span>No. Ujian:</span>
+                  <span className="font-mono text-emerald-600 font-bold bg-emerald-50/50 px-1.5 py-0.5 rounded text-[10px]">{selectedKesehatanStudent.no_ujian}</span>
+                  <span className="text-slate-300">|</span>
+                  <span>Gelombang:</span>
+                  <span className="text-slate-600 font-bold">{selectedKesehatanStudent.gelombang}</span>
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => setShowInputHasilModal(false)}
-              className="size-12 flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-full transition-all active:scale-90"
+              className="size-8 flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-lg transition-all active:scale-95 border border-slate-100"
             >
-              <span className="material-symbols-outlined text-[28px]">close</span>
+              <span className="material-symbols-outlined text-[18px]">close</span>
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-10 bg-white custom-scrollbar">
-            <div className="max-w-3xl mx-auto w-full">
-              {/* Data Hasil Pemeriksaan */}
-              <div>
-                <div className="flex items-center gap-3 mb-8 border-b border-slate-100 pb-4">
-                  <span className="material-symbols-outlined text-blue-500">assignment</span>
-                  <h4 className="text-[13px] font-black text-slate-800 uppercase tracking-[0.2em]">Hasil Pemeriksaan Kesehatan</h4>
+          <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30 custom-scrollbar">
+            <div className="max-w-2xl mx-auto w-full space-y-6">
+              
+              {/* Card 1: Informasi Peserta */}
+              <div className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-4 text-slate-800 border-b border-slate-50 pb-2">
+                  <span className="material-symbols-outlined text-[18px] text-emerald-600">person</span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider">Informasi Calon Mahasiswa</h4>
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Nama Lengkap</label>
+                    <div className="text-slate-800 font-semibold uppercase">{selectedKesehatanStudent.nama}</div>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Program Studi</label>
+                    <div className="text-slate-800 font-semibold uppercase">{selectedKesehatanStudent.pilihan || '-'}</div>
+                  </div>
+                </div>
+              </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+              {/* Card 2: Hasil Pemeriksaan Fisik */}
+              <div className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-4 text-slate-800 border-b border-slate-50 pb-2">
+                  <span className="material-symbols-outlined text-[18px] text-emerald-600">assignment</span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider">Hasil Pemeriksaan Kesehatan</h4>
+                </div>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {[
-                    { icon: 'tag', label: 'No Ujian', value: selectedKesehatanStudent.no_ujian || '-', color: 'emerald' },
-                    { icon: 'waves', label: 'Gelombang', value: selectedKesehatanStudent.gelombang || '-', color: 'blue' },
-                    { icon: 'person', label: 'Nama Peserta', value: selectedKesehatanStudent.nama || '-', color: 'slate', fullWidth: true },
-                    { icon: 'school', label: 'Program Studi', value: selectedKesehatanStudent.pilihan || '-', color: 'indigo', fullWidth: true },
-                    { icon: 'straighten', label: 'Tinggi Badan', value: `${tinggiBadan} cm`, color: 'blue' },
-                    { icon: 'bloodtype', label: 'Gol. Darah', value: golonganDarah || '-', color: 'rose' },
-                    { icon: 'visibility', label: 'Tes Warna', value: butaWarna || '-', color: 'amber' },
-                    { icon: 'eye_tracking', label: 'Visus Mata', value: visus || '-', color: 'indigo' },
-                    { icon: 'monitor_heart', label: 'Tekanan Darah', value: `${tekananDarah} mm/Hg`, color: 'emerald' },
-                    { icon: 'history_edu', label: 'Riwayat Penyakit', value: riwayatPenyakit || 'TIDAK ADA RIWAYAT PENYAKIT', fullWidth: true, color: 'rose', isItalic: true }
+                    { icon: 'straighten', label: 'Tinggi Badan', value: tinggiBadan ? `${tinggiBadan} cm` : '-', iconBg: 'bg-blue-50 text-blue-600 border-blue-100' },
+                    { icon: 'bloodtype', label: 'Gol. Darah', value: golonganDarah || '-', iconBg: 'bg-rose-50 text-rose-600 border-rose-100' },
+                    { icon: 'monitor_heart', label: 'Tekanan Darah', value: tekananDarah ? `${tekananDarah} mm/Hg` : '-', iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+                    { icon: 'visibility', label: 'Tes Warna', value: butaWarna || '-', iconBg: 'bg-amber-50 text-amber-600 border-amber-100' },
+                    { icon: 'eye_tracking', label: 'Visus Mata', value: visus || '-', iconBg: 'bg-indigo-50 text-indigo-600 border-indigo-100' },
                   ].map((item, idx) => (
-                    <div key={idx} className={`${item.fullWidth ? 'col-span-2 md:col-span-3' : ''} p-5 bg-slate-50/50 border border-slate-100 rounded-[24px] hover:bg-white hover:shadow-xl hover:shadow-slate-100/50 transition-all duration-300`}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`material-symbols-outlined text-[16px] text-${item.color}-500 opacity-60`}>{item.icon}</span>
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] block">{item.label}</label>
+                    <div key={idx} className="p-3.5 border border-slate-100 rounded-lg bg-slate-50/50 flex items-center gap-3">
+                      <div className={`size-9 rounded-lg flex items-center justify-center border ${item.iconBg}`}>
+                        <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
                       </div>
-                      <div className={`text-[15px] font-black text-slate-700 ${item.isItalic ? 'italic opacity-60 font-bold' : ''}`}>{item.value}</div>
+                      <div>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">{item.label}</span>
+                        <span className="text-xs font-semibold text-slate-700">{item.value}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
+
+                {/* Riwayat Penyakit */}
+                <div className="mt-4 p-3.5 border border-slate-100 rounded-lg bg-slate-50/50">
+                  <div className="flex items-center gap-2 mb-1.5 text-slate-400">
+                    <span className="material-symbols-outlined text-[16px] text-rose-500/80">history_edu</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider">Riwayat Penyakit</span>
+                  </div>
+                  <div className={`text-xs ${riwayatPenyakit ? 'text-slate-700 font-medium' : 'text-slate-400 italic'}`}>
+                    {riwayatPenyakit || 'Tidak ada riwayat penyakit yang dilaporkan'}
+                  </div>
+                </div>
               </div>
+
+              {/* Card 3: Dokumen Bukti (Optional) */}
+              {selectedKesehatanStudent.bukti_kesehatan_path && (
+                <div className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-500 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[20px]">description</span>
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-slate-700 block">Dokumen Pendukung</span>
+                      <span className="text-[10px] text-slate-400">Bukti hasil pemeriksaan kesehatan terlampir</span>
+                    </div>
+                  </div>
+                  <a
+                    href={`${API_BASE_URL}/storage/${selectedKesehatanStudent.bukti_kesehatan_path}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-all shadow-sm active:scale-95 whitespace-nowrap"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                    Lihat Dokumen
+                  </a>
+                </div>
+              )}
+
             </div>
+          </div>
+
+          {/* Footer Section */}
+          <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-end bg-white">
+            <button
+              onClick={() => setShowInputHasilModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all active:scale-95"
+            >
+              Tutup
+            </button>
           </div>
 
         </div>
@@ -4694,9 +4803,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       } else if (laporanView === 'laporan_ujian_tulis') {
         endpoint = `${API_BASE_URL}/api/admin/wawancara?gelombang=${laporanFilterGelombang}&tpa_only=1`;
       } else if (laporanView === 'rekap_tes_kesehatan') {
-        endpoint = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${laporanFilterGelombang}`;
+        endpoint = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${laporanFilterGelombang}&filter_health_test=1`;
       } else {
-        endpoint = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${laporanFilterGelombang}&kesehatan_only=1`;
+        endpoint = `${API_BASE_URL}/api/admin/kesehatan?gelombang=${laporanFilterGelombang}&kesehatan_only=1&filter_health_test=1`;
       }
 
       fetch(endpoint)
@@ -4729,6 +4838,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           }
           if (laporanView === 'laporan_tes_kesehatan') {
             result = result.filter((m: any) => m.status_kesehatan !== null && m.status_kesehatan !== undefined);
+          }
+          if (laporanView === 'rekap_tes_kesehatan' || laporanView === 'laporan_tes_kesehatan') {
+            result = result.filter((m: any) => checkHasKesehatan(m.pilihan));
           }
 
 
@@ -6076,14 +6188,14 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     </div>
                     <div className="bg-amber-50/50 p-2 rounded-lg border border-amber-100 text-center flex flex-col justify-center">
                       <label className="block text-[9px] font-bold text-amber-600 uppercase tracking-wider mb-0.5">Kesehatan</label>
-                      <div className={`font-black text-[11px] uppercase ${selectedKelulusanStudent.status_kesehatan === 'Sehat' || selectedKelulusanStudent.status_kesehatan === 'Lulus' ? 'text-emerald-600' : selectedKelulusanStudent.status_kesehatan === 'Menunggu' ? 'text-amber-600' : 'text-rose-600'}`}>
-                        {selectedKelulusanStudent.status_kesehatan === 'Menunggu' ? 'MENUNGGU' : (selectedKelulusanStudent.status_kesehatan || 'BELUM TES')}
+                      <div className={`font-black text-[11px] uppercase ${!checkHasKesehatan(selectedKelulusanStudent.pilihan) ? 'text-slate-400 font-normal italic' : (selectedKelulusanStudent.status_kesehatan === 'Sehat' || selectedKelulusanStudent.status_kesehatan === 'Lulus') ? 'text-emerald-600' : selectedKelulusanStudent.status_kesehatan === 'Menunggu' ? 'text-amber-600' : 'text-rose-600'}`}>
+                        {!checkHasKesehatan(selectedKelulusanStudent.pilihan) ? 'TIDAK ADA TES' : selectedKelulusanStudent.status_kesehatan === 'Menunggu' ? 'MENUNGGU' : (selectedKelulusanStudent.status_kesehatan || 'BELUM TES')}
                       </div>
                     </div>
                     <div className="bg-indigo-50/50 p-2 rounded-lg border border-indigo-100 text-center flex flex-col justify-center">
                       <label className="block text-[9px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">Wawancara</label>
-                      <div className={`font-black text-[11px] uppercase ${selectedKelulusanStudent.hasil_wawancara === 'LULUS' ? 'text-emerald-600' : selectedKelulusanStudent.hasil_wawancara === 'BELUM UJIAN' ? 'text-rose-600' : 'text-indigo-600'}`}>
-                        {selectedKelulusanStudent.hasil_wawancara === 'BELUM UJIAN' ? 'BELUM' : (selectedKelulusanStudent.hasil_wawancara || 'TIDAK ADA')}
+                      <div className={`font-black text-[11px] uppercase ${!checkHasWawancara(selectedKelulusanStudent.pilihan) ? 'text-slate-400 font-normal italic' : selectedKelulusanStudent.hasil_wawancara === 'LULUS' ? 'text-emerald-600' : selectedKelulusanStudent.hasil_wawancara === 'BELUM UJIAN' ? 'text-rose-600' : 'text-indigo-600'}`}>
+                        {!checkHasWawancara(selectedKelulusanStudent.pilihan) ? 'TIDAK ADA TES' : selectedKelulusanStudent.hasil_wawancara === 'BELUM UJIAN' ? 'BELUM' : (selectedKelulusanStudent.hasil_wawancara || 'TIDAK ADA')}
                       </div>
                     </div>
                   </div>

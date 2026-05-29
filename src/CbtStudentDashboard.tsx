@@ -20,6 +20,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
   const [isLoadingSchedule, setIsLoadingSchedule] = useState(true);
   const [currentView, setCurrentView] = useState<'dashboard' | 'kesehatan' | 'wawancara' | 'registrasi' | 'pengumuman'>('dashboard');
   const [hasilWawancara, setHasilWawancara] = useState<string | null>(null);
+  const [statusKelulusan, setStatusKelulusan] = useState<string | null>(null);
   const [statusRegistrasi, setStatusRegistrasi] = useState<string>('Belum Registrasi');
   const [buktiRegistrasiPath, setBuktiRegistrasiPath] = useState<string | null>(null);
   const [birthPlace, setBirthPlace] = useState<string>('-');
@@ -27,6 +28,27 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
   const [studentNisn, setStudentNisn] = useState<string>('-');
   
   const hasWawancara = ['keperawatan', 'ners', 'kebidanan', 'bidan'].some((p: string) => major?.toLowerCase().includes(p));
+
+  const checkHasKesehatan = (majorName: string): boolean => {
+    if (!majorName) return false;
+    const lower = majorName.toLowerCase();
+    
+    const isS1Kesmas = lower.includes('s1') && (lower.includes('kesmas') || lower.includes('kesehatan masyarakat') || lower.includes('ikm'));
+    const isS1Bidan = lower.includes('s1') && (lower.includes('bidan') || lower.includes('kebidanan'));
+    const isS1Keperawatan = lower.includes('s1') && (lower.includes('keperawatan') || lower.includes('kperwatan') || lower.includes('kpr'));
+    const isD3Rmik = lower.includes('d3') && (lower.includes('rmik') || lower.includes('rekam medis') || lower.includes('perekam medis') || lower.includes('mik'));
+    const isD4Rmik = lower.includes('d4') && (lower.includes('rmik') || lower.includes('mik') || lower.includes('rekam medis') || lower.includes('perekam medis') || lower.includes('manajemen informasi kesehatan'));
+    const isProfesiNers = lower.includes('profesi') && lower.includes('ners');
+    const isProfesiBidan = lower.includes('profesi') && (lower.includes('bidan') || lower.includes('kebidanan'));
+    
+    return isS1Kesmas || isS1Bidan || isS1Keperawatan || isD3Rmik || isD4Rmik || isProfesiNers || isProfesiBidan;
+  };
+
+  const hasKesehatan = checkHasKesehatan(major);
+  
+  const isLulus = statusKelulusan === 'Lulus' || (statusKelulusan !== null && (statusKelulusan.startsWith('Lulus Di') || statusKelulusan.includes('Lulus Di')));
+  const isTidakLulus = statusKelulusan === 'Tidak Lulus' || statusKelulusan === 'Gagal';
+  const isFinalStatus = isLulus || isTidakLulus;
   
   // Health Form State
   const [healthForm, setHealthForm] = useState({
@@ -99,6 +121,9 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
         }
         if (statusData.hasil_wawancara) {
           setHasilWawancara(statusData.hasil_wawancara);
+        }
+        if (statusData.status_kelulusan) {
+          setStatusKelulusan(statusData.status_kelulusan);
         }
         if (statusData.status_registrasi) {
           setStatusRegistrasi(statusData.status_registrasi);
@@ -232,20 +257,19 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
   const renderHealthForm = () => {
     return (
-      <div className="flex-1 overflow-y-auto p-6 lg:p-10 bg-gradient-to-tr from-[#00857A]/5 via-white to-slate-50 custom-scrollbar animate-in fade-in duration-700">
+      <div className="flex-1 overflow-y-auto p-6 lg:p-10 bg-slate-50/50 custom-scrollbar animate-in fade-in duration-700">
         <div className="max-w-7xl mx-auto space-y-6">
           
           {/* Modern Softer Info Box */}
-          <div className="relative overflow-hidden bg-blue-600 rounded-2xl p-6 text-white shadow-sm">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-2xl -mr-24 -mt-24"></div>
+          <div className="relative overflow-hidden bg-gradient-to-r from-primary-dark via-primary to-primary-dark rounded-2xl p-6 text-white shadow-md shadow-primary/10">
             
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
               <div className="size-12 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20 text-white flex-shrink-0">
                 <span className="material-symbols-outlined text-[24px]">medical_information</span>
               </div>
               <div className="flex-1 space-y-1">
-                <h4 className="text-base font-bold text-white tracking-tight uppercase">Informasi Tes Kesehatan</h4>
-                <p className="text-blue-50 text-xs md:text-sm leading-relaxed font-medium">
+                <h4 className="text-sm font-bold text-white tracking-wider uppercase font-display">Informasi Tes Kesehatan</h4>
+                <p className="text-white/90 text-xs md:text-sm leading-relaxed font-medium">
                   Silakan lakukan pemeriksaan kesehatan di Klinik/Puskesmas/Rumah Sakit terdekat, lalu unggah hasilnya di bawah ini. 
                   Pastikan data akurat sesuai dengan surat keterangan medis yang Anda terima.
                 </p>
@@ -254,7 +278,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                     href="/contoh-tes-kesehatan.jpg" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/25 rounded-xl font-semibold text-xs transition-colors shadow-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/25 rounded-xl font-bold text-xs transition-all duration-300 shadow-xs cursor-pointer active:scale-95"
                   >
                     <span className="material-symbols-outlined text-[16px]">download</span>
                     Unduh / Lihat Contoh Surat Kesehatan
@@ -263,7 +287,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
               </div>
               <button 
                 onClick={() => setCurrentView('dashboard')} 
-                className="size-8 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all self-start md:self-center"
+                className="size-8 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all self-start md:self-center cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
@@ -273,12 +297,12 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             
             {/* Column 1: Student Information Summary (Read-Only Info Card) */}
-            <div className="bg-gradient-to-br from-slate-50/80 via-slate-50/30 to-white rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-[#00857A] p-6 space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-6">
               <div className="border-b border-slate-100 pb-4 flex items-center gap-2.5">
-                <div className="size-8 rounded-lg bg-[#00857A]/10 text-[#00857A] flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                   <span className="material-symbols-outlined text-[20px]">badge</span>
                 </div>
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider font-display">
                   Profil Calon Mahasiswa
                 </h3>
               </div>
@@ -286,40 +310,40 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
               <div className="space-y-4">
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">No Ujian</span>
-                  <div className="flex items-center gap-2.5 px-4 py-3 bg-white border border-[#00857A]/15 rounded-xl">
-                    <span className="material-symbols-outlined text-[#00857A] text-[18px]">qr_code</span>
-                    <span className="text-sm font-semibold text-slate-600">{noUjian}</span>
-                    <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50/50 border border-slate-100 rounded-xl">
+                    <span className="material-symbols-outlined text-slate-400 text-[18px]">qr_code</span>
+                    <span className="text-xs font-bold text-slate-650 font-mono">{noUjian}</span>
+                    <span className="material-symbols-outlined text-slate-350 text-[14px] ml-auto">lock</span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nama Lengkap</span>
-                  <div className="flex items-center gap-2.5 px-4 py-3 bg-white border border-[#00857A]/15 rounded-xl">
-                    <span className="material-symbols-outlined text-[#00857A] text-[18px]">person</span>
-                    <span className="text-sm font-semibold text-slate-600 uppercase truncate">{studentName}</span>
-                    <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50/50 border border-slate-100 rounded-xl">
+                    <span className="material-symbols-outlined text-slate-400 text-[18px]">person</span>
+                    <span className="text-xs font-bold text-slate-650 uppercase truncate">{studentName}</span>
+                    <span className="material-symbols-outlined text-slate-355 text-[14px] ml-auto">lock</span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Program Studi</span>
-                  <div className="flex items-center gap-2.5 px-4 py-3 bg-white border border-[#00857A]/15 rounded-xl">
-                    <span className="material-symbols-outlined text-[#00857A] text-[18px]">school</span>
-                    <span className="text-sm font-semibold text-slate-600 uppercase truncate">{major}</span>
-                    <span className="material-symbols-outlined text-slate-300 text-[16px] ml-auto">lock</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50/50 border border-slate-100 rounded-xl">
+                    <span className="material-symbols-outlined text-slate-400 text-[18px]">school</span>
+                    <span className="text-xs font-bold text-slate-650 uppercase truncate">{major}</span>
+                    <span className="material-symbols-outlined text-slate-355 text-[14px] ml-auto">lock</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Column 2 & 3: Main Editable Health Form */}
-            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 border-t-4 border-t-[#00857A] p-6 lg:p-8">
+            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-6 lg:p-8">
               <div className="border-b border-slate-100 pb-4 mb-6 flex items-center gap-2.5">
-                <div className="size-8 rounded-lg bg-[#00857A]/10 text-[#00857A] flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                   <span className="material-symbols-outlined text-[20px]">edit_note</span>
                 </div>
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider font-display">
                   Formulir Data Kesehatan
                 </h3>
               </div>
@@ -327,13 +351,13 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
               <form onSubmit={handleHealthSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-600 ml-0.5">Tinggi Badan (cm)</label>
+                    <label className="text-xs font-bold text-slate-500 ml-0.5">Tinggi Badan (cm)</label>
                     <div className="relative flex items-center">
-                      <span className="material-symbols-outlined absolute left-4 text-[#00857A] text-[18px]">height</span>
+                      <span className="material-symbols-outlined absolute left-4 text-primary text-[18px]">height</span>
                       <input 
                         type="number" 
                         placeholder="Contoh: 170"
-                        className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400"
+                        className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl transition-all duration-350 text-sm font-medium text-slate-700 placeholder-slate-400"
                         value={healthForm.tinggi_badan}
                         onChange={e => setHealthForm({...healthForm, tinggi_badan: e.target.value})}
                         required
@@ -342,11 +366,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-600 ml-0.5">Golongan Darah</label>
+                    <label className="text-xs font-bold text-slate-500 ml-0.5">Golongan Darah</label>
                     <div className="relative">
-                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#00857A] text-[18px]">bloodtype</span>
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary text-[18px]">bloodtype</span>
                       <select 
-                        className="w-full pl-11 pr-10 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
+                        className="w-full pl-11 pr-10 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl transition-all duration-350 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
                         value={healthForm.golongan_darah}
                         onChange={e => setHealthForm({...healthForm, golongan_darah: e.target.value})}
                         required
@@ -362,11 +386,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-600 ml-0.5">Tes Buta Warna</label>
+                    <label className="text-xs font-bold text-slate-500 ml-0.5">Tes Buta Warna</label>
                     <div className="relative">
-                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#00857A] text-[18px]">visibility</span>
+                      <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary text-[18px]">visibility</span>
                       <select 
-                        className="w-full pl-11 pr-10 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
+                        className="w-full pl-11 pr-10 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl transition-all duration-350 text-sm font-medium text-slate-700 appearance-none cursor-pointer"
                         value={healthForm.buta_warna}
                         onChange={e => setHealthForm({...healthForm, buta_warna: e.target.value})}
                       >
@@ -379,13 +403,13 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-600 ml-0.5">Tekanan Darah (mmHg)</label>
+                    <label className="text-xs font-bold text-slate-500 ml-0.5">Tekanan Darah (mmHg)</label>
                     <div className="relative flex items-center">
-                      <span className="material-symbols-outlined absolute left-4 text-[#00857A] text-[18px]">monitor_heart</span>
+                      <span className="material-symbols-outlined absolute left-4 text-primary text-[18px]">monitor_heart</span>
                       <input 
                         type="text" 
                         placeholder="Contoh: 120/80"
-                        className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400"
+                        className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl transition-all duration-350 text-sm font-medium text-slate-700 placeholder-slate-400"
                         value={healthForm.tekanan_darah}
                         onChange={e => setHealthForm({...healthForm, tekanan_darah: e.target.value})}
                         required
@@ -395,11 +419,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-600 ml-0.5">Riwayat Penyakit (Opsional)</label>
+                  <label className="text-xs font-bold text-slate-500 ml-0.5">Riwayat Penyakit (Opsional)</label>
                   <div className="relative flex">
-                    <span className="material-symbols-outlined absolute left-4 top-3.5 text-[#00857A] text-[18px]">medical_services</span>
+                    <span className="material-symbols-outlined absolute left-4 top-3.5 text-primary text-[18px]">medical_services</span>
                     <textarea 
-                      className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00857A]/15 focus:border-[#00857A] transition-all duration-200 text-sm font-medium text-slate-700 placeholder-slate-400 resize-none h-24"
+                      className="w-full pl-11 pr-5 py-3 bg-slate-50/50 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl transition-all duration-350 text-sm font-medium text-slate-700 placeholder-slate-400 resize-none h-24"
                       placeholder="Masukkan riwayat penyakit penting jika ada..."
                       value={healthForm.riwayat_penyakit}
                       onChange={e => setHealthForm({...healthForm, riwayat_penyakit: e.target.value})}
@@ -409,10 +433,10 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
                 {/* File Upload Zone */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-600 ml-0.5">Unggah Bukti Tes Kesehatan</label>
+                  <label className="text-xs font-bold text-slate-500 ml-0.5">Unggah Bukti Tes Kesehatan</label>
                   <div 
                     onClick={() => document.getElementById('bukti_kesehatan_input')?.click()}
-                    className="group relative border-2 border-dashed border-[#00857A]/20 hover:border-[#00857A] bg-[#00857A]/5 hover:bg-[#00857A]/10 rounded-xl p-6 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center"
+                    className="group relative border-2 border-dashed border-primary/20 hover:border-primary bg-primary/3 hover:bg-primary/5 rounded-xl p-6 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center"
                   >
                     <input 
                       id="bukti_kesehatan_input"
@@ -432,7 +456,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                     />
                     {buktiFile ? (
                       <div className="flex flex-col items-center gap-2">
-                        <div className="size-12 rounded-xl bg-teal-50 text-[#00857A] flex items-center justify-center">
+                        <div className="size-12 rounded-xl bg-teal-50 text-primary flex items-center justify-center">
                           <span className="material-symbols-outlined text-[28px]">description</span>
                         </div>
                         <div className="space-y-1">
@@ -455,12 +479,12 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                       </div>
                     ) : (
                       <div className="flex flex-col items-center gap-2">
-                        <div className="size-12 rounded-xl bg-[#00857A]/10 group-hover:bg-[#00857A]/20 text-[#00857A] flex items-center justify-center transition-colors">
+                        <div className="size-12 rounded-xl bg-primary/10 group-hover:bg-primary/20 text-primary flex items-center justify-center transition-colors">
                           <span className="material-symbols-outlined text-[28px]">cloud_upload</span>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm font-semibold text-[#00857A]">Pilih file atau seret ke sini</p>
-                          <p className="text-xs text-slate-400">Format: JPG, PNG, PDF (Maksimal 5MB)</p>
+                          <p className="text-sm font-semibold text-primary">Pilih file atau seret ke sini</p>
+                          <p className="text-xs text-slate-400 font-medium">Format: JPG, PNG, PDF (Maksimal 5MB)</p>
                         </div>
                       </div>
                     )}
@@ -472,7 +496,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <button 
                     type="submit" 
                     disabled={isSubmittingHealth}
-                    className="w-full sm:w-auto px-8 py-3.5 bg-[#00857A] hover:bg-[#006d64] disabled:bg-[#00857A]/50 text-white rounded-xl shadow-lg shadow-teal-700/10 font-bold text-xs uppercase tracking-wider transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="w-full sm:w-auto px-8 py-3 bg-primary hover:bg-primary-dark disabled:bg-primary/50 text-white rounded-xl shadow-xs font-bold text-xs uppercase tracking-wider transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
                     {isSubmittingHealth ? (
                       <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
@@ -484,7 +508,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <button 
                     type="button" 
                     onClick={() => setCurrentView('dashboard')}
-                    className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-wider transition-all text-center"
+                    className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-650 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 text-center cursor-pointer"
                   >
                     Batal
                   </button>
@@ -532,40 +556,40 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
   const renderWawancaraForm = () => {
     return (
-    <div className="flex-1 overflow-y-auto p-6 lg:p-10 bg-white custom-scrollbar animate-in fade-in duration-700">
+    <div className="flex-1 overflow-y-auto p-6 lg:p-10 bg-slate-50/50 custom-scrollbar animate-in fade-in duration-700">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header Section */}
-        <div className="relative overflow-hidden bg-emerald-600 rounded-[32px] p-10 lg:p-14 text-white shadow-sm">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+        <div className="relative overflow-hidden bg-primary rounded-2xl p-8 lg:p-10 text-white shadow-sm">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
           
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-8">
-              <div className="size-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
-                <span className="material-symbols-outlined text-[32px]">content_paste</span>
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-6">
+              <div className="size-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-lg shadow-black/5">
+                <span className="material-symbols-outlined text-[28px]">content_paste</span>
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <span className="px-2 py-0.5 bg-white/10 text-white text-[9px] font-bold uppercase tracking-widest rounded border border-white/20">Wajib</span>
-                  <h3 className="text-2xl font-bold tracking-tight uppercase">Tes Wawancara</h3>
+                  <h3 className="text-xl font-bold tracking-tight uppercase font-display">Tes Wawancara</h3>
                 </div>
-                <p className="text-xs text-emerald-50 font-medium">Sampaikan aspirasi dan motivasi Anda dengan jujur.</p>
+                <p className="text-xs text-primary-light font-medium">Sampaikan aspirasi dan motivasi Anda dengan jujur.</p>
               </div>
             </div>
             <button 
               onClick={() => setCurrentView('dashboard')} 
-              className="size-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-xl transition-all"
+              className="size-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-xl transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-          <div className="p-10">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="p-6 lg:p-10">
             {isLoadingWawancara ? (
               <div className="py-20 text-center flex flex-col items-center gap-4">
-                <div className="size-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Memuat Soal...</p>
+                <div className="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Memuat Soal...</p>
               </div>
             ) : wawancaraQuestions.length === 0 ? (
               <div className="py-20 text-center flex flex-col items-center gap-4 text-slate-400">
@@ -573,51 +597,51 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 <p className="text-xs font-bold uppercase tracking-widest">Belum ada soal wawancara yang tersedia.</p>
                 <button 
                   onClick={() => setCurrentView('dashboard')}
-                  className="mt-4 px-8 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all"
+                  className="mt-4 px-8 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all cursor-pointer"
                 >
                   Kembali
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleWawancaraSubmit} className="space-y-12">
+              <form onSubmit={handleWawancaraSubmit} className="space-y-10">
                 {wawancaraQuestions.map((q: any, idx: number) => (
-                  <div key={q.id} className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${idx * 100}ms` }}>
-                    <div className="flex items-center gap-4">
-                      <div className="size-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs border border-emerald-100">
+                  <div key={q.id} className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${idx * 100}ms` }}>
+                    <div className="flex items-center gap-3">
+                      <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs border border-primary/15">
                         {idx + 1}
                       </div>
-                      <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Pertanyaan {idx + 1}</p>
+                      <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Pertanyaan {idx + 1}</p>
                     </div>
 
-                    <div className="p-8 bg-slate-50 rounded-[24px] border border-slate-100 text-slate-700 font-bold leading-relaxed text-base rich-text-content" dangerouslySetInnerHTML={{ __html: q.pertanyaan }}></div>
+                    <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100 text-slate-700 font-semibold leading-relaxed text-sm rich-text-content" dangerouslySetInnerHTML={{ __html: q.pertanyaan }}></div>
                     
-                    <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Jawaban Anda</label>
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1 block">Jawaban Anda</label>
                       <textarea 
                         required
                         value={wawancaraAnswers[q.id] || ''}
                         onChange={(e) => setWawancaraAnswers({ ...wawancaraAnswers, [q.id]: e.target.value })}
-                        className="w-full h-48 p-8 bg-white border-2 border-slate-100 rounded-[32px] focus:border-emerald-500 focus:bg-emerald-50/10 transition-all outline-none text-slate-700 font-medium placeholder:text-slate-300 placeholder:font-normal shadow-inner"
+                        className="w-full h-32 p-5 bg-white border border-slate-250 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-2xl transition-all duration-300 outline-none text-slate-700 font-medium placeholder:text-slate-350 shadow-xs"
                         placeholder="Ketik jawaban lengkap Anda di sini..."
                       ></textarea>
                     </div>
                   </div>
                 ))}
 
-                <div className="flex items-center gap-4 pt-10 border-t border-slate-50">
+                <div className="flex items-center gap-3 pt-8 border-t border-slate-100">
                   <button 
                     type="submit"
                     disabled={isSubmittingWawancara}
-                    className="px-12 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px] shadow-xl shadow-emerald-500/20 font-black text-xs uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+                    className="px-8 py-3.5 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-xl shadow-lg shadow-primary/20 font-bold text-xs uppercase tracking-wider transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
                     {isSubmittingWawancara ? (
                       <>
-                        <span className="material-symbols-outlined animate-spin">sync</span>
+                        <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
                         Sedang Menyimpan...
                       </>
                     ) : (
                       <>
-                        <span className="material-symbols-outlined">send</span>
+                        <span className="material-symbols-outlined text-[16px]">send</span>
                         Submit Jawaban
                       </>
                     )}
@@ -629,7 +653,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                         setCurrentView('dashboard');
                       }
                     }}
-                    className="px-10 py-4 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-[24px] font-black text-xs uppercase tracking-[0.2em] transition-all"
+                    className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-650 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer"
                   >
                     Batal
                   </button>
@@ -682,25 +706,25 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Modern Header Card */}
-        <div className="relative bg-white rounded-[32px] p-8 lg:p-10 shadow-sm border border-slate-100 overflow-hidden group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-32 -mt-32"></div>
+        <div className="relative bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 overflow-hidden group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
           
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-8">
-              <div className="size-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-                <span className="material-symbols-outlined text-[32px]">app_registration</span>
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-6">
+              <div className="size-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+                <span className="material-symbols-outlined text-[28px]">app_registration</span>
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-bold uppercase tracking-widest rounded border border-blue-100">Tahap Akhir</span>
-                  <h3 className="text-2xl font-bold text-slate-800 tracking-tight uppercase">Registrasi Ulang</h3>
+                  <span className="px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest rounded border border-primary/15">Tahap Akhir</span>
+                  <h3 className="text-xl font-bold text-slate-800 tracking-tight uppercase font-display">Registrasi Ulang</h3>
                 </div>
                 <p className="text-xs text-slate-400 font-medium">Lengkapi administrasi untuk mendapatkan NIM Resmi.</p>
               </div>
             </div>
             <button 
               onClick={() => setCurrentView('dashboard')} 
-              className="size-10 flex items-center justify-center bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl transition-all duration-300"
+              className="size-10 flex items-center justify-center bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl transition-all duration-300 cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>
@@ -710,14 +734,14 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           
           {/* Left Column: Instructions & Info */}
-          <div className="bg-white rounded-[32px] p-10 lg:p-14 shadow-sm border border-slate-100 flex flex-col space-y-10 animate-in slide-in-from-left-8 duration-700">
-            <div className="space-y-6">
-              <div className="size-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/20">
-                <span className="material-symbols-outlined text-[28px]">info</span>
+          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col space-y-8 animate-in slide-in-from-left-8 duration-700">
+            <div className="space-y-4">
+              <div className="size-12 rounded-xl bg-primary text-white flex items-center justify-center shadow-md shadow-primary/20">
+                <span className="material-symbols-outlined text-[24px]">info</span>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Instruksi Pembayaran</h3>
-                <p className="text-sm text-slate-500 leading-relaxed font-medium">
+              <div className="space-y-1">
+                <h3 className="text-base font-bold text-slate-800 uppercase tracking-tight font-display">Instruksi Pembayaran</h3>
+                <p className="text-xs text-slate-500 leading-relaxed font-medium">
                   Silakan unggah bukti transfer atau kwitansi pembayaran registrasi ulang Anda untuk mendapatkan Nomor Induk Mahasiswa (NIM).
                 </p>
               </div>
@@ -726,12 +750,12 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
             <div className="space-y-6">
               {/* Registration Period Info Box */}
               {schedule && schedule.tanggal_registrasi_mulai && schedule.tanggal_registrasi_akhir && (
-                <div className="p-6 bg-amber-50 rounded-[24px] border border-amber-200/80 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="p-5 bg-amber-50/50 rounded-2xl border border-amber-200/60 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
                   <div className="flex items-center gap-3 text-amber-700">
                     <span className="material-symbols-outlined text-[20px]">calendar_month</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Batas Waktu Registrasi Ulang</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Batas Waktu Registrasi Ulang</span>
                   </div>
-                  <div className="space-y-2 text-[13px] text-slate-700 font-medium">
+                  <div className="space-y-2 text-[12px] text-slate-700 font-medium">
                     <div className="flex items-center justify-between border-b border-amber-100/50 pb-2">
                       <span className="text-slate-500 font-semibold">Tanggal Mulai</span>
                       <span className="font-bold text-slate-800">
@@ -744,27 +768,27 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                         {new Date(schedule.tanggal_registrasi_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                       </span>
                     </div>
-                    <p className="text-[10px] text-amber-600 font-bold uppercase tracking-wider mt-3 text-center bg-amber-100/30 py-1.5 rounded-lg border border-amber-200/40">
+                    <p className="text-[9px] text-amber-600 font-bold uppercase tracking-wider mt-3 text-center bg-amber-100/30 py-1.5 rounded-lg border border-amber-200/40">
                       ⚠️ Harap lakukan registrasi ulang sebelum batas waktu
                     </p>
                   </div>
                 </div>
               )}
 
-              <div className="p-6 bg-slate-50 rounded-[24px] border border-slate-100 space-y-4">
-                <div className="flex items-center gap-3 text-blue-600">
+              <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-4">
+                <div className="flex items-center gap-3 text-primary">
                   <span className="material-symbols-outlined text-[20px]">check_circle</span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Ketentuan File</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest">Ketentuan File</span>
                 </div>
-                <ul className="space-y-3">
+                <ul className="space-y-2.5">
                   {[
                     'Format file JPG, PNG, atau PDF',
                     'Ukuran file maksimal 5 MB',
                     'Data transfer harus terlihat jelas',
                     'Verifikasi dilakukan dalam 1x24 jam'
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-[12px] text-slate-600 font-medium">
-                      <div className="size-1 bg-blue-400 rounded-full"></div>
+                    <li key={i} className="flex items-center gap-3 text-[11px] text-slate-600 font-medium">
+                      <div className="size-1 bg-primary rounded-full"></div>
                       {text}
                     </li>
                   ))}
@@ -772,35 +796,35 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
               </div>
 
               {/* Bank Account Info Card */}
-              <div className="p-6 bg-blue-600 rounded-[24px] text-white space-y-4 shadow-lg shadow-blue-600/20 group/bank">
+              <div className="p-6 bg-gradient-to-tr from-primary to-primary-dark rounded-2xl text-white space-y-4 shadow-lg shadow-primary/10 group/bank">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-[20px] group-hover/bank:rotate-12 transition-transform">account_balance</span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Rekening Pembayaran</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest">Rekening Pembayaran</span>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[9px] text-blue-100 font-bold uppercase tracking-widest">Bank BTN Syariah</p>
-                  <p className="text-lg font-bold tracking-tight">00323-01-30-000028-7</p>
-                  <p className="text-[10px] text-blue-50 font-medium">a.n. Yayasan Hang Tuah Pekanbaru</p>
+                  <p className="text-[9px] text-primary-light font-bold uppercase tracking-widest">Bank BTN Syariah</p>
+                  <p className="text-lg font-bold tracking-tight font-mono">00323-01-30-000028-7</p>
+                  <p className="text-[10px] text-white/90 font-medium">a.n. Yayasan Hang Tuah Pekanbaru</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Right Column: Upload Form */}
-          <div className="bg-white rounded-[32px] p-10 lg:p-14 shadow-sm border border-slate-100 flex flex-col animate-in slide-in-from-right-8 duration-700">
-            <form onSubmit={handleRegistrasiSubmit} className="flex-1 flex flex-col space-y-8">
+          <div className="bg-white rounded-3xl p-8 lg:p-10 shadow-sm border border-slate-100 flex flex-col animate-in slide-in-from-right-8 duration-700">
+            <form onSubmit={handleRegistrasiSubmit} className="flex-1 flex flex-col space-y-6">
               <div className="space-y-6 flex-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="size-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                       <span className="material-symbols-outlined text-[20px]">upload_file</span>
                     </div>
-                    <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Unggah Dokumen</h4>
+                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest font-display">Unggah Dokumen</h4>
                   </div>
-                  <span className="text-[9px] font-bold text-blue-600 uppercase bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">Wajib</span>
+                  <span className="text-[9px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-md border border-primary/15">Wajib</span>
                 </div>
 
-                <div className={`relative flex-1 group transition-all duration-300 ${buktiRegistrasiFile ? 'border-blue-500 bg-blue-50/20' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/50'} border-2 border-dashed rounded-[24px] p-8 text-center flex flex-col items-center justify-center min-h-[280px]`}>
+                <div className={`relative flex-1 group transition-all duration-300 border-2 border-dashed rounded-2xl p-6 text-center flex flex-col items-center justify-center min-h-[260px] ${buktiRegistrasiFile ? 'border-primary bg-primary/3' : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50'}`}>
                   <input 
                     type="file" 
                     onChange={e => {
@@ -818,17 +842,17 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   />
                   
                   <div className="relative z-10 space-y-4">
-                    <div className={`size-16 mx-auto rounded-2xl flex items-center justify-center transition-all duration-300 ${buktiRegistrasiFile ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-white text-slate-300 shadow-sm'}`}>
-                      <span className="material-symbols-outlined text-[32px]">
+                    <div className={`size-14 mx-auto rounded-xl flex items-center justify-center transition-all duration-300 ${buktiRegistrasiFile ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-350 shadow-xs'}`}>
+                      <span className="material-symbols-outlined text-[28px]">
                         {buktiRegistrasiFile ? 'check_circle' : 'add_photo_alternate'}
                       </span>
                     </div>
                     
                     <div className="space-y-1">
-                      <h4 className="text-sm font-bold text-slate-800 tracking-tight max-w-[220px] mx-auto truncate">
+                      <h4 className="text-sm font-bold text-slate-800 tracking-tight max-w-[200px] mx-auto truncate">
                         {buktiRegistrasiFile ? buktiRegistrasiFile.name : 'Pilih Bukti Pembayaran'}
                       </h4>
-                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
+                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
                         Klik atau seret file ke sini
                       </p>
                     </div>
@@ -840,13 +864,13 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 <button 
                   type="submit" 
                   disabled={isSubmittingRegistrasi}
-                  className="w-full group relative py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 active:scale-95 overflow-hidden"
+                  className="w-full group relative py-3.5 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-primary/25 disabled:opacity-50 active:scale-98 overflow-hidden cursor-pointer"
                 >
                   <div className="relative z-10 flex items-center justify-center gap-2">
                     {isSubmittingRegistrasi ? (
                       <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
                     ) : (
-                      <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">send</span>
+                      <span className="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">send</span>
                     )}
                     {isSubmittingRegistrasi ? 'Memproses...' : 'Submit Registrasi'}
                   </div>
@@ -855,7 +879,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 <button 
                   type="button" 
                   onClick={() => setCurrentView('dashboard')}
-                  className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-400 rounded-xl font-bold text-[9px] uppercase tracking-widest transition-all"
+                  className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-650 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer"
                 >
                   Batal
                 </button>
@@ -874,78 +898,91 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Modern Header Card */}
-        <div className="relative bg-white rounded-[40px] p-8 lg:p-12 shadow-2xl shadow-slate-200/50 border border-white overflow-hidden group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110"></div>
+        <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-slate-100">
           
-          <div className="relative z-10 flex items-center justify-between gap-8 border-b border-slate-50 pb-8">
-            <div className="flex items-center gap-8">
+          <div className="relative z-10 flex items-center justify-between gap-8 border-b border-slate-100 pb-6">
+            <div className="flex items-center gap-6">
               <button 
                 onClick={() => setCurrentView('dashboard')}
-                className="size-14 rounded-2xl bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-500 active:scale-90 hover:rotate-12"
+                className="size-11 rounded-xl bg-slate-50 border border-slate-100 text-slate-500 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all duration-300 active:scale-95 hover:rotate-12"
               >
-                <span className="material-symbols-outlined text-[28px]">arrow_back</span>
+                <span className="material-symbols-outlined text-[24px]">arrow_back</span>
               </button>
               <div>
-                <h2 className="text-3xl font-black text-slate-800 tracking-tight uppercase">HASIL SELEKSI</h2>
-                <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1 italic">Status kelulusan resmi Anda.</p>
+                <h2 className="text-xl font-bold text-slate-800 tracking-tight font-display">HASIL SELEKSI</h2>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Status kelulusan resmi Anda</p>
               </div>
             </div>
           </div>
           
-          <div className="mt-10 space-y-10">
-            {hasilWawancara === 'LULUS' ? (
+          <div className="mt-8 space-y-8">
+            {isLulus ? (
               <div className="space-y-8">
                 {/* Two-Column Success Display */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in zoom-in duration-700">
                   {/* Left Card: Status Message */}
-                  <div className="relative p-10 bg-emerald-600 rounded-[40px] text-white overflow-hidden shadow-xl shadow-emerald-900/10 group">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110"></div>
-                    <div className="relative z-10 flex flex-col h-full justify-between gap-8">
-                      <div className="space-y-6">
-                        <div className="size-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
-                          <span className="material-symbols-outlined text-[32px] text-emerald-200">workspace_premium</span>
-                        </div>
-                        <div className="space-y-3">
-                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-white text-[9px] font-bold uppercase tracking-widest border border-white/10">
-                            <span className="size-1.5 bg-emerald-200 rounded-full animate-pulse"></span>
-                            Seleksi Selesai
-                          </div>
-                          <h3 className="text-3xl font-black tracking-tight leading-tight uppercase">
-                            Selamat!<br/>Anda <span className="text-emerald-200">LULUS</span>.
-                          </h3>
-                        </div>
+                  <div className="p-8 lg:p-10 bg-primary rounded-2xl text-white shadow-md border border-primary-dark/10 flex flex-col justify-between gap-6">
+                    <div className="space-y-6">
+                      <div className="size-12 rounded-xl bg-white/10 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[26px] text-gold">workspace_premium</span>
                       </div>
-                      <p className="text-emerald-50/80 text-[13px] font-medium leading-relaxed italic border-l-2 border-emerald-400/30 pl-4">
-                        "Teruslah berkarya dan jadilah bagian dari perubahan positif bersama Universitas Hang Tuah Pekanbaru."
+                      <div className="space-y-2">
+                        <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-white/15 rounded-md text-gold text-[9px] font-bold uppercase tracking-wider">
+                          <span className="size-1.5 bg-gold rounded-full animate-pulse"></span>
+                          Seleksi Selesai
+                        </div>
+                        <h3 className="text-xl lg:text-2xl font-bold tracking-tight leading-snug font-display text-white">
+                          Selamat! Anda Dinyatakan <br/>
+                          <span className="text-gold uppercase font-black tracking-wide">
+                            Lulus Seleksi
+                          </span>
+                        </h3>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4 border-t border-white/10 mt-auto">
+                      <p className="text-white/85 text-[11px] md:text-xs font-medium leading-relaxed italic pl-3 border-l-2 border-white/30">
+                        Teruslah berkarya dan jadilah bagian dari perubahan positif bersama Universitas Hang Tuah Pekanbaru.
                       </p>
                     </div>
                   </div>
 
                   {/* Right Card: Actions & Details */}
-                  <div className="relative p-10 bg-white border border-slate-100 rounded-[40px] shadow-xl shadow-slate-200/40 flex flex-col justify-between gap-8">
+                  <div className="p-8 lg:p-10 bg-white border border-slate-100 rounded-2xl shadow-sm flex flex-col justify-between gap-6">
                     <div className="space-y-6">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">Program Studi Tujuan</p>
-                        <h4 className="text-xl font-bold text-slate-800 leading-tight">{major}</h4>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Program Studi Tujuan</p>
+                        <h4 className="text-lg font-bold text-slate-800 leading-tight font-display">{major}</h4>
                       </div>
-                      <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
-                        <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                          <span>Nomor Ujian</span>
-                          <span className="text-slate-800">{noUjian}</span>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100/60 flex items-center gap-3">
+                          <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                            <span className="material-symbols-outlined text-[20px]">badge</span>
+                          </div>
+                          <div>
+                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider block">Nomor Ujian</span>
+                            <span className="text-[12px] font-bold text-slate-700 font-mono">{noUjian}</span>
+                          </div>
                         </div>
-                        <div className="h-px bg-slate-200/50 w-full"></div>
-                        <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                          <span>Gelombang</span>
-                          <span className="text-slate-800">{studentGelombang}</span>
+
+                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100/60 flex items-center gap-3">
+                          <div className="size-10 rounded-xl bg-gold/10 text-gold flex items-center justify-center flex-shrink-0">
+                            <span className="material-symbols-outlined text-[20px]">calendar_today</span>
+                          </div>
+                          <div>
+                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider block">Gelombang</span>
+                            <span className="text-[12px] font-bold text-slate-700">{studentGelombang}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     <button 
                       onClick={handlePrintSKL}
-                      className="w-full py-5 bg-emerald-600 hover:bg-emerald-700 text-white transition-all rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-3 active:scale-95 group"
+                      className="w-full py-4 bg-primary hover:bg-primary-dark text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-xs transition-all duration-300 flex items-center justify-center gap-2.5 active:scale-[0.98] cursor-pointer group"
                     >
-                      <span className="material-symbols-outlined text-[24px] group-hover:bounce">download_for_offline</span>
+                      <span className="material-symbols-outlined text-[20px] transition-transform duration-300">download_for_offline</span>
                       Unduh SKL Resmi
                     </button>
                   </div>
@@ -954,20 +991,22 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 {/* Next Steps Grid - Refined 3 Column Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
-                    { step: '1', title: 'Unduh SKL', desc: 'Cetak Surat Keterangan Lulus resmi.', icon: 'description', color: 'emerald' },
-                    { step: '2', title: 'Pembayaran', desc: 'Transfer ke rekening resmi UHTP.', icon: 'payments', color: 'blue' },
-                    { step: '3', title: 'Registrasi', desc: 'Unggah bukti bayar untuk NIM.', icon: 'app_registration', color: 'indigo' }
+                    { step: '1', title: 'Unduh SKL', desc: 'Cetak Surat Keterangan Lulus resmi.', icon: 'description', color: 'primary' },
+                    { step: '2', title: 'Pembayaran', desc: 'Transfer ke rekening resmi UHTP.', icon: 'payments', color: 'primary' },
+                    { step: '3', title: 'Registrasi', desc: 'Unggah bukti bayar untuk NIM.', icon: 'app_registration', color: 'primary' }
                   ].map((item: any, i: number) => (
-                    <div key={i} className="flex items-start gap-6 p-6 rounded-[28px] bg-white border border-slate-100 shadow-sm hover:shadow-lg hover:border-emerald-500/10 transition-all duration-500 group">
-                      <div className={`size-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-${item.color}-600 group-hover:text-white transition-all duration-500 shadow-inner flex-shrink-0`}>
-                        <span className="material-symbols-outlined text-[28px]">{item.icon}</span>
+                    <div key={i} className="flex flex-col gap-4 p-5 rounded-xl bg-white border border-slate-100 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <div className="size-10 rounded-lg bg-primary/5 text-primary flex items-center justify-center flex-shrink-0">
+                          <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                        </div>
+                        <span className="text-[9px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Langkah 0{item.step}</span>
                       </div>
-                      <div className="space-y-1.5 pt-1">
-                        <h4 className="text-[11px] font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
-                           <span className={`text-${item.color}-600 opacity-40`}>0{item.step}</span>
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-bold text-slate-800 tracking-tight">
                            {item.title}
                         </h4>
-                        <p className="text-[11px] text-slate-500 leading-relaxed font-medium">{item.desc}</p>
+                        <p className="text-xs text-slate-500 leading-relaxed font-medium">{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -975,19 +1014,22 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
                 {/* Status Registrasi If Already Done */}
                 {statusRegistrasi !== 'Belum Registrasi' && (
-                  <div className="p-10 bg-emerald-50 rounded-[48px] border-2 border-emerald-100 flex flex-col md:flex-row items-center gap-10">
-                    <div className="size-20 rounded-[28px] bg-emerald-600 text-white flex items-center justify-center shadow-xl shadow-emerald-600/30">
-                      <span className="material-symbols-outlined text-[40px]">check_circle</span>
+                  <div className="p-6 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col md:flex-row items-center gap-6 shadow-xs">
+                    <div className="size-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[26px]">check_circle</span>
                     </div>
-                    <div className="flex-1 space-y-2 text-center md:text-left">
-                      <h3 className="text-xl font-black text-emerald-900 uppercase tracking-widest">Administrasi Selesai</h3>
-                      <p className="text-slate-600 font-medium">
-                        Anda telah mengunggah bukti registrasi. Status saat ini: <span className="px-3 py-1 bg-emerald-600 text-white rounded-lg text-[10px] font-black uppercase ml-2">{statusRegistrasi}</span>
+                    <div className="flex-1 space-y-1 text-center md:text-left">
+                      <h3 className="text-base font-bold text-slate-800 uppercase tracking-wide font-display">Administrasi Selesai</h3>
+                      <p className="text-slate-600 font-medium text-xs">
+                        Anda telah mengunggah bukti registrasi. Status saat ini: 
+                        <span className="px-2.5 py-0.5 bg-emerald-500 text-white rounded text-[8px] font-bold uppercase tracking-wider ml-2 inline-block">
+                          {statusRegistrasi}
+                        </span>
                       </p>
                     </div>
                     <button 
                       onClick={handlePrintKwitansi}
-                      className="px-10 py-5 bg-white text-emerald-600 border-2 border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all rounded-[24px] text-xs font-black uppercase tracking-widest"
+                      className="w-full md:w-auto px-5 py-3 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all duration-300 rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs active:scale-95 cursor-pointer text-center"
                     >
                       Lihat Kwitansi
                     </button>
@@ -995,19 +1037,19 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 )}
               </div>
             ) : (
-              <div className="flex flex-col items-center p-16 bg-rose-50/30 rounded-[40px] border border-rose-100 shadow-sm text-center space-y-6">
-                <div className="size-24 rounded-[32px] bg-rose-100 text-rose-500 flex items-center justify-center shadow-inner">
-                  <span className="material-symbols-outlined text-[48px]">cancel</span>
+              <div className="flex flex-col items-center p-10 bg-rose-50/20 rounded-3xl border border-rose-100/60 shadow-xs text-center space-y-6">
+                <div className="size-20 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center shadow-inner border border-rose-100/40">
+                  <span className="material-symbols-outlined text-[40px]">cancel</span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-rose-900 uppercase tracking-widest">Maaf, Anda Belum Lulus</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed max-w-lg font-medium mx-auto">
+                  <h3 className="text-xl font-bold text-rose-900 uppercase tracking-wider font-display">Maaf, Anda Belum Lulus</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed max-w-md font-medium mx-auto">
                     Tetap semangat dan pantang menyerah. Kegagalan hari ini adalah langkah awal menuju kesuksesan di masa depan. Anda dapat mencoba kembali di gelombang berikutnya.
                   </p>
                 </div>
                 <button 
                   onClick={() => setCurrentView('dashboard')}
-                  className="px-10 py-4 bg-white border border-rose-200 text-rose-600 hover:bg-rose-600 hover:text-white transition-all rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-sm"
+                  className="px-8 py-3.5 bg-white border border-rose-200 text-rose-600 hover:bg-rose-600 hover:text-white transition-all duration-300 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-xs cursor-pointer active:scale-95"
                 >
                   Kembali ke Dashboard
                 </button>
@@ -1020,48 +1062,51 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
     );
   };
   return (
-    <div className="flex h-screen w-full bg-[#f8fafc] font-sans overflow-hidden animate-in fade-in duration-700">
+    <div className="flex h-screen w-full bg-slate-50 font-sans overflow-hidden animate-in fade-in duration-700">
       
       {/* Refined Sidebar */}
-      <div className="w-72 bg-[#0f172a] flex flex-col p-8 hidden lg:flex relative overflow-hidden">
-        {/* Background Decorative Element */}
-        <div className="absolute top-0 left-0 w-full h-32 bg-emerald-500/5 blur-3xl rounded-full -translate-y-1/2"></div>
+      <div className="w-72 bg-slate-900 flex flex-col p-8 hidden lg:flex relative overflow-y-auto border-r border-slate-800 custom-scrollbar">
         
-        <div className="flex items-center gap-4 mb-12 relative z-10">
-          <div className="size-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <span className="material-symbols-outlined text-white text-2xl">school</span>
+        <div className="flex items-center gap-4 mb-6 relative z-10">
+          <div className="size-12 bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-700">
+            <span className="material-symbols-outlined text-gold text-2xl">school</span>
           </div>
           <div>
-            <h2 className="text-base font-black tracking-tight text-white uppercase">SPMB Portal</h2>
-            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">V2.0 Stable</p>
+            <h2 className="text-base font-black tracking-tight text-white uppercase font-display">SPMB Portal</h2>
+            <p className="text-[8px] font-extrabold text-slate-300 uppercase tracking-widest bg-slate-800 px-1.5 py-0.5 rounded-md w-fit border border-slate-700 mt-0.5">v2.0 stable</p>
           </div>
         </div>
 
         {/* Profile Section */}
-        <div className="mb-12 text-center px-2 relative z-10">
-          <div className="size-20 mx-auto rounded-full overflow-hidden mb-4 border-2 border-white/10 shadow-xl">
+        <div className="mb-6 text-center px-2 relative z-10">
+          <div className="relative size-20 mx-auto rounded-full p-1 bg-gradient-to-tr from-primary via-white/10 to-gold shadow-2xl mb-4 transition-transform duration-500 hover:rotate-6">
             {photoUrl ? (
-              <img src={photoUrl} alt="Profil" className="w-full h-full object-cover" />
+              <img src={photoUrl} alt="Profil" className="w-full h-full rounded-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-emerald-500 text-white">
+              <div className="w-full h-full rounded-full flex items-center justify-center bg-gradient-to-tr from-primary to-primary-dark text-white">
                 <span className="material-symbols-outlined text-[28px]">person</span>
               </div>
             )}
           </div>
-          <h3 className="text-xs font-bold text-white uppercase tracking-tight truncate">{studentName}</h3>
+          <h3 className="text-xs font-bold text-slate-200 tracking-wide font-display mt-3 truncate">{studentName}</h3>
           <div className="flex items-center justify-center gap-1.5 mt-2">
-             <div className="size-1 bg-emerald-500 rounded-full"></div>
-             <p className="text-[8px] text-slate-400 font-bold uppercase tracking-[0.1em]">Siswa Aktif</p>
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-primary/10 border border-primary/20 rounded-full">
+              <span className="relative flex size-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full size-1.5 bg-emerald-500"></span>
+              </span>
+              <span className="text-[8px] text-primary-light font-bold uppercase tracking-widest">Siswa Aktif</span>
+            </div>
           </div>
         </div>
 
-        <nav className="flex-1 space-y-2 relative z-10">
+        <nav className="space-y-2 relative z-10">
           <button 
             onClick={() => setCurrentView('dashboard')}
-            className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-300 group active:scale-95 ${
+            className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-300 group active:scale-95 border-l-4 ${
               currentView === 'dashboard' 
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' 
-              : 'text-slate-400 hover:bg-white/5 hover:text-white'
+              ? 'bg-white/10 text-white border-gold font-bold' 
+              : 'text-slate-400 hover:bg-white/5 hover:text-slate-200 border-transparent'
             }`}
           >
             <span className="material-symbols-outlined text-[20px]">dashboard</span>
@@ -1072,7 +1117,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
         {/* Logout Button */}
         <button 
           onClick={onLogout}
-          className="mt-auto flex items-center gap-4 p-4 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-2xl transition-all group font-bold text-[11px] uppercase tracking-widest relative z-10"
+          className="mt-auto flex items-center gap-4 px-5 py-4 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl transition-all duration-300 group font-bold text-[10px] uppercase tracking-wider relative z-10 border border-transparent hover:border-rose-500/15"
         >
           <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">logout</span>
           Keluar
@@ -1083,47 +1128,56 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
       <div className="flex-1 flex flex-col overflow-hidden">
         
         {/* Top Header */}
-        <header className="px-10 py-6 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-50">
+        <header className="px-10 py-6 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-xs flex items-center justify-between sticky top-0 z-50">
           <div className="flex items-center gap-4">
-            <div className="size-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
+            <div className="size-10 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center text-primary shadow-inner">
               <span className="material-symbols-outlined">person</span>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-800 tracking-tight flex items-center gap-2">
+              <h1 className="text-base font-bold text-slate-800 tracking-tight flex items-center gap-2 font-display">
                 Portal Mahasiswa
-                <span className="size-1.5 bg-emerald-500 rounded-full"></span>
+                <span className="relative flex size-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full size-1.5 bg-emerald-500"></span>
+                </span>
               </h1>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
-                No Ujian: <span className="text-emerald-600">{noUjian}</span> • {formattedTime}
+              <p className="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5">
+                No Ujian: <span className="text-primary font-bold">{noUjian}</span> • {formattedTime}
               </p>
             </div>
           </div>
           <div className="text-right hidden md:block group">
             <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Program Studi</div>
-            <div className="text-sm font-bold text-slate-700 uppercase tracking-tight">{major}</div>
+            <div className="text-sm font-bold text-slate-700 uppercase tracking-tight font-display">{major}</div>
           </div>
         </header>
 
         {/* Content Body */}
         {currentView === 'dashboard' ? (
-          <main className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
+          <main className="flex-1 overflow-y-auto p-8 lg:p-10 space-y-10 custom-scrollbar">
             
             {/* Welcome Banner */}
-            <section className="relative p-10 bg-white rounded-[32px] border border-slate-100 overflow-hidden shadow-sm animate-in fade-in slide-in-from-top-4 duration-700">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -mr-32 -mt-32"></div>
+            <section className="relative p-8 lg:p-10 bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md animate-in fade-in slide-in-from-top-4 duration-700">
+              <div className="absolute top-0 right-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none"></div>
               
-              <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-                <div className="size-20 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/20">
-                  <span className="material-symbols-outlined text-[40px]">waving_hand</span>
+              <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
+                <div className="size-16 rounded-2xl bg-primary text-white flex items-center justify-center shadow-sm flex-shrink-0">
+                  <span className="material-symbols-outlined text-[32px]">waving_hand</span>
                 </div>
                 <div className="text-center md:text-left space-y-2">
-                  <div className="flex flex-col md:flex-row items-center md:items-baseline gap-3">
-                    <h2 className="text-2xl font-bold tracking-tight text-slate-800">
-                      Selamat Datang, <span>{studentName}</span>
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                    <h2 className="text-xl lg:text-2xl font-bold tracking-tight text-slate-800 font-display">
+                      {(() => {
+                        const hours = currentTime.getHours();
+                        if (hours < 11) return 'Selamat Pagi';
+                        if (hours < 15) return 'Selamat Siang';
+                        if (hours < 18) return 'Selamat Sore';
+                        return 'Selamat Malam';
+                      })()}, <span className="text-primary">{studentName}</span>
                     </h2>
-                    <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase tracking-widest rounded-md border border-emerald-100">Status Aktif</span>
+                    <span className="px-2.5 py-0.5 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest rounded-md border border-primary/20">Siswa Aktif</span>
                   </div>
-                  <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-2xl">
+                  <p className="text-slate-500 text-xs md:text-sm font-medium leading-relaxed max-w-2xl">
                     Sistem Seleksi Penerimaan Mahasiswa Baru Digital Universitas Hang Tuah Pekanbaru. 
                     Pantau tahapan pendaftaran Anda di bawah ini secara real-time.
                   </p>
@@ -1132,85 +1186,100 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
             </section>
 
             {/* Steps Grid */}
-            <section className={`grid grid-cols-1 ${hasWawancara ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-8`}>
+            <section className={`grid grid-cols-1 ${
+              (3 + (hasKesehatan ? 1 : 0) + (hasWawancara ? 1 : 0)) === 3 ? 'md:grid-cols-3' :
+              (3 + (hasKesehatan ? 1 : 0) + (hasWawancara ? 1 : 0)) === 4 ? 'md:grid-cols-4' :
+              'md:grid-cols-5'
+            } gap-6`}>
               {/* Step 1: Online Exam */}
               <button 
                 onClick={(hasFinishedExam || !isExamOpen) ? undefined : onStartExam}
                 disabled={hasFinishedExam || !isExamOpen || isLoadingSchedule}
-                className={`group relative flex flex-col p-8 rounded-[32px] transition-all duration-500 overflow-hidden border border-slate-100 ${
+                className={`group relative flex flex-col p-6 rounded-2xl text-left transition-all duration-300 border ${
                   hasFinishedExam 
-                  ? 'bg-slate-50 opacity-80 cursor-not-allowed' 
+                  ? 'bg-slate-50/80 border-slate-100 opacity-90 cursor-not-allowed' 
                   : !isExamOpen 
-                    ? 'bg-white cursor-not-allowed'
-                    : 'bg-white hover:border-emerald-500/20 hover:shadow-xl hover:shadow-emerald-900/5 hover:-translate-y-2'
+                    ? 'bg-slate-100/60 border-slate-100/50 opacity-60 cursor-not-allowed'
+                    : 'bg-white border-slate-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer'
                 }`}
               >
-                <div className={`size-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${
-                  hasFinishedExam 
-                  ? 'bg-slate-100 text-slate-400' 
-                  : !isExamOpen 
-                    ? 'bg-slate-50 text-slate-200'
-                    : 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 group-hover:scale-110'
-                }`}>
-                  <span className="material-symbols-outlined text-[28px]">
-                    {hasFinishedExam ? 'check_circle' : (isExamOpen ? 'computer' : 'lock_clock')}
-                  </span>
-                </div>
-                
-                <h3 className={`text-base font-bold tracking-tight mb-2 uppercase ${hasFinishedExam || !isExamOpen ? 'text-slate-800' : 'text-slate-900'}`}>
-                  Tes Ujian Online
-                </h3>
-                <p className={`text-[10px] font-bold uppercase tracking-widest ${hasFinishedExam || !isExamOpen ? 'text-slate-400' : 'text-emerald-600'}`}>
-                  {hasFinishedExam ? 'Ujian Telah Selesai' : examMessage}
-                </p>
-              </button>              {/* Step 2: Health Test */}
-              <button 
-                onClick={() => {
-                  if (healthStatus) return;
-                  if (hasFinishedExam) setCurrentView('kesehatan');
-                  else alert('Selesaikan ujian online terlebih dahulu.');
-                }}
-                disabled={!hasFinishedExam || !!healthStatus || isLoadingSchedule}
-                className={`group relative flex flex-col p-8 rounded-[32px] transition-all duration-500 border border-slate-100 ${
-                  healthStatus 
-                  ? 'bg-slate-50 opacity-80 cursor-not-allowed' 
-                  : hasFinishedExam 
-                    ? 'bg-white hover:border-emerald-500/20 hover:shadow-xl hover:shadow-emerald-900/5 hover:-translate-y-2 cursor-pointer' 
-                    : 'bg-white opacity-60 cursor-not-allowed'
-                }`}
-              >
-                <div className={`size-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${
-                  healthStatus
-                  ? 'bg-slate-100 text-slate-400'
-                  : hasFinishedExam 
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 group-hover:scale-110' 
-                    : 'bg-slate-50 text-slate-200'
-                }`}>
-                  <span className="material-symbols-outlined text-[28px]">
-                    {healthStatus ? 'check_circle' : 'medical_services'}
-                  </span>
-                </div>
-                
-                <h3 className={`text-base font-bold tracking-tight mb-2 uppercase ${hasFinishedExam ? 'text-slate-800' : 'text-slate-400'}`}>
-                  Tes Kesehatan
-                </h3>
-                
-                <div className="flex flex-col">
-                  <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                    healthStatus ? 'text-slate-400' : (hasFinishedExam ? 'text-emerald-600' : 'text-slate-400')
+                <div className="w-full flex items-center justify-between mb-6">
+                  <div className={`size-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                    hasFinishedExam 
+                    ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' 
+                    : !isExamOpen 
+                      ? 'bg-slate-200 text-slate-400'
+                      : 'bg-primary text-white shadow-xs'
                   }`}>
-                    {healthStatus ? 'Tahapan Selesai' : (hasFinishedExam ? 'Silakan Lanjut' : 'Menunggu Ujian')}
-                  </p>
-                  {healthStatus && (
-                    <span className={`mt-3 inline-block px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest w-fit shadow-sm ${
-                      (healthStatus === 'Sehat' || healthStatus === 'Lulus') ? 'bg-emerald-600 text-white' : 
-                      (healthStatus === 'Menunggu') ? 'bg-amber-500 text-white' : 'bg-rose-600 text-white'
-                    }`}>
-                      {healthStatus === 'Menunggu' ? 'VERIFIKASI' : `STATUS: ${healthStatus}`}
+                    <span className="material-symbols-outlined text-[24px]">
+                      {hasFinishedExam ? 'check_circle' : (isExamOpen ? 'computer' : 'lock_clock')}
                     </span>
-                  )}
+                  </div>
+                  <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">Tahap 1</span>
                 </div>
+                
+                <h3 className={`text-sm font-bold tracking-tight mb-1 font-display ${hasFinishedExam || !isExamOpen ? 'text-slate-500' : 'text-slate-800'}`}>
+                  Ujian Online
+                </h3>
+                <p className={`text-[9px] font-extrabold uppercase tracking-widest ${hasFinishedExam ? 'text-emerald-550' : (!isExamOpen ? 'text-slate-400' : 'text-primary')}`}>
+                  {hasFinishedExam ? 'Selesai' : examMessage}
+                </p>
               </button>
+
+              {/* Step 2: Health Test */}
+              {hasKesehatan && (
+                <button 
+                  onClick={() => {
+                    if (healthStatus) return;
+                    if (hasFinishedExam) setCurrentView('kesehatan');
+                    else alert('Selesaikan ujian online terlebih dahulu.');
+                  }}
+                  disabled={!hasFinishedExam || !!healthStatus || isLoadingSchedule}
+                  className={`group relative flex flex-col p-6 rounded-2xl text-left transition-all duration-300 border ${
+                    healthStatus 
+                    ? 'bg-slate-50/80 border-slate-100 opacity-90 cursor-not-allowed' 
+                    : hasFinishedExam 
+                      ? 'bg-white border-slate-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer' 
+                      : 'bg-slate-100/60 border-slate-100/50 opacity-60 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="w-full flex items-center justify-between mb-6">
+                    <div className={`size-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                      healthStatus
+                      ? 'bg-emerald-550/10 text-emerald-600 border border-emerald-500/20'
+                      : hasFinishedExam 
+                        ? 'bg-primary text-white shadow-xs' 
+                        : 'bg-slate-200 text-slate-400'
+                    }`}>
+                      <span className="material-symbols-outlined text-[24px]">
+                        {healthStatus ? 'check_circle' : 'medical_services'}
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">Tahap 2</span>
+                  </div>
+                  
+                  <h3 className={`text-sm font-bold tracking-tight mb-1 font-display ${healthStatus || !hasFinishedExam ? 'text-slate-500' : 'text-slate-800'}`}>
+                    Tes Kesehatan
+                  </h3>
+                  
+                  <div className="flex flex-col">
+                    <p className={`text-[9px] font-extrabold uppercase tracking-widest ${
+                      healthStatus ? 'text-emerald-550' : (hasFinishedExam ? 'text-primary' : 'text-slate-400')
+                    }`}>
+                      {healthStatus ? 'Selesai' : (hasFinishedExam ? 'Silakan Isi' : 'Menunggu')}
+                    </p>
+                    {healthStatus && (
+                      <span className={`mt-2 inline-block px-2 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider w-fit shadow-xs ${
+                        (healthStatus === 'Sehat' || healthStatus === 'Lulus') ? 'bg-emerald-500 text-white' : 
+                        (healthStatus === 'Menunggu') ? 'bg-amber-500 text-white' : 'bg-rose-500 text-white'
+                      }`}>
+                        {healthStatus === 'Menunggu' ? 'VERIFIKASI' : `STATUS: ${healthStatus}`}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )}
+
               {/* Step 3: Wawancara Test */}
               {hasWawancara && (
                 <button 
@@ -1220,69 +1289,78 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                     else alert('Selesaikan ujian online terlebih dahulu.');
                   }}
                   disabled={!hasFinishedExam || (hasilWawancara !== null && hasilWawancara !== 'BELUM UJIAN')}
-                  className={`group relative flex flex-col p-8 rounded-[32px] transition-all duration-500 border border-slate-100 ${
+                  className={`group relative flex flex-col p-6 rounded-2xl text-left transition-all duration-300 border ${
                     (hasilWawancara !== null && hasilWawancara !== 'BELUM UJIAN')
-                    ? 'bg-slate-50 opacity-80 cursor-not-allowed'
+                    ? 'bg-slate-50/80 border-slate-100 opacity-90 cursor-not-allowed'
                     : hasFinishedExam 
-                      ? 'bg-white hover:border-emerald-500/20 hover:shadow-xl hover:shadow-emerald-900/5 hover:-translate-y-2' 
-                      : 'bg-white opacity-60 cursor-not-allowed'
+                      ? 'bg-white border-slate-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer' 
+                      : 'bg-slate-100/60 border-slate-100/50 opacity-60 cursor-not-allowed'
                   }`}
                 >
-                  <div className={`size-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${
-                    (hasilWawancara !== null && hasilWawancara !== 'BELUM UJIAN')
-                    ? 'bg-slate-100 text-slate-400'
-                    : hasFinishedExam 
-                      ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 group-hover:scale-110' 
-                      : 'bg-slate-50 text-slate-300'
-                  }`}>
-                    <span className="material-symbols-outlined text-[28px]">
-                      {(hasilWawancara && hasilWawancara !== 'BELUM UJIAN') ? 'check_circle' : 'content_paste'}
+                  <div className="w-full flex items-center justify-between mb-6">
+                    <div className={`size-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                      (hasilWawancara && hasilWawancara !== 'BELUM UJIAN')
+                      ? 'bg-emerald-550/10 text-emerald-600 border border-emerald-500/20'
+                      : hasFinishedExam 
+                        ? 'bg-primary text-white shadow-xs' 
+                        : 'bg-slate-200 text-slate-400'
+                    }`}>
+                      <span className="material-symbols-outlined text-[24px]">
+                        {(hasilWawancara && hasilWawancara !== 'BELUM UJIAN') ? 'check_circle' : 'content_paste'}
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                      {hasKesehatan ? 'Tahap 3' : 'Tahap 2'}
                     </span>
                   </div>
-                  <h3 className={`text-base font-bold tracking-tight mb-2 uppercase ${hasFinishedExam ? 'text-slate-800' : 'text-slate-400'}`}>
+                  <h3 className={`text-sm font-bold tracking-tight mb-1 font-display ${(hasilWawancara && hasilWawancara !== 'BELUM UJIAN') || !hasFinishedExam ? 'text-slate-500' : 'text-slate-800'}`}>
                     Tes Wawancara
                   </h3>
-                  <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                    (hasilWawancara && hasilWawancara !== 'BELUM UJIAN') ? 'text-slate-400' : (hasFinishedExam ? 'text-emerald-600' : 'text-slate-400')
+                  <p className={`text-[9px] font-extrabold uppercase tracking-widest ${
+                    (hasilWawancara && hasilWawancara !== 'BELUM UJIAN') ? 'text-emerald-550' : (hasFinishedExam ? 'text-primary' : 'text-slate-400')
                   }`}>
-                    {(hasilWawancara && hasilWawancara !== 'BELUM UJIAN') ? 'Tahapan Selesai' : (hasFinishedExam ? 'Silakan Lanjut' : 'Menunggu Ujian')}
+                    {(hasilWawancara && hasilWawancara !== 'BELUM UJIAN') ? 'Selesai' : (hasFinishedExam ? 'Silakan Isi' : 'Menunggu')}
                   </p>
                 </button>
               )}
 
-
               {/* Step 4: Graduation */}
               <button 
                 onClick={() => {
-                  if (hasilWawancara === 'LULUS' || hasilWawancara === 'TIDAK LULUS') setCurrentView('pengumuman');
+                  if (isFinalStatus) setCurrentView('pengumuman');
                 }}
-                disabled={!hasilWawancara || (hasilWawancara !== 'LULUS' && hasilWawancara !== 'TIDAK LULUS')}
-                className={`group relative flex flex-col p-8 rounded-[32px] text-left transition-all duration-500 border border-slate-100 ${
-                  hasilWawancara === 'LULUS' 
-                    ? 'bg-white hover:border-emerald-500/20 hover:shadow-xl hover:shadow-emerald-900/5 hover:-translate-y-2 cursor-pointer' 
-                    : hasilWawancara === 'TIDAK LULUS'
-                      ? 'bg-white hover:border-rose-500/20 hover:shadow-xl hover:shadow-rose-900/5 hover:-translate-y-2 cursor-pointer'
-                      : 'bg-white opacity-60 cursor-not-allowed'
+                disabled={!isFinalStatus}
+                className={`group relative flex flex-col p-6 rounded-2xl text-left transition-all duration-300 border ${
+                  isLulus 
+                    ? 'bg-white border-slate-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer' 
+                    : isTidakLulus
+                      ? 'bg-white border-slate-100 hover:border-rose-500/20 hover:shadow-lg hover:shadow-rose-950/5 hover:-translate-y-1 cursor-pointer'
+                      : 'bg-slate-100/60 border-slate-100/50 opacity-60 cursor-not-allowed'
                 }`}
               >
-                <div className={`size-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${
-                  hasilWawancara === 'LULUS'
-                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 group-hover:scale-110'
-                    : hasilWawancara === 'TIDAK LULUS'
-                      ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/20 group-hover:scale-110'
-                      : 'bg-slate-50 text-slate-200'
-                }`}>
-                  <span className="material-symbols-outlined text-[28px]">
-                    {hasilWawancara === 'LULUS' ? 'workspace_premium' : (hasilWawancara === 'TIDAK LULUS' ? 'cancel' : 'campaign')}
+                <div className="w-full flex items-center justify-between mb-6">
+                  <div className={`size-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                    isLulus
+                      ? 'bg-primary text-white shadow-xs'
+                      : isTidakLulus
+                        ? 'bg-rose-500 text-white shadow-xs'
+                        : 'bg-slate-200 text-slate-400'
+                  }`}>
+                    <span className="material-symbols-outlined text-[24px]">
+                      {isLulus ? 'workspace_premium' : (isTidakLulus ? 'cancel' : 'campaign')}
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                    {3 + (hasKesehatan ? 1 : 0) + (hasWawancara ? 1 : 0) - 1}
                   </span>
                 </div>
-                <h3 className={`text-base font-bold tracking-tight mb-1 uppercase ${(hasilWawancara === 'LULUS' || hasilWawancara === 'TIDAK LULUS') ? 'text-slate-800' : 'text-slate-400'}`}>
+                <h3 className={`text-sm font-bold tracking-tight mb-1 font-display ${isFinalStatus ? 'text-slate-800' : 'text-slate-400'}`}>
                   Hasil Seleksi
                 </h3>
-                <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                  hasilWawancara === 'LULUS' ? 'text-emerald-600' : (hasilWawancara === 'TIDAK LULUS' ? 'text-rose-600' : 'text-slate-400')
+                <p className={`text-[9px] font-extrabold uppercase tracking-widest ${
+                  isLulus ? 'text-primary' : (isTidakLulus ? 'text-rose-500' : 'text-slate-400')
                 }`}>
-                  {hasilWawancara === 'LULUS' ? 'Selamat! Anda Lulus' : (hasilWawancara === 'TIDAK LULUS' ? 'Maaf, Coba Lagi' : 'Menunggu Hasil')}
+                  {isLulus ? 'Selamat! Anda Lulus' : (isTidakLulus ? 'Maaf, Coba Lagi' : 'Menunggu')}
                 </p>
               </button>
 
@@ -1292,41 +1370,46 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   if (statusRegistrasi !== 'Belum Registrasi' && statusRegistrasi !== 'Ditolak') return;
                   setCurrentView('registrasi');
                 }}
-                disabled={hasilWawancara !== 'LULUS' || (statusRegistrasi !== 'Belum Registrasi' && statusRegistrasi !== 'Ditolak')}
-                className={`group relative flex flex-col p-8 rounded-[32px] transition-all duration-500 border border-slate-100 ${
+                disabled={!isLulus || (statusRegistrasi !== 'Belum Registrasi' && statusRegistrasi !== 'Ditolak')}
+                className={`group relative flex flex-col p-6 rounded-2xl text-left transition-all duration-300 border ${
                   (statusRegistrasi !== 'Belum Registrasi' && statusRegistrasi !== 'Ditolak') 
-                  ? 'bg-slate-50 opacity-80 cursor-not-allowed'
-                  : hasilWawancara === 'LULUS'
-                    ? 'bg-white hover:border-blue-500/20 hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-2 cursor-pointer' 
-                    : 'bg-white opacity-60 cursor-not-allowed'
+                  ? 'bg-slate-50/80 border-slate-100 opacity-90 cursor-not-allowed'
+                  : isLulus
+                    ? 'bg-white border-slate-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer' 
+                    : 'bg-slate-100/60 border-slate-100/50 opacity-60 cursor-not-allowed'
                 }`}
               >
-                <div className={`size-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${
-                  (statusRegistrasi !== 'Belum Registrasi' && statusRegistrasi !== 'Ditolak')
-                  ? 'bg-blue-50 text-blue-400'
-                  : hasilWawancara === 'LULUS'
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 group-hover:scale-110' 
-                    : 'bg-slate-50 text-slate-300'
-                }`}>
-                  <span className="material-symbols-outlined text-[28px]">
-                    {(statusRegistrasi === 'Sudah Registrasi') ? 'check_circle' : 'app_registration'}
+                <div className="w-full flex items-center justify-between mb-6">
+                  <div className={`size-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                    (statusRegistrasi === 'Sudah Registrasi' || statusRegistrasi === 'Menunggu Verifikasi')
+                    ? 'bg-emerald-550/10 text-emerald-600 border border-emerald-500/20'
+                    : isLulus
+                      ? 'bg-primary text-white shadow-xs' 
+                      : 'bg-slate-200 text-slate-400'
+                  }`}>
+                    <span className="material-symbols-outlined text-[24px]">
+                      {(statusRegistrasi === 'Sudah Registrasi') ? 'check_circle' : 'app_registration'}
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                    {3 + (hasKesehatan ? 1 : 0) + (hasWawancara ? 1 : 0)}
                   </span>
                 </div>
                 
-                <h3 className={`text-base font-bold tracking-tight mb-1 uppercase ${hasilWawancara === 'LULUS' ? 'text-slate-800' : 'text-slate-400'}`}>
+                <h3 className={`text-sm font-bold tracking-tight mb-1 font-display ${isLulus ? 'text-slate-800' : 'text-slate-400'}`}>
                   Registrasi Ulang
                 </h3>
                 
                 <div className="flex flex-col">
-                  <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                    statusRegistrasi !== 'Belum Registrasi' ? 'text-slate-400' : (hasilWawancara === 'LULUS' ? 'text-blue-600' : 'text-slate-400')
+                  <p className={`text-[9px] font-extrabold uppercase tracking-widest ${
+                    statusRegistrasi !== 'Belum Registrasi' ? 'text-emerald-550' : (isLulus ? 'text-primary' : 'text-slate-400')
                   }`}>
-                    {statusRegistrasi === 'Belum Registrasi' ? (hasilWawancara === 'LULUS' ? 'Unggah Bukti' : 'Menunggu') : 'Selesai'}
+                    {statusRegistrasi === 'Belum Registrasi' ? (isLulus ? 'Unggah Bukti' : 'Menunggu') : 'Selesai'}
                   </p>
                   {statusRegistrasi !== 'Belum Registrasi' && (
-                    <span className={`mt-3 inline-block px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest w-fit shadow-sm ${
-                      statusRegistrasi === 'Sudah Registrasi' ? 'bg-emerald-600 text-white' : 
-                      statusRegistrasi === 'Menunggu Verifikasi' ? 'bg-amber-500 text-white' : 'bg-rose-600 text-white'
+                    <span className={`mt-2 inline-block px-2 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider w-fit shadow-xs ${
+                      statusRegistrasi === 'Sudah Registrasi' ? 'bg-emerald-500 text-white' : 
+                      statusRegistrasi === 'Menunggu Verifikasi' ? 'bg-amber-500 text-white' : 'bg-rose-500 text-white'
                     }`}>
                       {statusRegistrasi}
                     </span>
@@ -1336,7 +1419,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                       href={`${API_BASE_URL}/storage/${buktiRegistrasiPath}`} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="mt-3 text-[9px] font-bold text-blue-600 hover:underline flex items-center gap-1 w-fit"
+                      className="mt-2 text-[9px] font-bold text-primary hover:underline flex items-center gap-1 w-fit"
                     >
                       <span className="material-symbols-outlined text-[12px]">visibility</span>
                       Lihat Bukti
@@ -1347,22 +1430,22 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 {/* Registration Dates Period */}
                 {schedule && schedule.tanggal_registrasi_mulai && schedule.tanggal_registrasi_akhir ? (
                   <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-1 text-left w-full">
-                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px] text-blue-500">calendar_month</span>
+                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px] text-primary">calendar_month</span>
                       Periode Registrasi
                     </span>
-                    <div className="flex flex-col gap-0.5 mt-1 pl-5">
-                      <span className="text-[11px] font-bold text-slate-700">
+                    <div className="flex flex-col gap-0.5 mt-1 pl-4">
+                      <span className="text-[10px] font-bold text-slate-700">
                         {new Date(schedule.tanggal_registrasi_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                       </span>
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest my-0.5">s/d</span>
-                      <span className="text-[11px] font-bold text-slate-700">
+                      <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest my-0.5">s/d</span>
+                      <span className="text-[10px] font-bold text-slate-750">
                         {new Date(schedule.tanggal_registrasi_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                       </span>
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-1 text-left w-full text-[10px] font-semibold text-slate-400">
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-1 text-left w-full text-[9px] font-semibold text-slate-400">
                     <span className="material-symbols-outlined text-[14px]">calendar_month</span>
                     <span>Jadwal belum ditentukan</span>
                   </div>
@@ -1370,12 +1453,9 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
               </button>
             </section>
 
-
-
-
-            <section className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-sm">
-              <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
-                <span className="material-symbols-outlined text-emerald-600 text-[20px]">gavel</span>
+            <section className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-100 shadow-sm">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-3 border-b border-slate-50 pb-4">
+                <span className="material-symbols-outlined text-primary text-[20px]">gavel</span>
                 Ketentuan Seleksi & Ujian
               </h3>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1389,11 +1469,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   "Ujian hanya dapat dilakukan satu kali kesempatan.",
                   "Segala bentuk kecurangan akan membatalkan kelulusan."
                 ].map((rule: string, idx: number) => (
-                  <li key={idx} className="flex gap-4 p-4 bg-white rounded-2xl border border-slate-100 text-xs font-medium text-slate-600 leading-relaxed group hover:border-emerald-500/20 transition-all">
-                    <div className="size-5 rounded-full bg-emerald-100 text-emerald-600 flex-shrink-0 flex items-center justify-center text-[10px] font-bold">
+                  <li key={idx} className="flex gap-4 p-4 bg-slate-50/50 rounded-xl border border-slate-100/80 text-xs font-medium text-slate-600 leading-relaxed transition-all duration-300 hover:border-primary/15 hover:bg-white hover:shadow-xs group">
+                    <div className="size-5 rounded-full bg-primary/10 text-primary flex-shrink-0 flex items-center justify-center text-[10px] font-bold transition-colors group-hover:bg-primary group-hover:text-white">
                       {idx + 1}
                     </div>
-                    {rule}
+                    <span>{rule}</span>
                   </li>
                 ))}
               </ul>
