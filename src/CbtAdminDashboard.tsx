@@ -410,11 +410,13 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   };
 
   useEffect(() => {
-    if (!kesehatanFilterGelombang) {
+    if (kesehatanFilterGelombang && (view === 'proses_kesehatan' || view === 'rekap_kesehatan')) {
+      fetchKesehatanData();
+    } else if (!kesehatanFilterGelombang) {
       setKesehatanData([]);
       setHasSearchedKesehatan(false);
     }
-  }, [kesehatanFilterGelombang]);
+  }, [kesehatanFilterGelombang, view]);
 
   const fetchKesehatanData = async () => {
     if (!kesehatanFilterGelombang) return;
@@ -453,11 +455,13 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
   const totalKesehatanPages = Math.ceil(filteredKesehatanData.length / kesehatanEntries);
 
-  const fetchWawancaraData = async () => {
-    const isKelulusanView = view === 'proses_kelulusan' || view === 'rekap_kelulusan';
+  const fetchWawancaraData = async (showError = false) => {
+    const isKelulusanView = view === 'proses_kelulusan' || view === 'rekap_kelulusan' || view === 'rekap_wawancara';
 
     if (!wawancaraFilterGelombang || (!isKelulusanView && !wawancaraFilterProdi)) {
-      setNotification({ message: `Harap pilih gelombang${!isKelulusanView ? ' dan prodi' : ''} terlebih dahulu!`, type: 'error' });
+      if (showError) {
+        setNotification({ message: `Harap pilih gelombang${!isKelulusanView ? ' dan prodi' : ''} terlebih dahulu!`, type: 'error' });
+      }
       return;
     }
 
@@ -473,15 +477,31 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         setWawancaraData(data.data);
       } else {
         setWawancaraData([]);
-        setNotification({ message: data.message || 'Data tidak ditemukan.', type: 'error' });
+        if (showError) {
+          setNotification({ message: data.message || 'Data tidak ditemukan.', type: 'error' });
+        }
       }
     } catch (error) {
       console.error('Error fetching wawancara data:', error);
-      setNotification({ message: 'Gagal mengambil data wawancara.', type: 'error' });
+      if (showError) {
+        setNotification({ message: 'Gagal mengambil data wawancara.', type: 'error' });
+      }
     } finally {
       setWawancaraLoading(false);
     }
   };
+
+  useEffect(() => {
+    const isKelulusanView = view === 'proses_kelulusan' || view === 'rekap_kelulusan' || view === 'rekap_wawancara';
+    if (view === 'proses_wawancara' || view === 'rekap_wawancara') {
+      if (wawancaraFilterGelombang && (isKelulusanView || wawancaraFilterProdi)) {
+        fetchWawancaraData(false);
+      } else {
+        setWawancaraData([]);
+        setHasSearchedWawancara(false);
+      }
+    }
+  }, [wawancaraFilterGelombang, wawancaraFilterProdi, view]);
 
   const fetchAbsensiData = async () => {
     if (!absensiFilterGelombang || !absensiFilterProdi) {
@@ -3171,7 +3191,6 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 onChange={(e) => {
                   setWawancaraFilterGelombang(e.target.value);
                   setWawancaraCurrentPage(1);
-                  setHasSearchedWawancara(false);
                 }}
               >
                 <option value="">Pilih Gelombang</option>
@@ -3188,7 +3207,6 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 onChange={(e) => {
                   setWawancaraFilterProdi(e.target.value);
                   setWawancaraCurrentPage(1);
-                  setHasSearchedWawancara(false);
                 }}
               >
                 <option value="">Pilih Prodi</option>
@@ -3200,7 +3218,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
             <button
               className="px-4 py-1.5 bg-[#00a65a] text-white rounded-sm text-sm font-semibold hover:bg-[#008d4c] transition-colors"
-              onClick={fetchWawancaraData}
+              onClick={() => fetchWawancaraData(true)}
             >
               Pilih
             </button>
@@ -3252,21 +3270,6 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 onChange={(e) => {
                   setWawancaraFilterGelombang(e.target.value);
                   setWawancaraCurrentPage(1);
-                  // Auto fetch when gelombang changes for rekap
-                  if (e.target.value) {
-                    setHasSearchedWawancara(true);
-                    setWawancaraLoading(true);
-                    fetch(`${API_BASE_URL}/api/admin/wawancara?gelombang=${e.target.value}`)
-                      .then(res => res.json())
-                      .then(data => {
-                        if (data.status === 'success') setWawancaraData(data.data);
-                        else setWawancaraData([]);
-                        setWawancaraLoading(false);
-                      })
-                      .catch(() => setWawancaraLoading(false));
-                  } else {
-                    setHasSearchedWawancara(false);
-                  }
                 }}
               >
                 <option value="">Pilih Gelombang</option>
@@ -3515,7 +3518,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
             <button
               className="px-4 py-1.5 bg-[#00a65a] text-white rounded-sm text-sm font-semibold hover:bg-[#008d4c] transition-colors"
-              onClick={fetchWawancaraData}
+              onClick={() => fetchWawancaraData(true)}
             >
               Pilih
             </button>
