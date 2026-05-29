@@ -261,15 +261,15 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
         <div className="max-w-7xl mx-auto space-y-6">
           
           {/* Modern Softer Info Box */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-primary-dark via-primary to-primary-dark rounded-2xl p-6 text-white shadow-md shadow-primary/10">
+          <div className="relative overflow-hidden bg-emerald-50/60 border border-emerald-100 rounded-2xl p-6 text-slate-800 shadow-xs">
             
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="size-12 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20 text-white flex-shrink-0">
+              <div className="size-12 rounded-xl bg-emerald-100/70 flex items-center justify-center border border-emerald-200/50 text-emerald-600 flex-shrink-0">
                 <span className="material-symbols-outlined text-[24px]">medical_information</span>
               </div>
               <div className="flex-1 space-y-1">
-                <h4 className="text-sm font-bold text-white tracking-wider uppercase font-display">Informasi Tes Kesehatan</h4>
-                <p className="text-white/90 text-xs md:text-sm leading-relaxed font-medium">
+                <h4 className="text-sm font-bold text-emerald-900 tracking-wider uppercase font-display">Informasi Tes Kesehatan</h4>
+                <p className="text-emerald-850 text-xs md:text-sm leading-relaxed font-medium">
                   Silakan lakukan pemeriksaan kesehatan di Klinik/Puskesmas/Rumah Sakit terdekat, lalu unggah hasilnya di bawah ini. 
                   Pastikan data akurat sesuai dengan surat keterangan medis yang Anda terima.
                 </p>
@@ -278,7 +278,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                     href="/contoh-tes-kesehatan.jpg" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/25 rounded-xl font-bold text-xs transition-all duration-300 shadow-xs cursor-pointer active:scale-95"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition-all duration-300 shadow-xs cursor-pointer active:scale-95"
                   >
                     <span className="material-symbols-outlined text-[16px]">download</span>
                     Unduh / Lihat Contoh Surat Kesehatan
@@ -287,7 +287,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
               </div>
               <button 
                 onClick={() => setCurrentView('dashboard')} 
-                className="size-8 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all self-start md:self-center cursor-pointer"
+                className="size-8 flex items-center justify-center text-slate-400 hover:text-slate-650 hover:bg-slate-100/70 rounded-lg transition-all self-start md:self-center cursor-pointer border border-transparent hover:border-slate-200/50"
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
