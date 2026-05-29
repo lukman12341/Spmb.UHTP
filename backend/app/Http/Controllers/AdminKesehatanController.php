@@ -309,6 +309,8 @@ class AdminKesehatanController extends Controller
         $health = HealthTest::where('registration_id', $biodata->registration_id)->first();
 
         $status_cbt = $result->status_kelulusan ?? null;
+        $status_kesehatan = $health->status_kesehatan ?? null;
+        $hasil_wawancara = $biodata->hasil_wawancara ?? null;
         $manualStatuses = [
             'Cadangan', 
             'Lulus Di S1 Kesmas Jalur A Reguler', 
