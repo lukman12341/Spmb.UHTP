@@ -109,7 +109,47 @@ class AdminKesehatanController extends Controller
             if ($status_cbt && ($isManualApproval || in_array($status_cbt, $manualStatuses))) {
                 $finalStatus = $status_cbt;
             } else {
-                $finalStatus = 'Proses';
+                if ($status_cbt === 'Lulus') {
+                    $hasWawancara = $this->checkHasWawancara($reg->program_studi);
+
+                    // Health check evaluation
+                    $kesehatanPassed = false;
+                    $kesehatanFailed = false;
+                    if ($hasKesehatan) {
+                        if ($status_kesehatan === 'Sehat' || $status_kesehatan === 'Lulus') {
+                            $kesehatanPassed = true;
+                        } elseif ($status_kesehatan && !in_array($status_kesehatan, ['Menunggu'])) {
+                            $kesehatanFailed = true;
+                        }
+                    } else {
+                        $kesehatanPassed = true;
+                    }
+
+                    // Wawancara check evaluation
+                    $wawancaraPassed = false;
+                    $wawancaraFailed = false;
+                    if ($hasWawancara) {
+                        if ($hasil_wawancara === 'LULUS') {
+                            $wawancaraPassed = true;
+                        } elseif ($hasil_wawancara === 'TIDAK LULUS') {
+                            $wawancaraFailed = true;
+                        }
+                    } else {
+                        $wawancaraPassed = true;
+                    }
+
+                    if ($kesehatanFailed || $wawancaraFailed) {
+                        $finalStatus = 'Tidak Lulus';
+                    } elseif ($kesehatanPassed && $wawancaraPassed) {
+                        $finalStatus = 'Lulus';
+                    } else {
+                        $finalStatus = 'Proses';
+                    }
+                } elseif ($status_cbt === 'Tidak Lulus') {
+                    $finalStatus = 'Tidak Lulus';
+                } else {
+                    $finalStatus = 'Proses';
+                }
             }
 
             $details = $reg->examResult->details ?? null;
@@ -290,7 +330,49 @@ class AdminKesehatanController extends Controller
         if ($status_cbt && ($isManualApproval || in_array($status_cbt, $manualStatuses))) {
             $finalStatus = $status_cbt;
         } else {
-            $finalStatus = 'Proses';
+            if ($status_cbt === 'Lulus') {
+                $prodi = $biodata->registration->program_studi ?? null;
+                $hasKesehatan = $this->checkHasKesehatan($prodi);
+                $hasWawancara = $this->checkHasWawancara($prodi);
+
+                // Health check evaluation
+                $kesehatanPassed = false;
+                $kesehatanFailed = false;
+                if ($hasKesehatan) {
+                    if ($status_kesehatan === 'Sehat' || $status_kesehatan === 'Lulus') {
+                        $kesehatanPassed = true;
+                    } elseif ($status_kesehatan && !in_array($status_kesehatan, ['Menunggu'])) {
+                        $kesehatanFailed = true;
+                    }
+                } else {
+                    $kesehatanPassed = true;
+                }
+
+                // Wawancara check evaluation
+                $wawancaraPassed = false;
+                $wawancaraFailed = false;
+                if ($hasWawancara) {
+                    if ($hasil_wawancara === 'LULUS') {
+                        $wawancaraPassed = true;
+                    } elseif ($hasil_wawancara === 'TIDAK LULUS') {
+                        $wawancaraFailed = true;
+                    }
+                } else {
+                    $wawancaraPassed = true;
+                }
+
+                if ($kesehatanFailed || $wawancaraFailed) {
+                    $finalStatus = 'Tidak Lulus';
+                } elseif ($kesehatanPassed && $wawancaraPassed) {
+                    $finalStatus = 'Lulus';
+                } else {
+                    $finalStatus = 'Proses';
+                }
+            } elseif ($status_cbt === 'Tidak Lulus') {
+                $finalStatus = 'Tidak Lulus';
+            } else {
+                $finalStatus = 'Proses';
+            }
         }
 
         return response()->json([
@@ -444,6 +526,25 @@ class AdminKesehatanController extends Controller
         $isProfesiBidan = (strpos($lower, 'profesi') !== false) && (strpos($lower, 'bidan') !== false || strpos($lower, 'kebidanan') !== false);
         
         return $isS1Kesmas || $isS1Bidan || $isS1Keperawatan || $isD3Rmik || $isD4Rmik || $isProfesiNers || $isProfesiBidan;
+    }
+
+    private function checkHasWawancara($prodi)
+    {
+        if (!$prodi) return false;
+        $lower = strtolower($prodi);
+        $allowedWawancaraProdi = [
+            's2 kesmas',
+            's1 keperawatan',
+            'profesi ners',
+            's1 kebidanan',
+            'profesi bidan'
+        ];
+        foreach ($allowedWawancaraProdi as $wProdi) {
+            if (strpos($lower, $wProdi) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function normalizeExamNumber($examNumber)
