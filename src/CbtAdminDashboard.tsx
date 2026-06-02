@@ -261,6 +261,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   });
 
   const [soalList, setSoalList] = useState<any[]>([]);
+  const [soalSearch, setSoalSearch] = useState('');
+  const [soalEntries, setSoalEntries] = useState(10);
+  const [soalCurrentPage, setSoalCurrentPage] = useState(1);
   const [isSoalLoading, setIsSoalLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editingSoalId, setEditingSoalId] = useState<number | null>(null);
@@ -344,7 +347,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   const [pengumumanFilterGelombang, setPengumumanFilterGelombang] = useState('');
   const [pengumumanFilterProdi, setPengumumanFilterProdi] = useState('ALL');
   const [pengumumanFilterStatus, setPengumumanFilterStatus] = useState('Lulus');
-  const [pengumumanFilterRegistrasi, setPengumumanFilterRegistrasi] = useState('Sudah');
+  const [pengumumanFilterRegistrasi, setPengumumanFilterRegistrasi] = useState('ALL');
   const [pengumumanData, setPengumumanData] = useState<any[]>([]);
   const [pengumumanLoading, setPengumumanLoading] = useState(false);
 
@@ -690,12 +693,44 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     }, 500);
   };
 
+  const availableProdisInData = useMemo(() => {
+    const list = new Set<string>();
+    pengumumanData.forEach(mhs => {
+      if (mhs.pilihan) list.add(mhs.pilihan);
+    });
+    absensiData.forEach(mhs => {
+      if (mhs.pilihan) list.add(mhs.pilihan);
+    });
+    ALL_PRODI_LIST.forEach(p => list.add(p));
+    prodiOptions.forEach(p => list.add(p));
+    return Array.from(list).sort();
+  }, [pengumumanData, absensiData, prodiOptions]);
+
   const getFilteredPengumumanData = () => {
     return pengumumanData.filter(mhs => {
       const statusLower = (mhs.status || '').toLowerCase();
       
       // Filter by prodi
-      if (pengumumanFilterProdi !== 'ALL' && mhs.pilihan !== pengumumanFilterProdi) return false;
+      if (pengumumanFilterProdi !== 'ALL') {
+        const studentProdi = (mhs.pilihan || '').toLowerCase();
+        const filterProdi = pengumumanFilterProdi.toLowerCase();
+        let isMatch = studentProdi === filterProdi || studentProdi.includes(filterProdi);
+        
+        // Handle common abbreviations and synonyms
+        if (!isMatch) {
+          if (filterProdi === 's1 sistem informasi' || filterProdi === 'si') {
+            isMatch = studentProdi.includes('sistem informasi') || studentProdi.includes('si');
+          } else if (filterProdi === 's1 teknik informatika' || filterProdi === 'ti') {
+            isMatch = studentProdi.includes('teknik informatika') || studentProdi.includes('ti');
+          } else if (filterProdi === 's1 kesehatan masyarakat' || filterProdi === 's2 kesehatan masyarakat' || filterProdi === 'ikm') {
+            isMatch = studentProdi.includes('kesehatan masyarakat') || studentProdi.includes('kesmas') || studentProdi.includes('ikm');
+          } else if (filterProdi === 's1 kebidanan' || filterProdi === 'profesi bidan' || filterProdi === 's1 bidan' || filterProdi === 'd3 kebidanan') {
+            isMatch = studentProdi.includes('kebidanan') || studentProdi.includes('bidan');
+          }
+        }
+        
+        if (!isMatch) return false;
+      }
       
       // Filter by status kelulusan
       if (pengumumanFilterStatus !== 'ALL') {
@@ -1130,6 +1165,32 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   }, [filteredWawancaraData, wawancaraCurrentPage, wawancaraEntries]);
 
   const totalWawancaraPages = Math.ceil(filteredWawancaraData.length / wawancaraEntries);
+
+  const filteredSoalList = useMemo(() => {
+    return soalList.filter(soal => {
+      const q = soalSearch.toLowerCase();
+      return (
+        (soal.pertanyaan || '').toLowerCase().includes(q) ||
+        (soal.pilihan_a || '').toLowerCase().includes(q) ||
+        (soal.pilihan_b || '').toLowerCase().includes(q) ||
+        (soal.pilihan_c || '').toLowerCase().includes(q) ||
+        (soal.pilihan_d || '').toLowerCase().includes(q) ||
+        (soal.type_soal || '').toLowerCase().includes(q) ||
+        (soal.soal_untuk || '').toLowerCase().includes(q) ||
+        (soal.kategori || '').toLowerCase().includes(q) ||
+        (soal.prodi || '').toLowerCase().includes(q)
+      );
+    });
+  }, [soalList, soalSearch]);
+
+  const paginatedSoalList = useMemo(() => {
+    const startIndex = (soalCurrentPage - 1) * soalEntries;
+    return filteredSoalList.slice(startIndex, startIndex + soalEntries);
+  }, [filteredSoalList, soalCurrentPage, soalEntries]);
+
+  const totalSoalPages = Math.ceil(filteredSoalList.length / soalEntries);
+
+
 
   // Health Detail States
   const [tinggiBadan, setTinggiBadan] = useState('');
@@ -1643,6 +1704,8 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     } else if (view.startsWith('daftar_')) {
       const jalurOptions = ['Jalur A', 'Soal Wawancara', 'Jalur B', 'Pasca', 'NERS', 'Profesi Bidan', 'STMIK'];
       const jalur = jalurOptions.find(j => `daftar_${j.toLowerCase().replace(' ', '_')}` === view) || view;
+      setSoalCurrentPage(1);
+      setSoalSearch('');
       fetchSoalList(jalur);
     } else if (view === 'jadwal_ujian') {
       fetchJadwalList();
@@ -1786,7 +1849,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <div className="size-12 bg-emerald-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-600/20">
-              <span className="material-symbols-outlined text-[28px]">assessment</span>
+              <span className="material-symbols-outlined text-[28px] leading-none flex items-center justify-center">assessment</span>
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-800 tracking-tight">Rincian Pendaftaran Mahasiswa Baru</h1>
@@ -1969,7 +2032,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
       <div className="flex items-center gap-4 mb-8">
         <div className="size-12 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm border border-emerald-100">
-          <span className="material-symbols-outlined text-[28px]">post_add</span>
+          <span className="material-symbols-outlined text-[28px] leading-none flex items-center justify-center">post_add</span>
         </div>
         <div>
           <h1 className="text-2xl font-black text-slate-800 tracking-tight">
@@ -2221,7 +2284,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
       <div className="flex items-center gap-4 mb-8">
         <div className="size-12 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm border border-emerald-100">
-          <span className="material-symbols-outlined text-[28px]">calendar_month</span>
+          <span className="material-symbols-outlined text-[28px] leading-none flex items-center justify-center">calendar_month</span>
         </div>
         <div>
           <h1 className="text-2xl font-black text-slate-800 tracking-tight">Pengaturan Jadwal Ujian</h1>
@@ -2257,7 +2320,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   onChange={e => setJadwalForm({ ...jadwalForm, tanggal_ujian: e.target.value })}
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">calendar_today</span>
+                  <span className="material-symbols-outlined text-[20px] leading-none flex items-center justify-center">calendar_today</span>
                 </div>
               </div>
             </div>
@@ -2283,7 +2346,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                      <span className="material-symbols-outlined text-[18px]">schedule</span>
+                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
                     </div>
                   </div>
                 </div>
@@ -2299,7 +2362,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                      <span className="material-symbols-outlined text-[18px]">schedule</span>
+                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
                     </div>
                   </div>
                 </div>
@@ -2326,7 +2389,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_mulai: e.target.value })}
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                      <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
                     </div>
                   </div>
                 </div>
@@ -2343,7 +2406,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_akhir: e.target.value })}
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
-                      <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
                     </div>
                   </div>
                 </div>
@@ -2421,7 +2484,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 {/* Gelombang Badge */}
                 <div className="flex items-center gap-4">
                   <div className="px-3.5 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-100/80 flex items-center gap-2">
-                    <span className={`size-1.5 rounded-full ${isSelected ? 'bg-emerald-500 animate-ping' : 'bg-emerald-400'}`}></span>
+                    <span className={`size-1.5 rounded-full inline-block ${isSelected ? 'bg-emerald-500' : 'bg-emerald-400'}`}></span>
                     Gelombang {j.gelombang}
                   </div>
                 </div>
@@ -2430,7 +2493,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 <div className="flex flex-wrap items-center gap-6 md:gap-8 flex-1">
                   <div className="flex items-center gap-3">
                     <div className="size-9 bg-slate-50 group-hover:bg-emerald-50/50 rounded-xl flex items-center justify-center text-emerald-600 transition-colors shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Tanggal Ujian</p>
@@ -2442,7 +2505,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
                   <div className="flex items-center gap-3">
                     <div className="size-9 bg-slate-50 group-hover:bg-indigo-50/50 rounded-xl flex items-center justify-center text-indigo-600 transition-colors shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">schedule</span>
+                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Waktu Ujian</p>
@@ -2455,7 +2518,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
                   <div className="flex items-center gap-3">
                     <div className="size-9 bg-slate-50 group-hover:bg-amber-50/50 rounded-xl flex items-center justify-center text-amber-600 transition-colors shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">date_range</span>
+                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">date_range</span>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 text-left">Periode Registrasi</p>
@@ -2591,7 +2654,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
       <div className="flex items-center gap-4 mb-8">
         <div className="size-12 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm border border-emerald-100">
-          <span className="material-symbols-outlined text-[28px]">list_alt</span>
+          <span className="material-symbols-outlined text-[28px] leading-none flex items-center justify-center">list_alt</span>
         </div>
         <div>
           <h1 className="text-2xl font-black text-slate-800 tracking-tight">Daftar soal {jalur}</h1>
@@ -2605,8 +2668,17 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
               <span>Tampilkan</span>
-              <select className="bg-transparent border-none focus:ring-0 text-emerald-700 font-bold cursor-pointer py-0 pl-1 pr-7 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23059669%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:14px_14px] bg-no-repeat bg-[position:right_center]">
-                <option>10</option><option>25</option><option>50</option>
+              <select
+                value={soalEntries}
+                onChange={(e) => {
+                  setSoalEntries(Number(e.target.value));
+                  setSoalCurrentPage(1);
+                }}
+                className="bg-transparent border-none focus:ring-0 text-emerald-700 font-bold cursor-pointer py-0 pl-1 pr-7 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23059669%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:14px_14px] bg-no-repeat bg-[position:right_center]"
+              >
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
               </select>
               <span>Baris</span>
             </div>
@@ -2621,6 +2693,11 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             <input
               type="text"
               placeholder="Cari konten soal..."
+              value={soalSearch}
+              onChange={(e) => {
+                setSoalSearch(e.target.value);
+                setSoalCurrentPage(1);
+              }}
               className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all text-sm font-medium text-slate-700 w-64 md:w-80"
             />
             <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center text-slate-400 group-focus-within/search:text-emerald-500 transition-colors">
@@ -2634,11 +2711,15 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
               <div className="size-10 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin"></div>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest animate-pulse">Memuat Data Soal...</p>
             </div>
-          ) : soalList.length === 0 ? (
+          ) : filteredSoalList.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center text-center bg-slate-50/50">
               <span className="material-symbols-outlined text-4xl text-slate-350 mb-1">inventory_2</span>
               <h3 className="text-sm font-bold text-slate-700">Tidak Ada Data</h3>
-              <p className="text-xs text-slate-400">Belum ada soal yang tersedia untuk kategori {jalur}.</p>
+              <p className="text-xs text-slate-400">
+                {soalList.length === 0 
+                  ? `Belum ada soal yang tersedia untuk kategori ${jalur}.`
+                  : 'Tidak ada soal yang cocok dengan pencarian Anda.'}
+              </p>
             </div>
           ) : (
             <table className="w-full text-left border-collapse min-w-[1000px]">
@@ -2663,10 +2744,10 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-                {soalList.map((soal, idx) => (
+                {paginatedSoalList.map((soal, idx) => (
                   <tr key={soal.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-4 py-2.5 text-center align-middle font-bold text-slate-455">
-                      {idx + 1}
+                      {(soalCurrentPage - 1) * soalEntries + idx + 1}
                     </td>
                     <td className="px-4 py-2.5 align-middle">
                       <div className="rich-text-content text-slate-800 leading-relaxed font-semibold" dangerouslySetInnerHTML={{ __html: soal.pertanyaan }}></div>
@@ -2763,12 +2844,46 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         {/* Standard Footer Pagination */}
         <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-500 font-medium">
-            Menampilkan <span className="font-bold text-slate-700">1</span> sampai <span className="font-bold text-slate-700">{soalList.length}</span> dari <span className="font-bold text-slate-700">{soalList.length}</span> data
+            Menampilkan <span className="font-bold text-slate-700">{filteredSoalList.length === 0 ? 0 : (soalCurrentPage - 1) * soalEntries + 1}</span> sampai <span className="font-bold text-slate-700">{Math.min(soalCurrentPage * soalEntries, filteredSoalList.length)}</span> dari <span className="font-bold text-slate-700">{filteredSoalList.length}</span> data
           </p>
           <div className="flex items-center gap-1">
-            <button className="px-3 py-1.5 bg-white border border-slate-200 rounded text-xs font-medium text-slate-400 cursor-not-allowed">Previous</button>
-            <button className="px-3 py-1.5 bg-emerald-600 text-white rounded text-xs font-bold shadow-sm">1</button>
-            <button className="px-3 py-1.5 bg-white border border-slate-200 rounded text-xs font-medium text-slate-600 hover:bg-slate-50">Next</button>
+            <button
+              disabled={soalCurrentPage === 1}
+              onClick={() => setSoalCurrentPage(prev => Math.max(1, prev - 1))}
+              className={`px-3 py-1.5 bg-white border border-slate-200 rounded text-xs font-medium transition-all ${
+                soalCurrentPage === 1
+                  ? 'text-slate-400 cursor-not-allowed'
+                  : 'text-slate-600 hover:bg-slate-50 cursor-pointer'
+              }`}
+            >
+              Previous
+            </button>
+            
+            {Array.from({ length: totalSoalPages }, (_, idx) => idx + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setSoalCurrentPage(page)}
+                className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
+                  soalCurrentPage === page
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              disabled={soalCurrentPage === totalSoalPages || totalSoalPages === 0}
+              onClick={() => setSoalCurrentPage(prev => Math.min(totalSoalPages, prev + 1))}
+              className={`px-3 py-1.5 bg-white border border-slate-200 rounded text-xs font-medium transition-all ${
+                soalCurrentPage === totalSoalPages || totalSoalPages === 0
+                  ? 'text-slate-400 cursor-not-allowed'
+                  : 'text-slate-600 hover:bg-slate-50 cursor-pointer'
+              }`}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
@@ -3562,7 +3677,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <div className="size-12 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm border border-emerald-100">
-              <span className="material-symbols-outlined text-[28px]">assignment</span>
+              <span className="material-symbols-outlined text-[28px] leading-none flex items-center justify-center">assignment</span>
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-800 tracking-tight">Absensi Ujian Tulis (CBT)</h1>
@@ -3606,7 +3721,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 }}
               >
                 <option value="">Pilih Program Studi</option>
-                {prodiOptions.map(opt => (
+                {availableProdisInData.map(opt => (
                   <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
@@ -3757,7 +3872,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <div className="size-12 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm border border-emerald-100">
-              <span className="material-symbols-outlined text-[28px]">description</span>
+              <span className="material-symbols-outlined text-[28px] leading-none flex items-center justify-center">description</span>
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-800 tracking-tight">Berita Acara Ujian Tulis (CBT)</h1>
@@ -4121,7 +4236,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   onChange={(e) => setPengumumanFilterProdi(e.target.value)}
                 >
                   <option value="ALL">ALL</option>
-                  {prodiOptions.map(opt => (
+                  {availableProdisInData.map(opt => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
@@ -4135,6 +4250,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   value={pengumumanFilterStatus}
                   onChange={(e) => setPengumumanFilterStatus(e.target.value)}
                 >
+                  <option value="ALL">ALL</option>
                   <option value="Lulus">Lulus</option>
                   <option value="Tidak Lulus">Tidak Lulus</option>
                   <option value="Cadangan">Cadangan</option>
@@ -4149,6 +4265,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   value={pengumumanFilterRegistrasi}
                   onChange={(e) => setPengumumanFilterRegistrasi(e.target.value)}
                 >
+                  <option value="ALL">ALL</option>
                   <option value="Sudah">Sudah</option>
                   <option value="Belum">Belum</option>
                 </select>
@@ -5812,7 +5929,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             <div className="animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="flex items-center gap-4 mb-8">
                 <div className="size-12 bg-white text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm border border-emerald-100">
-                  <span className="material-symbols-outlined text-[28px]">edit_note</span>
+                  <span className="material-symbols-outlined text-[28px] leading-none flex items-center justify-center">edit_note</span>
                 </div>
                 <div>
                   <h1 className="text-2xl font-black text-slate-800 tracking-tight">Edit Soal Ujian</h1>
@@ -6218,12 +6335,11 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                           <option value="Lulus">LULUS</option>
                           <option value="Tidak Lulus">TIDAK LULUS</option>
                           <option value="Cadangan">CADANGAN</option>
-                          <option value="Lulus Di S1 Kesmas Jalur A Reguler">LULUS DI S1 KESMAS JALUR A REGULER</option>
-                          <option value="Lulus Di S1 Kesmas Jalur B (Transfer)">LULUS DI S1 KESMAS JALUR B (TRANSFER)</option>
-                          <option value="Lulus Di S1 Keperawatan">LULUS DI S1 KEPERAWATAN</option>
-                          <option value="Lulus Di Profesi Ners">LULUS DI PROFESI NERS</option>
-                          <option value="Lulus Di S1 Kebidanan">LULUS DI S1 KEBIDANAN</option>
-                          <option value="Lulus Di Profesi Bidan">LULUS DI PROFESI BIDAN</option>
+                          {prodiOptions.map(prodi => (
+                            <option key={prodi} value={`Lulus Di ${prodi}`}>
+                              LULUS DI {prodi.toUpperCase()}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>

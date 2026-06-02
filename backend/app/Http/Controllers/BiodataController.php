@@ -120,6 +120,14 @@ class BiodataController extends Controller
                 'Lulus Di Profesi Ners',
                 'Lulus Di S1 Kebidanan',
                 'Lulus Di Profesi Bidan',
+                'Lulus Di S1 Ilmu Komunikasi',
+                'Lulus Di S1 Ilmu Hukum',
+                'Lulus Di S1 Sistem Informasi',
+                'Lulus Di S1 Teknik Informatika',
+                'Lulus Di S2 Kesehatan Masyarakat',
+                'Lulus Di D3 Rekam Medis & Informasi Kesehatan (RMIK)',
+                'Lulus Di D4 Manajemen Informasi Kesehatan (MIK)',
+                'Lulus Di D3 Kebidanan',
                 'S1 Kesmas Jalur A Reguler', 
                 'S1 Kesmas Jalur B (Transfer)',
                 'S1 Keperawatan',
@@ -129,50 +137,11 @@ class BiodataController extends Controller
             ];
 
             $isManualApproval = ($r->examResult->keterangan ?? '') === 'Update Status Manual oleh Admin';
-            if ($status_cbt && ($isManualApproval || in_array($status_cbt, $manualStatuses))) {
+            $isLulusDi = strpos($status_cbt, 'Lulus Di') === 0;
+            if ($status_cbt && ($isManualApproval || $isLulusDi || in_array($status_cbt, $manualStatuses))) {
                 $finalStatus = $status_cbt;
             } else {
-                if ($status_cbt === 'Lulus') {
-                    $hasWawancara = $this->checkHasWawancara($r->program_studi);
-
-                    // Health check evaluation
-                    $kesehatanPassed = false;
-                    $kesehatanFailed = false;
-                    if ($hasKesehatan) {
-                        if ($status_kesehatan === 'Sehat' || $status_kesehatan === 'Lulus') {
-                            $kesehatanPassed = true;
-                        } elseif ($status_kesehatan && !in_array($status_kesehatan, ['Menunggu'])) {
-                            $kesehatanFailed = true;
-                        }
-                    } else {
-                        $kesehatanPassed = true;
-                    }
-
-                    // Wawancara check evaluation
-                    $wawancaraPassed = false;
-                    $wawancaraFailed = false;
-                    if ($hasWawancara) {
-                        if ($hasil_wawancara === 'LULUS') {
-                            $wawancaraPassed = true;
-                        } elseif ($hasil_wawancara === 'TIDAK LULUS') {
-                            $wawancaraFailed = true;
-                        }
-                    } else {
-                        $wawancaraPassed = true;
-                    }
-
-                    if ($kesehatanFailed || $wawancaraFailed) {
-                        $finalStatus = 'Tidak Lulus';
-                    } elseif ($kesehatanPassed && $wawancaraPassed) {
-                        $finalStatus = 'Lulus';
-                    } else {
-                        $finalStatus = 'Proses';
-                    }
-                } elseif ($status_cbt === 'Tidak Lulus') {
-                    $finalStatus = 'Tidak Lulus';
-                } else {
-                    $finalStatus = 'Proses';
-                }
+                $finalStatus = 'Proses';
             }
 
             // Jika biodata ada, gunakan array-nya, jika tidak buat array default

@@ -21,10 +21,13 @@ class AdminKesehatanController extends Controller
             $gelombang = Registration::whereNotNull('gelombang')->distinct()->orderBy('gelombang')->pluck('gelombang');
         }
 
-        $prodi = Prodi::orderBy('nama_prodi')->pluck('nama_prodi');
-        if ($prodi->isEmpty()) {
-            $prodi = Registration::whereNotNull('program_studi')->distinct()->orderBy('program_studi')->pluck('program_studi');
-        }
+        $prodiDb = Prodi::orderBy('nama_prodi')->pluck('nama_prodi')->toArray();
+        $prodiReg = Registration::whereNotNull('program_studi')->distinct()->pluck('program_studi')->toArray();
+        $prodi = collect(array_merge($prodiDb, $prodiReg))
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
 
         $periode = Periode::pluck('kode_periode')
             ->merge(Registration::whereNotNull('gelombang')->distinct()->pluck('gelombang'))
@@ -55,7 +58,28 @@ class AdminKesehatanController extends Controller
         }
 
         if ($request->has('prodi') && $request->prodi != '') {
-            $query->where('program_studi', 'LIKE', '%' . $request->prodi . '%');
+            $prodi = $request->prodi;
+            $prodiLower = strtolower($prodi);
+            
+            if ($prodiLower === 'si' || strpos($prodiLower, 'sistem informasi') !== false) {
+                $query->where(function ($q) {
+                    $q->where('program_studi', 'LIKE', '% SI %')
+                      ->orWhere('program_studi', 'LIKE', 'SI %')
+                      ->orWhere('program_studi', 'LIKE', '% SI')
+                      ->orWhere('program_studi', '=', 'SI')
+                      ->orWhere('program_studi', 'LIKE', '%Sistem Informasi%');
+                });
+            } elseif ($prodiLower === 'ti' || strpos($prodiLower, 'teknik informatika') !== false) {
+                $query->where(function ($q) {
+                    $q->where('program_studi', 'LIKE', '% TI %')
+                      ->orWhere('program_studi', 'LIKE', 'TI %')
+                      ->orWhere('program_studi', 'LIKE', '% TI')
+                      ->orWhere('program_studi', '=', 'TI')
+                      ->orWhere('program_studi', 'LIKE', '%Teknik Informatika%');
+                });
+            } else {
+                $query->where('program_studi', 'LIKE', '%' . $prodi . '%');
+            }
         }
 
         if ($request->has('tpa_only') && $request->tpa_only == '1') {
@@ -97,6 +121,14 @@ class AdminKesehatanController extends Controller
                 'Lulus Di Profesi Ners',
                 'Lulus Di S1 Kebidanan',
                 'Lulus Di Profesi Bidan',
+                'Lulus Di S1 Ilmu Komunikasi',
+                'Lulus Di S1 Ilmu Hukum',
+                'Lulus Di S1 Sistem Informasi',
+                'Lulus Di S1 Teknik Informatika',
+                'Lulus Di S2 Kesehatan Masyarakat',
+                'Lulus Di D3 Rekam Medis & Informasi Kesehatan (RMIK)',
+                'Lulus Di D4 Manajemen Informasi Kesehatan (MIK)',
+                'Lulus Di D3 Kebidanan',
                 'S1 Kesmas Jalur A Reguler', 
                 'S1 Kesmas Jalur B (Transfer)',
                 'S1 Keperawatan',
@@ -106,50 +138,11 @@ class AdminKesehatanController extends Controller
             ];
 
             $isManualApproval = ($reg->examResult->keterangan ?? '') === 'Update Status Manual oleh Admin';
-            if ($status_cbt && ($isManualApproval || in_array($status_cbt, $manualStatuses))) {
+            $isLulusDi = strpos($status_cbt, 'Lulus Di') === 0;
+            if ($status_cbt && ($isManualApproval || $isLulusDi || in_array($status_cbt, $manualStatuses))) {
                 $finalStatus = $status_cbt;
             } else {
-                if ($status_cbt === 'Lulus') {
-                    $hasWawancara = $this->checkHasWawancara($reg->program_studi);
-
-                    // Health check evaluation
-                    $kesehatanPassed = false;
-                    $kesehatanFailed = false;
-                    if ($hasKesehatan) {
-                        if ($status_kesehatan === 'Sehat' || $status_kesehatan === 'Lulus') {
-                            $kesehatanPassed = true;
-                        } elseif ($status_kesehatan && !in_array($status_kesehatan, ['Menunggu'])) {
-                            $kesehatanFailed = true;
-                        }
-                    } else {
-                        $kesehatanPassed = true;
-                    }
-
-                    // Wawancara check evaluation
-                    $wawancaraPassed = false;
-                    $wawancaraFailed = false;
-                    if ($hasWawancara) {
-                        if ($hasil_wawancara === 'LULUS') {
-                            $wawancaraPassed = true;
-                        } elseif ($hasil_wawancara === 'TIDAK LULUS') {
-                            $wawancaraFailed = true;
-                        }
-                    } else {
-                        $wawancaraPassed = true;
-                    }
-
-                    if ($kesehatanFailed || $wawancaraFailed) {
-                        $finalStatus = 'Tidak Lulus';
-                    } elseif ($kesehatanPassed && $wawancaraPassed) {
-                        $finalStatus = 'Lulus';
-                    } else {
-                        $finalStatus = 'Proses';
-                    }
-                } elseif ($status_cbt === 'Tidak Lulus') {
-                    $finalStatus = 'Tidak Lulus';
-                } else {
-                    $finalStatus = 'Proses';
-                }
+                $finalStatus = 'Proses';
             }
 
             $details = $reg->examResult->details ?? null;
@@ -319,6 +312,14 @@ class AdminKesehatanController extends Controller
             'Lulus Di Profesi Ners',
             'Lulus Di S1 Kebidanan',
             'Lulus Di Profesi Bidan',
+            'Lulus Di S1 Ilmu Komunikasi',
+            'Lulus Di S1 Ilmu Hukum',
+            'Lulus Di S1 Sistem Informasi',
+            'Lulus Di S1 Teknik Informatika',
+            'Lulus Di S2 Kesehatan Masyarakat',
+            'Lulus Di D3 Rekam Medis & Informasi Kesehatan (RMIK)',
+            'Lulus Di D4 Manajemen Informasi Kesehatan (MIK)',
+            'Lulus Di D3 Kebidanan',
             'S1 Kesmas Jalur A Reguler', 
             'S1 Kesmas Jalur B (Transfer)',
             'S1 Keperawatan',
@@ -327,54 +328,13 @@ class AdminKesehatanController extends Controller
             'Profesi Bidan'
         ];
         $isManualApproval = ($result->keterangan ?? '') === 'Update Status Manual oleh Admin';
+        $isLulusDi = strpos($status_cbt, 'Lulus Di') === 0;
 
         $finalStatus = 'Proses';
-        if ($status_cbt && ($isManualApproval || in_array($status_cbt, $manualStatuses))) {
+        if ($status_cbt && ($isManualApproval || $isLulusDi || in_array($status_cbt, $manualStatuses))) {
             $finalStatus = $status_cbt;
         } else {
-            if ($status_cbt === 'Lulus') {
-                $prodi = $biodata->registration->program_studi ?? null;
-                $hasKesehatan = $this->checkHasKesehatan($prodi);
-                $hasWawancara = $this->checkHasWawancara($prodi);
-
-                // Health check evaluation
-                $kesehatanPassed = false;
-                $kesehatanFailed = false;
-                if ($hasKesehatan) {
-                    if ($status_kesehatan === 'Sehat' || $status_kesehatan === 'Lulus') {
-                        $kesehatanPassed = true;
-                    } elseif ($status_kesehatan && !in_array($status_kesehatan, ['Menunggu'])) {
-                        $kesehatanFailed = true;
-                    }
-                } else {
-                    $kesehatanPassed = true;
-                }
-
-                // Wawancara check evaluation
-                $wawancaraPassed = false;
-                $wawancaraFailed = false;
-                if ($hasWawancara) {
-                    if ($hasil_wawancara === 'LULUS') {
-                        $wawancaraPassed = true;
-                    } elseif ($hasil_wawancara === 'TIDAK LULUS') {
-                        $wawancaraFailed = true;
-                    }
-                } else {
-                    $wawancaraPassed = true;
-                }
-
-                if ($kesehatanFailed || $wawancaraFailed) {
-                    $finalStatus = 'Tidak Lulus';
-                } elseif ($kesehatanPassed && $wawancaraPassed) {
-                    $finalStatus = 'Lulus';
-                } else {
-                    $finalStatus = 'Proses';
-                }
-            } elseif ($status_cbt === 'Tidak Lulus') {
-                $finalStatus = 'Tidak Lulus';
-            } else {
-                $finalStatus = 'Proses';
-            }
+            $finalStatus = 'Proses';
         }
 
         return response()->json([
