@@ -696,3 +696,21 @@ fix
 .reveal-delay-400 { transition-delay: 400ms; }
 .reveal-delay-500 { transition-delay: 500ms; }
 
+/* Custom UHTP Gradient Utilities for Tailwind v4 Compatibility */
+.uhtp-bg-gradient-tr {
+  background: linear-gradient(135deg, #00857A, #00695C) !important;
+}
+
+.uhtp-bg-gradient-r {
+  background: linear-gradient(90deg, #00857A, #00695C) !important;
+}
+
+.uhtp-bg-gradient-r:hover:not(:disabled) {
+  background: linear-gradient(90deg, #00695C, #00857A) !important;
+}
+
+.uhtp-profile-ring-gradient {
+  background: linear-gradient(135deg, #00857A, rgba(255, 255, 255, 0.1), #D4AF37) !important;
+}
+
+
