@@ -706,7 +706,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Modern Header Card */}
-        <div className="relative bg-[#f0f9f8] rounded-3xl p-6 lg:p-8 shadow-sm border border-[#e0f2f1] overflow-hidden group">
+        <div className="relative bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
           
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -719,12 +719,12 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <span className="px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest rounded border border-primary/15">Tahap Akhir</span>
                   <h3 className="text-xl font-bold text-slate-800 tracking-tight uppercase font-display">Registrasi Ulang</h3>
                 </div>
-                <p className="text-xs text-slate-500 font-medium">Lengkapi administrasi untuk mendapatkan NIM Resmi.</p>
+                <p className="text-xs text-slate-400 font-medium">Lengkapi administrasi untuk mendapatkan NIM Resmi.</p>
               </div>
             </div>
             <button 
               onClick={() => setCurrentView('dashboard')} 
-              className="size-10 flex items-center justify-center bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl transition-all duration-300 cursor-pointer shadow-xs border border-slate-100"
+              className="size-10 flex items-center justify-center bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl transition-all duration-300 cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>
@@ -1375,7 +1375,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   (statusRegistrasi !== 'Belum Registrasi' && statusRegistrasi !== 'Ditolak') 
                   ? 'bg-slate-50/80 border-slate-100 opacity-90 cursor-not-allowed'
                   : isLulus
-                    ? 'bg-[#f0faf9] border-[#e0f2f1] hover:border-primary/40 hover:bg-[#e0f2f1]/80 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer' 
+                    ? 'bg-white border-slate-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer' 
                     : 'bg-slate-100/60 border-slate-100/50 opacity-60 cursor-not-allowed'
                 }`}
               >
