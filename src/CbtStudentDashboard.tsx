@@ -632,7 +632,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <button 
                     type="submit"
                     disabled={isSubmittingWawancara}
-                    className="px-8 py-3.5 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-xl shadow-lg shadow-primary/20 font-bold text-xs uppercase tracking-wider transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                    className="px-8 py-3.5 bg-gradient-to-r from-[#00857A] to-[#00695C] hover:from-[#00695C] hover:to-[#00857A] text-white rounded-xl shadow-lg shadow-primary/20 font-bold text-xs uppercase tracking-wider transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
                     {isSubmittingWawancara ? (
                       <>
@@ -796,7 +796,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
               </div>
 
               {/* Bank Account Info Card */}
-              <div className="p-6 bg-gradient-to-tr from-primary to-primary-dark rounded-2xl text-white space-y-4 shadow-lg shadow-primary/10 group/bank">
+              <div className="p-6 bg-gradient-to-tr from-[#00857A] to-[#00695C] rounded-2xl text-white space-y-4 shadow-lg shadow-primary/10 group/bank">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-[20px] group-hover/bank:rotate-12 transition-transform">account_balance</span>
                   <span className="text-[9px] font-bold uppercase tracking-widest">Rekening Pembayaran</span>
@@ -864,7 +864,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 <button 
                   type="submit" 
                   disabled={isSubmittingRegistrasi}
-                  className="w-full group relative py-3.5 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-primary/25 disabled:opacity-50 active:scale-98 overflow-hidden cursor-pointer"
+                  className="w-full group relative py-3.5 bg-gradient-to-r from-[#00857A] to-[#00695C] hover:from-[#00695C] hover:to-[#00857A] text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-primary/25 disabled:opacity-50 active:scale-98 overflow-hidden cursor-pointer"
                 >
                   <div className="relative z-10 flex items-center justify-center gap-2">
                     {isSubmittingRegistrasi ? (
@@ -1079,11 +1079,11 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
 
         {/* Profile Section */}
         <div className="mb-6 text-center px-2 relative z-10">
-          <div className="relative size-20 mx-auto rounded-full p-1 bg-gradient-to-tr from-primary via-white/10 to-gold shadow-2xl mb-4 transition-transform duration-500 hover:rotate-6">
+          <div className="relative size-20 mx-auto rounded-full p-1 bg-gradient-to-tr from-[#00857A] via-white/10 to-[#D4AF37] shadow-2xl mb-4 transition-transform duration-500 hover:rotate-6">
             {photoUrl ? (
               <img src={photoUrl} alt="Profil" className="w-full h-full rounded-full object-cover" />
             ) : (
-              <div className="w-full h-full rounded-full flex items-center justify-center bg-gradient-to-tr from-primary to-primary-dark text-white">
+              <div className="w-full h-full rounded-full flex items-center justify-center bg-gradient-to-tr from-[#00857A] to-[#00695C] text-white">
                 <span className="material-symbols-outlined text-[28px]">person</span>
               </div>
             )}
