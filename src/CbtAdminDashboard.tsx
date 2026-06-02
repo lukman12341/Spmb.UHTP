@@ -2055,7 +2055,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
               <span className="material-symbols-outlined text-[18px]">edit_square</span>
               Konten Pertanyaan
             </h4>
-            <div className="tinymce-editor-container border-2 border-slate-200 rounded-2xl overflow-hidden focus-within:border-emerald-500 transition-all">
+            <div className="tinymce-editor-container border-2 border-slate-200 rounded-2xl overflow-hidden focus-within:border-primary transition-all">
               <CKEditor
                 editor={ClassicEditor as any}
                 data={soalForm.pertanyaan}
@@ -2124,7 +2124,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kunci Jawaban</label>
                   <div className="relative flex items-center">
                     <select 
-                      className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
+                      className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
                       value={soalForm.jawaban} 
                       onChange={e => setSoalForm({ ...soalForm, jawaban: e.target.value })}
                     >
@@ -2141,7 +2141,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Soal Untuk</label>
                 <div className="relative flex items-center">
                   <select 
-                    className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
+                    className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
                     value={soalForm.soal_untuk} 
                     onChange={e => setSoalForm({ ...soalForm, soal_untuk: e.target.value })}
                   >
@@ -2162,7 +2162,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kategori Wawancara</label>
                     <div className="relative flex items-center">
                       <select
-                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                         value={soalForm.kategori}
                         onChange={e => setSoalForm({ ...soalForm, kategori: e.target.value })}
                       >
@@ -2177,7 +2177,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Prodi</label>
                     <div className="relative flex items-center">
                       <select
-                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                         value={soalForm.prodi}
                         onChange={e => setSoalForm({ ...soalForm, prodi: e.target.value })}
                       >
@@ -2201,7 +2201,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
                     <div className="relative flex items-center">
                       <select
-                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                         value={(soalForm as any).status}
                         onChange={e => setSoalForm({ ...soalForm, status: e.target.value })}
                       >
@@ -2218,7 +2218,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tipe Soal</label>
                     <div className="relative flex items-center">
                       <select 
-                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
                         value={soalForm.type_soal} 
                         onChange={e => setSoalForm({ ...soalForm, type_soal: e.target.value })}
                       >
@@ -2232,7 +2232,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
                     <div className="relative flex items-center">
                       <select
-                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
+                        className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer"
                         value={(soalForm as any).status}
                         onChange={e => setSoalForm({ ...soalForm, status: e.target.value })}
                       >
@@ -2305,7 +2305,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-500 ml-0.5">Gelombang</label>
-              <input type="text" placeholder="Contoh: 20261" className="w-full px-4 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 shadow-inner/5" value={jadwalForm.gelombang} onChange={e => setJadwalForm({ ...jadwalForm, gelombang: e.target.value })} />
+              <input type="text" placeholder="Contoh: 20261" className="w-full px-4 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 shadow-inner/5" value={jadwalForm.gelombang} onChange={e => setJadwalForm({ ...jadwalForm, gelombang: e.target.value })} />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-500 ml-0.5">Tanggal Ujian</label>
@@ -2315,11 +2315,11 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   onClick={(e) => {
                     try { (e.target as HTMLInputElement).showPicker(); } catch { }
                   }}
-                  className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+                  className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
                   value={jadwalForm.tanggal_ujian}
                   onChange={e => setJadwalForm({ ...jadwalForm, tanggal_ujian: e.target.value })}
                 />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
                   <span className="material-symbols-outlined text-[20px] leading-none flex items-center justify-center">calendar_today</span>
                 </div>
               </div>
@@ -2343,9 +2343,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       readOnly
                       onClick={() => setActiveTimePicker({ field: 'jam_mulai', label: 'Pilih Jam Mulai' })}
                       placeholder="08:00:00"
-                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
                       <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
                     </div>
                   </div>
@@ -2359,9 +2359,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       readOnly
                       onClick={() => setActiveTimePicker({ field: 'jam_berakhir', label: 'Pilih Jam Berakhir' })}
                       placeholder="21:00:00"
-                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
                       <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
                     </div>
                   </div>
@@ -2384,11 +2384,11 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       onClick={(e) => {
                         try { (e.target as HTMLInputElement).showPicker(); } catch { }
                       }}
-                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
                       value={jadwalForm.tanggal_registrasi_mulai}
                       onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_mulai: e.target.value })}
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
                       <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
                     </div>
                   </div>
@@ -2401,11 +2401,11 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       onClick={(e) => {
                         try { (e.target as HTMLInputElement).showPicker(); } catch { }
                       }}
-                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
                       value={jadwalForm.tanggal_registrasi_akhir}
                       onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_akhir: e.target.value })}
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-emerald-500 transition-colors">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
                       <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
                     </div>
                   </div>
@@ -2448,8 +2448,8 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             <span className="font-bold text-emerald-600">{jadwalList.length}</span>
           </div>
           <div className="relative group/search">
-            <input type="text" placeholder="Cari jadwal..." className="pl-10 pr-4 py-2.5 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl text-xs focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all w-56 shadow-sm/5 font-semibold text-slate-700" />
-            <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center text-slate-400 group-focus-within/search:text-emerald-500 transition-colors pointer-events-none">
+            <input type="text" placeholder="Cari jadwal..." className="pl-10 pr-4 py-2.5 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl text-xs focus:bg-white focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all w-56 shadow-sm/5 font-semibold text-slate-700" />
+            <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center text-slate-400 group-focus-within/search:text-primary transition-colors pointer-events-none">
               <span className="material-symbols-outlined text-[18px]">search</span>
             </div>
           </div>
@@ -2698,9 +2698,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 setSoalSearch(e.target.value);
                 setSoalCurrentPage(1);
               }}
-              className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all text-sm font-medium text-slate-700 w-64 md:w-80"
+              className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all text-sm font-medium text-slate-700 w-64 md:w-80"
             />
-            <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center text-slate-400 group-focus-within/search:text-emerald-500 transition-colors">
+            <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center text-slate-400 group-focus-within/search:text-primary transition-colors">
               <span className="material-symbols-outlined text-[18px]">search</span>
             </div>
           </div>
@@ -3696,7 +3696,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             <div className="flex-1 min-w-[240px]">
               <label className="block text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">Gelombang</label>
               <select
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-sm font-semibold text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_15px_center]"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-sm font-semibold text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_15px_center]"
                 value={absensiFilterGelombang}
                 onChange={e => {
                   setAbsensiFilterGelombang(e.target.value);
@@ -3713,7 +3713,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             <div className="flex-1 min-w-[240px]">
               <label className="block text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">Program Studi</label>
               <select
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-sm font-semibold text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_15px_center]"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-sm font-semibold text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_15px_center]"
                 value={absensiFilterProdi}
                 onChange={e => {
                   setAbsensiFilterProdi(e.target.value);
@@ -3788,7 +3788,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       setAbsensiSearch(e.target.value);
                       setAbsensiCurrentPage(1);
                     }}
-                    className="px-3 py-1 border border-slate-300 rounded-lg outline-none focus:border-emerald-500"
+                    className="px-3 py-1 border border-slate-300 rounded-lg outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
               </div>
@@ -3891,7 +3891,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             <div className="flex-1 min-w-[240px]">
               <label className="block text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">Gelombang</label>
               <select
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-sm font-semibold text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_15px_center]"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-sm font-semibold text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_15px_center]"
                 value={beritaFilterGelombang}
                 onChange={e => {
                   setBeritaFilterGelombang(e.target.value);
@@ -3908,7 +3908,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             <div className="flex-1 min-w-[240px]">
               <label className="block text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">Program Studi</label>
               <select
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-sm font-semibold text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_15px_center]"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-sm font-semibold text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_15px_center]"
                 value={beritaFilterProdi}
                 onChange={e => {
                   setBeritaFilterProdi(e.target.value);
@@ -3979,7 +3979,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       type="text"
                       value={beritaMateriUjian}
                       onChange={e => setBeritaMateriUjian(e.target.value)}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-500 transition-all shadow-sm"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
                     />
                   </div>
                   <div>
@@ -3988,7 +3988,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       type="date"
                       value={beritaHariTanggal}
                       onChange={e => setBeritaHariTanggal(e.target.value)}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-500 transition-all shadow-sm"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
                     />
                   </div>
                   <div>
@@ -3998,7 +3998,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       placeholder="e.g. 08:00:00"
                       value={beritaJamMulai}
                       onChange={e => setBeritaJamMulai(e.target.value)}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-500 transition-all shadow-sm"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
                     />
                   </div>
                   <div>
@@ -4008,7 +4008,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       placeholder="e.g. 21:00:00"
                       value={beritaJamSelesai}
                       onChange={e => setBeritaJamSelesai(e.target.value)}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-500 transition-all shadow-sm"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
                     />
                   </div>
                   <div>
@@ -4018,7 +4018,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       placeholder={`Default: ${filteredBerita.length}`}
                       value={beritaHadirUjianCount}
                       onChange={e => setBeritaHadirUjianCount(e.target.value === '' ? '' : Number(e.target.value))}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-emerald-500 transition-all shadow-sm"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-sm"
                     />
                   </div>
                 </div>
@@ -5952,7 +5952,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       <span className="material-symbols-outlined text-[18px]">edit_square</span>
                       Konten Pertanyaan
                     </h4>
-                    <div className="tinymce-editor-container border-2 border-slate-200 rounded-2xl overflow-hidden focus-within:border-emerald-500 transition-all">
+                    <div className="tinymce-editor-container border-2 border-slate-200 rounded-2xl overflow-hidden focus-within:border-primary transition-all">
                       <CKEditor
                         editor={ClassicEditor as any}
                         data={soalForm.pertanyaan}
@@ -6330,7 +6330,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                         <select
                           value={statusKelulusan}
                           onChange={(e) => setStatusKelulusan(e.target.value)}
-                          className="w-full pl-3 pr-10 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-slate-700 font-bold text-[13px] shadow-sm"
+                          className="w-full pl-3 pr-10 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-700 font-bold text-[13px] shadow-sm"
                         >
                           <option value="Lulus">LULUS</option>
                           <option value="Tidak Lulus">TIDAK LULUS</option>
@@ -6363,7 +6363,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                             }
                             setNoWhatsappKelulusan(val);
                           }}
-                          className="w-full pl-10 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-slate-700 font-medium text-[13px] shadow-sm"
+                          className="w-full pl-10 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-700 font-medium text-[13px] shadow-sm"
                           placeholder="Contoh: 628123456789"
                         />
                       </div>

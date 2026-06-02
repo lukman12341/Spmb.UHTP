@@ -102,7 +102,7 @@ const CbtLogin: React.FC<CbtLoginProps> = ({ role, onBack, onLogin }) => {
 
             <div className="space-y-4">
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                   <span className="material-symbols-outlined text-[20px]">person</span>
                 </div>
                 <input
@@ -112,13 +112,13 @@ const CbtLogin: React.FC<CbtLoginProps> = ({ role, onBack, onLogin }) => {
                   onChange={(e) => setNoUjian(e.target.value)}
                   readOnly={!userFocused}
                   onFocus={() => setUserFocused(true)}
-                  className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-[20px] text-slate-700 font-bold text-sm transition-all outline-none"
+                  className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white rounded-[20px] text-slate-700 font-bold text-sm transition-all outline-none"
                   autoComplete={role === 'panitia' ? 'username' : 'off'}
                 />
               </div>
 
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                   <span className="material-symbols-outlined text-[20px]">lock</span>
                 </div>
                 <input
@@ -128,7 +128,7 @@ const CbtLogin: React.FC<CbtLoginProps> = ({ role, onBack, onLogin }) => {
                   onChange={(e) => setPassword(e.target.value)}
                   readOnly={!passwordFocused}
                   onFocus={() => setPasswordFocused(true)}
-                  className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-[20px] text-slate-700 font-bold text-sm transition-all outline-none"
+                  className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-white rounded-[20px] text-slate-700 font-bold text-sm transition-all outline-none"
                   autoComplete="current-password"
                 />
               </div>
