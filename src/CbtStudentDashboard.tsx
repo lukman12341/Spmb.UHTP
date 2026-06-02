@@ -706,7 +706,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Modern Header Card */}
-        <div className="relative bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-slate-100 overflow-hidden group">
+        <div className="relative bg-[#f0f9f8] rounded-3xl p-6 lg:p-8 shadow-sm border border-[#e0f2f1] overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
           
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -719,12 +719,12 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <span className="px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest rounded border border-primary/15">Tahap Akhir</span>
                   <h3 className="text-xl font-bold text-slate-800 tracking-tight uppercase font-display">Registrasi Ulang</h3>
                 </div>
-                <p className="text-xs text-slate-400 font-medium">Lengkapi administrasi untuk mendapatkan NIM Resmi.</p>
+                <p className="text-xs text-slate-500 font-medium">Lengkapi administrasi untuk mendapatkan NIM Resmi.</p>
               </div>
             </div>
             <button 
               onClick={() => setCurrentView('dashboard')} 
-              className="size-10 flex items-center justify-center bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl transition-all duration-300 cursor-pointer"
+              className="size-10 flex items-center justify-center bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl transition-all duration-300 cursor-pointer shadow-xs border border-slate-100"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>
@@ -734,14 +734,14 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           
           {/* Left Column: Instructions & Info */}
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col space-y-8 animate-in slide-in-from-left-8 duration-700">
+          <div className="bg-[#f0f9f8] rounded-3xl p-8 shadow-sm border border-[#e0f2f1] flex flex-col space-y-8 animate-in slide-in-from-left-8 duration-700">
             <div className="space-y-4">
               <div className="size-12 rounded-xl bg-primary text-white flex items-center justify-center shadow-md shadow-primary/20">
                 <span className="material-symbols-outlined text-[24px]">info</span>
               </div>
               <div className="space-y-1">
                 <h3 className="text-base font-bold text-slate-800 uppercase tracking-tight font-display">Instruksi Pembayaran</h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                <p className="text-xs text-slate-650 leading-relaxed font-medium">
                   Silakan unggah bukti transfer atau kwitansi pembayaran registrasi ulang Anda untuk mendapatkan Nomor Induk Mahasiswa (NIM).
                 </p>
               </div>
@@ -750,7 +750,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
             <div className="space-y-6">
               {/* Registration Period Info Box */}
               {schedule && schedule.tanggal_registrasi_mulai && schedule.tanggal_registrasi_akhir && (
-                <div className="p-5 bg-amber-50/50 rounded-2xl border border-amber-200/60 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="p-5 bg-amber-50/70 rounded-2xl border border-amber-200/80 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500 shadow-xs">
                   <div className="flex items-center gap-3 text-amber-700">
                     <span className="material-symbols-outlined text-[20px]">calendar_month</span>
                     <span className="text-[9px] font-bold uppercase tracking-widest">Batas Waktu Registrasi Ulang</span>
@@ -775,7 +775,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 </div>
               )}
 
-              <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-4">
+              <div className="p-5 bg-white rounded-2xl border border-[#e0f2f1] space-y-4 shadow-xs">
                 <div className="flex items-center gap-3 text-primary">
                   <span className="material-symbols-outlined text-[20px]">check_circle</span>
                   <span className="text-[9px] font-bold uppercase tracking-widest">Ketentuan File</span>
@@ -787,7 +787,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                     'Data transfer harus terlihat jelas',
                     'Verifikasi dilakukan dalam 1x24 jam'
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-[11px] text-slate-600 font-medium">
+                    <li key={i} className="flex items-center gap-3 text-[11px] text-slate-650 font-medium">
                       <div className="size-1 bg-primary rounded-full"></div>
                       {text}
                     </li>
@@ -811,7 +811,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
           </div>
 
           {/* Right Column: Upload Form */}
-          <div className="bg-white rounded-3xl p-8 lg:p-10 shadow-sm border border-slate-100 flex flex-col animate-in slide-in-from-right-8 duration-700">
+          <div className="bg-[#f0f9f8] rounded-3xl p-8 lg:p-10 shadow-sm border border-[#e0f2f1] flex flex-col animate-in slide-in-from-right-8 duration-700">
             <form onSubmit={handleRegistrasiSubmit} className="flex-1 flex flex-col space-y-6">
               <div className="space-y-6 flex-1">
                 <div className="flex items-center justify-between">
@@ -824,7 +824,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <span className="text-[9px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-md border border-primary/15">Wajib</span>
                 </div>
 
-                <div className={`relative flex-1 group transition-all duration-300 border-2 border-dashed rounded-2xl p-6 text-center flex flex-col items-center justify-center min-h-[260px] ${buktiRegistrasiFile ? 'border-primary bg-primary/3' : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50'}`}>
+                <div className={`relative flex-1 group transition-all duration-300 border-2 border-dashed rounded-2xl p-6 text-center flex flex-col items-center justify-center min-h-[260px] ${buktiRegistrasiFile ? 'border-primary bg-primary/5' : 'border-[#b2dfdb] bg-white hover:bg-white/85 shadow-xs'}`}>
                   <input 
                     type="file" 
                     onChange={e => {
@@ -842,7 +842,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   />
                   
                   <div className="relative z-10 space-y-4">
-                    <div className={`size-14 mx-auto rounded-xl flex items-center justify-center transition-all duration-300 ${buktiRegistrasiFile ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-350 shadow-xs'}`}>
+                    <div className={`size-14 mx-auto rounded-xl flex items-center justify-center transition-all duration-300 ${buktiRegistrasiFile ? 'bg-primary text-white shadow-md' : 'bg-emerald-50 text-slate-500 border border-emerald-100 shadow-xs'}`}>
                       <span className="material-symbols-outlined text-[28px]">
                         {buktiRegistrasiFile ? 'check_circle' : 'add_photo_alternate'}
                       </span>
@@ -879,7 +879,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                 <button 
                   type="button" 
                   onClick={() => setCurrentView('dashboard')}
-                  className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-650 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer"
+                  className="w-full py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-xs"
                 >
                   Batal
                 </button>
@@ -1375,7 +1375,7 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   (statusRegistrasi !== 'Belum Registrasi' && statusRegistrasi !== 'Ditolak') 
                   ? 'bg-slate-50/80 border-slate-100 opacity-90 cursor-not-allowed'
                   : isLulus
-                    ? 'bg-white border-slate-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer' 
+                    ? 'bg-[#f0faf9] border-[#e0f2f1] hover:border-primary/40 hover:bg-[#e0f2f1]/80 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer' 
                     : 'bg-slate-100/60 border-slate-100/50 opacity-60 cursor-not-allowed'
                 }`}
               >
