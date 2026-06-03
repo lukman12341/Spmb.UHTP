@@ -3,6 +3,33 @@ import { API_BASE_URL } from './config';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
+const getPageNumbers = (currentPage: number, totalPages: number) => {
+  const delta = 1;
+  const range = [];
+  const rangeWithDots = [];
+  let l;
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+      range.push(i);
+    }
+  }
+
+  for (let i of range) {
+    if (l) {
+      if (i - l === 2) {
+        rangeWithDots.push(l + 1);
+      } else if (i - l > 2) {
+        rangeWithDots.push('...');
+      }
+    }
+    rangeWithDots.push(i);
+    l = i;
+  }
+
+  return rangeWithDots;
+};
+
 interface CbtAdminDashboardProps {
   onLogout: () => void;
   adminName?: string;
@@ -197,6 +224,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   // Navigation State
   const [view, setView] = useState<string>('dashboard');
   const [backView, setBackView] = useState<string>('proses_kesehatan');
+  const prevViewRef = React.useRef(view);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -366,6 +394,74 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   }, []);
 
   useEffect(() => {
+    const mainViews = [
+      'dashboard', 'detail_spmb', 'jadwal_ujian', 'tambah_soal', 
+      'daftar_jalur_a', 'daftar_jalur_b', 'daftar_pascasarjana', 
+      'proses_kesehatan', 'rekap_kesehatan', 'proses_wawancara', 
+      'rekap_wawancara', 'proses_kelulusan', 'rekap_kelulusan', 
+      'absensi', 'berita_acara_ujian', 'pengumuman', 'laporan'
+    ];
+    
+    const prevView = prevViewRef.current;
+    prevViewRef.current = view;
+
+    // Reset all search/filter/data states when switching between main pages
+    if (view !== prevView && mainViews.includes(view) && mainViews.includes(prevView)) {
+      // 1. Kesehatan
+      setKesehatanFilterGelombang('');
+      setKesehatanSearch('');
+      setHasSearchedKesehatan(false);
+      setKesehatanData([]);
+      setKesehatanCurrentPage(1);
+
+      // 2. Wawancara
+      setWawancaraFilterGelombang('');
+      setWawancaraFilterProdi('');
+      setWawancaraSearch('');
+      setHasSearchedWawancara(false);
+      setWawancaraData([]);
+      setWawancaraCurrentPage(1);
+
+      // 3. Absensi
+      setAbsensiFilterGelombang('');
+      setAbsensiFilterProdi('');
+      setAbsensiSearch('');
+      setHasSearchedAbsensi(false);
+      setAbsensiData([]);
+      setAbsensiCurrentPage(1);
+
+      // 4. Berita Acara
+      setBeritaFilterGelombang('');
+      setBeritaFilterProdi('');
+      setBeritaSearch('');
+      setHasSearchedBerita(false);
+      setBeritaData([]);
+      setBeritaCurrentPage(1);
+
+      // 5. Pengumuman
+      setPengumumanFilterGelombang('');
+      setPengumumanFilterProdi('ALL');
+      setPengumumanFilterStatus('Lulus');
+      setPengumumanFilterRegistrasi('ALL');
+      setPengumumanData([]);
+
+      // 6. Laporan
+      setLaporanFilterGelombang('');
+      setLaporanFilterProdi('');
+      setLaporanData([]);
+      setLaporanFilterPeriode('2026');
+
+      // 7. Soal
+      setSoalSearch('');
+      setSoalCurrentPage(1);
+
+      // 8. Stat Details
+      setStatDetailsSearch('');
+      setStatDetailsCurrentPage(1);
+      setSelectedStatCard(null);
+      setStatDetailsData([]);
+    }
+
     if (view === 'proses_kesehatan' || view === 'rekap_kesehatan') {
       fetchKesehatanOptions();
     }
@@ -445,11 +541,20 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   };
 
   const filteredKesehatanData = useMemo(() => {
-    return kesehatanData.filter(mhs =>
-      (mhs.nama?.toLowerCase() || '').includes(kesehatanSearch.toLowerCase()) ||
-      (mhs.no_ujian?.toLowerCase() || '').includes(kesehatanSearch.toLowerCase())
-    );
-  }, [kesehatanData, kesehatanSearch]);
+    return kesehatanData.filter(mhs => {
+      const matchesSearch = (mhs.nama?.toLowerCase() || '').includes(kesehatanSearch.toLowerCase()) ||
+        (mhs.no_ujian?.toLowerCase() || '').includes(kesehatanSearch.toLowerCase());
+      
+      const statusKesLower = (mhs.status_kesehatan || '').toLowerCase();
+      const isKesehatanFinal = statusKesLower === 'sehat' || statusKesLower === 'tidak sehat' || statusKesLower === 'lulus' || statusKesLower === 'tidak lulus';
+
+      let isCorrectView = true;
+      if (view === 'rekap_kesehatan') isCorrectView = isKesehatanFinal;
+      else if (view === 'proses_kesehatan') isCorrectView = !isKesehatanFinal;
+
+      return matchesSearch && isCorrectView;
+    });
+  }, [kesehatanData, kesehatanSearch, view]);
 
   const paginatedKesehatanData = useMemo(() => {
     const startIndex = (kesehatanCurrentPage - 1) * kesehatanEntries;
@@ -1146,12 +1251,15 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       const matchesSearch = (mhs.nama?.toLowerCase() || '').includes(wawancaraSearch.toLowerCase()) ||
         (mhs.no_ujian?.toLowerCase() || '').includes(wawancaraSearch.toLowerCase());
 
+      const wawancaraStatusLower = (mhs.hasil_wawancara || '').toLowerCase();
+      const isWawancaraFinal = wawancaraStatusLower === 'lulus' || wawancaraStatusLower === 'tidak lulus';
+
       const statusLower = (mhs.status || '').toLowerCase();
       const isFinalStatus = statusLower !== 'proses' && statusLower !== '';
 
       let isCorrectView = true;
-      if (view === 'rekap_wawancara') isCorrectView = isFinalStatus;
-      else if (view === 'proses_wawancara') isCorrectView = !isFinalStatus;
+      if (view === 'rekap_wawancara') isCorrectView = isWawancaraFinal;
+      else if (view === 'proses_wawancara') isCorrectView = !isWawancaraFinal;
       else if (view === 'rekap_kelulusan') isCorrectView = isFinalStatus;
       else if (view === 'proses_kelulusan') isCorrectView = !isFinalStatus;
 
@@ -2143,7 +2251,11 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   <select 
                     className="w-full px-5 pr-12 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none appearance-none transition-all font-bold text-slate-700 text-[13px] cursor-pointer" 
                     value={soalForm.soal_untuk} 
-                    onChange={e => setSoalForm({ ...soalForm, soal_untuk: e.target.value })}
+                    onChange={e => {
+                      const val = e.target.value;
+                      const nextProdi = val === 'Soal Wawancara' ? 'S1 Keperawatan' : '';
+                      setSoalForm({ ...soalForm, soal_untuk: val, prodi: nextProdi });
+                    }}
                   >
                     <option value="Jalur A">Jalur A</option>
                     <option value="Jalur B">Jalur B</option>
@@ -2181,16 +2293,27 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                         value={soalForm.prodi}
                         onChange={e => setSoalForm({ ...soalForm, prodi: e.target.value })}
                       >
-                        <option value="">Semua Prodi (General)</option>
-                        {prodiOptions.length > 0 ? (
-                          prodiOptions.map(p => (
-                            <option key={p} value={p}>{p}</option>
-                          ))
+                        {soalForm.soal_untuk === 'Soal Wawancara' ? (
+                          <>
+                            <option value="S1 Keperawatan">S1 Keperawatan</option>
+                            <option value="Profesi Ners">Profesi Ners</option>
+                            <option value="S1 Kebidanan">S1 Kebidanan</option>
+                            <option value="Profesi Bidan">Profesi Bidan</option>
+                          </>
                         ) : (
                           <>
-                            <option value="Magister Kesehatan Masyarakat">Magister Kesehatan Masyarakat</option>
-                            <option value="S1 Keperawatan">S1 Keperawatan</option>
-                            <option value="S1 Kebidanan">S1 Kebidanan</option>
+                            <option value="">Semua Prodi (General)</option>
+                            {prodiOptions.length > 0 ? (
+                              prodiOptions.map(p => (
+                                <option key={p} value={p}>{p}</option>
+                              ))
+                            ) : (
+                              <>
+                                <option value="Magister Kesehatan Masyarakat">Magister Kesehatan Masyarakat</option>
+                                <option value="S1 Keperawatan">S1 Keperawatan</option>
+                                <option value="S1 Kebidanan">S1 Kebidanan</option>
+                              </>
+                            )}
                           </>
                         )}
                       </select>
@@ -2859,19 +2982,32 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
               Previous
             </button>
             
-            {Array.from({ length: totalSoalPages }, (_, idx) => idx + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setSoalCurrentPage(page)}
-                className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
-                  soalCurrentPage === page
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+            {getPageNumbers(soalCurrentPage, totalSoalPages).map((page, idx) => {
+              if (page === '...') {
+                return (
+                  <span
+                    key={`dots-soal-${idx}`}
+                    className="px-3 py-1.5 text-xs font-bold text-slate-400 select-none"
+                  >
+                    ...
+                  </span>
+                );
+              }
+              const pageNum = page as number;
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setSoalCurrentPage(pageNum)}
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
+                    soalCurrentPage === pageNum
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
 
             <button
               disabled={soalCurrentPage === totalSoalPages || totalSoalPages === 0}
@@ -5446,8 +5582,18 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   <span className="material-symbols-outlined text-[18px]">chevron_left</span>
                 </button>
                 
-                {Array.from({ length: totalPages }).map((_, pIdx) => {
-                  const pNum = pIdx + 1;
+                {getPageNumbers(statDetailsCurrentPage, totalPages).map((page, idx) => {
+                  if (page === '...') {
+                    return (
+                      <span
+                        key={`dots-stat-${idx}`}
+                        className="size-8 flex items-center justify-center font-bold text-xs text-slate-400 select-none"
+                      >
+                        ...
+                      </span>
+                    );
+                  }
+                  const pNum = page as number;
                   const isCurrent = statDetailsCurrentPage === pNum;
                   return (
                     <button
@@ -6045,16 +6191,27 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                                 value={soalForm.prodi}
                                 onChange={e => setSoalForm({ ...soalForm, prodi: e.target.value })}
                               >
-                                <option value="">Semua Prodi (General)</option>
-                                {prodiOptions.length > 0 ? (
-                                  prodiOptions.map(p => (
-                                    <option key={p} value={p}>{p}</option>
-                                  ))
+                                {soalForm.soal_untuk === 'Soal Wawancara' ? (
+                                  <>
+                                    <option value="S1 Keperawatan">S1 Keperawatan</option>
+                                    <option value="Profesi Ners">Profesi Ners</option>
+                                    <option value="S1 Kebidanan">S1 Kebidanan</option>
+                                    <option value="Profesi Bidan">Profesi Bidan</option>
+                                  </>
                                 ) : (
                                   <>
-                                    <option value="Magister Kesehatan Masyarakat">Magister Kesehatan Masyarakat</option>
-                                    <option value="S1 Keperawatan">S1 Keperawatan</option>
-                                    <option value="S1 Kebidanan">S1 Kebidanan</option>
+                                    <option value="">Semua Prodi (General)</option>
+                                    {prodiOptions.length > 0 ? (
+                                      prodiOptions.map(p => (
+                                        <option key={p} value={p}>{p}</option>
+                                      ))
+                                    ) : (
+                                      <>
+                                        <option value="Magister Kesehatan Masyarakat">Magister Kesehatan Masyarakat</option>
+                                        <option value="S1 Keperawatan">S1 Keperawatan</option>
+                                        <option value="S1 Kebidanan">S1 Kebidanan</option>
+                                      </>
+                                    )}
                                   </>
                                 )}
                               </select>
@@ -6332,14 +6489,14 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                           onChange={(e) => setStatusKelulusan(e.target.value)}
                           className="w-full pl-3 pr-10 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-700 font-bold text-[13px] shadow-sm"
                         >
-                          <option value="Lulus">LULUS</option>
-                          <option value="Tidak Lulus">TIDAK LULUS</option>
-                          <option value="Cadangan">CADANGAN</option>
-                          {prodiOptions.map(prodi => (
-                            <option key={prodi} value={`Lulus Di ${prodi}`}>
-                              LULUS DI {prodi.toUpperCase()}
-                            </option>
-                          ))}
+                          <option value="Lulus">Lulus</option>
+                          <option value="Tidak Lulus">Tidak Lulus</option>
+                          <option value="Cadangan">Cadangan</option>
+                          <option value="Lulus Di S1 Kesmas Jalur A Reguler">Lulus Di S1 Kesmas Jalur A Reguler</option>
+                          <option value="Lulus di D3 RMIK">Lulus di D3 RMIK</option>
+                          <option value="Lulus di D3 Kebidanan">Lulus di D3 Kebidanan</option>
+                          <option value="Lulus di S1 Kebidanan">Lulus di S1 Kebidanan</option>
+                          <option value="Lulus di S1 Keperawatan">Lulus di S1 Keperawatan</option>
                         </select>
                       </div>
                     </div>

@@ -1405,7 +1405,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Jenis Kelamin</label>
                             <div className="relative">
-                              <select value={formPribadi.jenis_kelamin} onChange={(e) => setFormPribadi({ ...formPribadi, jenis_kelamin: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                              <select value={formPribadi.jenis_kelamin} onChange={(e) => setFormPribadi({ ...formPribadi, jenis_kelamin: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300" style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}>
                                 <option>Laki-Laki</option>
                                 <option>Perempuan</option>
                               </select>
@@ -1415,7 +1415,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Agama</label>
                             <div className="relative">
-                              <select value={formPribadi.agama} onChange={(e) => setFormPribadi({ ...formPribadi, agama: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                              <select value={formPribadi.agama} onChange={(e) => setFormPribadi({ ...formPribadi, agama: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300" style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}>
                                 <option>Islam</option>
                                 <option>Kristen</option>
                                 <option>Katolik</option>
@@ -1432,7 +1432,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Kabupaten</label>
                             <div className="relative">
-                              <select value={formPribadi.kabupaten} onChange={(e) => setFormPribadi({ ...formPribadi, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                              <select value={formPribadi.kabupaten} onChange={(e) => setFormPribadi({ ...formPribadi, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300" style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}>
                                 <option value="">Pilih Kabupaten</option>
                                 {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
                               </select>
@@ -1442,7 +1442,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Provinsi</label>
                             <div className="relative">
-                              <select value={formPribadi.provinsi} onChange={(e) => setFormPribadi({ ...formPribadi, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                              <select value={formPribadi.provinsi} onChange={(e) => setFormPribadi({ ...formPribadi, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300" style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}>
                                 <option value="">Pilih Provinsi</option>
                                 {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
                               </select>
@@ -1515,7 +1515,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Kabupaten</label>
                             <div className="relative">
-                              <select value={formSekolah.kabupaten} onChange={(e) => setFormSekolah({ ...formSekolah, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                              <select value={formSekolah.kabupaten} onChange={(e) => setFormSekolah({ ...formSekolah, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300" style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}>
                                 <option value="">Pilih Kabupaten</option>
                                 {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
                               </select>
@@ -1525,7 +1525,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Provinsi</label>
                             <div className="relative">
-                              <select value={formSekolah.provinsi} onChange={(e) => setFormSekolah({ ...formSekolah, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                              <select value={formSekolah.provinsi} onChange={(e) => setFormSekolah({ ...formSekolah, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300" style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}>
                                 <option value="">Pilih Provinsi</option>
                                 {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
                               </select>
@@ -1590,7 +1590,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Kabupaten</label>
                             <div className="relative">
-                              <select value={formOrangTua.kabupaten} onChange={(e) => setFormOrangTua({ ...formOrangTua, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                              <select value={formOrangTua.kabupaten} onChange={(e) => setFormOrangTua({ ...formOrangTua, kabupaten: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300" style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}>
                                 <option value="">Pilih Kabupaten</option>
                                 {KABUPATEN_LIST.map(k => <option key={k} value={k}>{k}</option>)}
                               </select>
@@ -1600,7 +1600,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           <div>
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block ml-1">Pilih Provinsi</label>
                             <div className="relative">
-                              <select value={formOrangTua.provinsi} onChange={(e) => setFormOrangTua({ ...formOrangTua, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300">
+                              <select value={formOrangTua.provinsi} onChange={(e) => setFormOrangTua({ ...formOrangTua, provinsi: e.target.value })} className="appearance-none w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 pr-10 cursor-pointer hover:border-slate-300" style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}>
                                 <option value="">Pilih Provinsi</option>
                                 {PROVINSI_LIST.map(p => <option key={p} value={p}>{p}</option>)}
                               </select>

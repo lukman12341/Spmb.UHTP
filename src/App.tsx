@@ -160,6 +160,8 @@ function App() {
   const [forgotSuccess, setForgotSuccess] = useState('');
   const [isLoadingForgot, setIsLoadingForgot] = useState(false);
 
+
+
   // Form State
   const [formData, setFormData] = useState({
     name: '',
@@ -1600,89 +1602,88 @@ function App() {
       {
         isRegisterModalOpen && (
           <div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 sm:p-8 animate-in fade-in duration-300 overflow-y-auto"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 sm:p-8 animate-in fade-in duration-300 overflow-y-auto"
             onClick={() => setIsRegisterModalOpen(false)}
           >
             <div
-              className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-slate-100 flex flex-col max-h-full sm:max-h-[95vh] animate-in zoom-in-95 duration-200 my-auto"
+              className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/30 border border-slate-100 flex flex-col max-h-full sm:max-h-[92vh] animate-in zoom-in-95 duration-200 my-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header Info Banner */}
-              <div className="bg-slate-50 p-6 sm:p-8 border-b border-slate-200/60 relative shrink-0">
-                <button
-                  className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 size-10 bg-white hover:bg-slate-50 text-slate-600 rounded-full flex items-center justify-center shadow-sm border border-slate-150 transition-all hover:scale-105"
-                  onClick={() => setIsRegisterModalOpen(false)}
-                >
-                  <span className="material-symbols-outlined text-xl">close</span>
-                </button>
-                <div className="flex items-center gap-3 text-[#00857A] font-extrabold mb-5 font-display">
-                  <div className="size-10 rounded-xl bg-[#00857A]/10 flex items-center justify-center text-[#00857A]">
-                    <span className="material-symbols-outlined text-xl">info</span>
+              {/* Header Close Button (Always visible) */}
+              <button
+                className="absolute top-4 right-4 sm:top-5 sm:right-5 z-30 size-10 bg-white hover:bg-slate-50 text-slate-600 rounded-full flex items-center justify-center shadow-sm border border-slate-200/80 transition-all hover:scale-105 cursor-pointer"
+                onClick={() => setIsRegisterModalOpen(false)}
+              >
+                <span className="material-symbols-outlined text-xl">close</span>
+              </button>
+
+              {/* Header Info Banner (Always visible) */}
+              <div className="bg-[#00857A]/[0.02] border-b border-slate-200/40 relative shrink-0">
+                <div className="p-5 sm:p-6 pr-16 bg-[#00857A]/[0.01]">
+                  <div className="flex items-center gap-3 text-primary font-bold mb-4 font-display">
+                    <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                      <span className="material-symbols-outlined text-lg">info</span>
+                    </div>
+                    <h3 className="text-base tracking-tight font-bold">Persyaratan Program RPL</h3>
                   </div>
-                  <h3 className="text-lg sm:text-xl tracking-tight font-bold">Informasi Program RPL</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 text-sm leading-relaxed">
-                  {/* Card 1 */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-[#00857A]/20 transition-all duration-300 flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-extrabold text-slate-800 text-[14px] sm:text-[15px] flex items-center gap-1.5 mb-2 font-display">
-                        <span className="material-symbols-outlined text-[18px] text-[#00857A]">school</span>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 text-sm leading-relaxed mb-1">
+                    {/* Card 1 */}
+                    <div className="bg-white p-4 rounded-2xl border border-slate-200/60 border-t-3 border-t-primary shadow-xs hover:shadow-sm transition-all duration-300">
+                      <h4 className="font-extrabold text-slate-800 text-[13px] flex items-center gap-1.5 mb-1.5 font-display">
+                        <span className="material-symbols-outlined text-[16px] text-primary">school</span>
                         RPL A1 (Transfer SKS)
                       </h4>
-                      <span className="inline-block text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-[#00857A] border border-emerald-100/50 px-2.5 py-0.5 rounded-md w-fit mb-4">
+                      <span className="inline-block text-[8.5px] font-bold uppercase tracking-wider bg-emerald-50 text-primary border border-primary/10 px-2 py-0.5 rounded-md mb-3">
                         Lulusan D3 ke S1
                       </span>
-                      <ul className="space-y-2 text-[12px] font-medium text-slate-600">
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-[15px] text-emerald-600 shrink-0 mt-0.5">check_circle</span>
+                      <ul className="space-y-1.5 text-[11px] font-medium text-slate-600">
+                        <li className="flex items-start gap-1.5">
+                          <span className="material-symbols-outlined text-[13px] text-primary shrink-0 mt-0.5">check_circle</span>
                           Lulusan D3 / Pernah Kuliah
                         </li>
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-[15px] text-emerald-600 shrink-0 mt-0.5">check_circle</span>
+                        <li className="flex items-start gap-1.5">
+                          <span className="material-symbols-outlined text-[13px] text-primary shrink-0 mt-0.5">check_circle</span>
                           Lama Kuliah Minimal 3 Semester
                         </li>
                       </ul>
                     </div>
-                  </div>
-                  {/* Card 2 */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-[#00857A]/20 transition-all duration-300 flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-extrabold text-slate-800 text-[14px] sm:text-[15px] flex items-center gap-1.5 mb-2 font-display">
-                        <span className="material-symbols-outlined text-[18px] text-[#00857A]">work</span>
+                    {/* Card 2 */}
+                    <div className="bg-white p-4 rounded-2xl border border-slate-200/60 border-t-3 border-t-primary shadow-xs hover:shadow-sm transition-all duration-300">
+                      <h4 className="font-extrabold text-slate-800 text-[13px] flex items-center gap-1.5 mb-1.5 font-display">
+                        <span className="material-symbols-outlined text-[16px] text-primary">work</span>
                         RPL A2 (Perolehan SKS)
                       </h4>
-                      <span className="inline-block text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-[#00857A] border border-emerald-100/50 px-2.5 py-0.5 rounded-md w-fit mb-4">
+                      <span className="inline-block text-[8.5px] font-bold uppercase tracking-wider bg-emerald-50 text-primary border border-primary/10 px-2 py-0.5 rounded-md mb-3">
                         Lulusan D3 ke S1
                       </span>
-                      <ul className="space-y-2 text-[12px] font-medium text-slate-600">
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-[15px] text-emerald-600 shrink-0 mt-0.5">check_circle</span>
+                      <ul className="space-y-1.5 text-[11px] font-medium text-slate-600">
+                        <li className="flex items-start gap-1.5">
+                          <span className="material-symbols-outlined text-[13px] text-primary shrink-0 mt-0.5">check_circle</span>
                           Sudah Bekerja Minimal 2 Tahun
                         </li>
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-[15px] text-emerald-600 shrink-0 mt-0.5">check_circle</span>
+                        <li className="flex items-start gap-1.5">
+                          <span className="material-symbols-outlined text-[13px] text-primary shrink-0 mt-0.5">check_circle</span>
                           Lama Kuliah Minimal 2 Semester
                         </li>
                       </ul>
                     </div>
-                  </div>
-                  {/* Card 3 */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-[#00857A]/20 transition-all duration-300 flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-extrabold text-slate-800 text-[14px] sm:text-[15px] flex items-center gap-1.5 mb-2 font-display">
-                        <span className="material-symbols-outlined text-[18px] text-[#00857A]">trending_up</span>
+                    {/* Card 3 */}
+                    <div className="bg-white p-4 rounded-2xl border border-slate-200/60 border-t-3 border-t-gold shadow-xs hover:shadow-sm transition-all duration-300">
+                      <h4 className="font-extrabold text-slate-800 text-[13px] flex items-center gap-1.5 mb-1.5 font-display">
+                        <span className="material-symbols-outlined text-[16px] text-gold">trending_up</span>
                         RPL Lanjutan S2
                       </h4>
-                      <span className="inline-block text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-600 border border-blue-100/50 px-2.5 py-0.5 rounded-md w-fit mb-4">
+                      <span className="inline-block text-[8.5px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 border border-blue-100/50 px-2 py-0.5 rounded-md mb-3">
                         Lulusan S1/D4 ke S2
                       </span>
-                      <ul className="space-y-2 text-[12px] font-medium text-slate-600">
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-[15px] text-emerald-600 shrink-0 mt-0.5">check_circle</span>
+                      <ul className="space-y-1.5 text-[11px] font-medium text-slate-600">
+                        <li className="flex items-start gap-1.5">
+                          <span className="material-symbols-outlined text-[13px] text-primary shrink-0 mt-0.5">check_circle</span>
                           Punya Pengalaman Kerja
                         </li>
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-[15px] text-emerald-600 shrink-0 mt-0.5">check_circle</span>
+                        <li className="flex items-start gap-1.5">
+                          <span className="material-symbols-outlined text-[13px] text-primary shrink-0 mt-0.5">check_circle</span>
                           Lama Kuliah Minimal 2 Semester
                         </li>
                       </ul>
@@ -1693,29 +1694,68 @@ function App() {
 
               {/* Form Content */}
               <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }} className="p-6 sm:p-8 overflow-y-auto bg-white flex flex-col min-h-0">
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-slate-900 font-display">Form Pendaftaran Akun</h3>
-                  <p className="text-sm text-slate-500 font-medium">Silakan lengkapi formulir di bawah ini dengan data yang valid.</p>
+                <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-4">
+                  <div>
+                    <h3 className="text-lg font-extrabold text-slate-800 font-display">Form Pendaftaran Akun</h3>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">Silakan lengkapi formulir di bawah ini dengan data yang valid.</p>
+                  </div>
+                  <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100 w-fit">
+                    <span className="size-2 rounded-full bg-[#00857A] animate-pulse"></span>
+                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Pendaftaran Online</span>
+                  </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                   {/* Left Column */}
-                  <div className="space-y-5">
-                    <div className="flex flex-col gap-1.5 min-w-0">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Lengkap</label>
-                      <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="Masukkan nama Anda" autoComplete="off" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all hover:border-slate-300" />
-                      <p className="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-slate-400/80">info</span>Nama lengkap tanpa gelar akademik</p>
+                  <div className="space-y-4">
+                    {/* Nama Lengkap */}
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Nama Lengkap</label>
+                      <div className="relative flex items-center group">
+                        <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">person</span>
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          placeholder="Masukkan nama lengkap Anda"
+                          autoComplete="off"
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                        />
+                      </div>
+                      <p className="text-[10px] text-slate-400/80 mt-1 flex items-center gap-1 ml-1 font-medium"><span className="material-symbols-outlined text-[13px] text-slate-400/60">info</span>Nama lengkap sesuai identitas resmi tanpa gelar akademik</p>
                     </div>
-                    <div className="flex flex-col gap-1.5 min-w-0">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">NIK (Nomor Induk Kependudukan)</label>
-                      <input type="text" name="nik" value={formData.nik} onChange={handleInputChange} placeholder="16 Digit NIK" autoComplete="off" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all hover:border-slate-300" />
-                      <p className="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-slate-400/80">info</span>Sesuai dengan KTP/Kartu Keluarga</p>
+
+                    {/* NIK */}
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">NIK (Nomor Induk Kependudukan)</label>
+                      <div className="relative flex items-center group">
+                        <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">badge</span>
+                        <input
+                          type="text"
+                          name="nik"
+                          value={formData.nik}
+                          onChange={handleInputChange}
+                          placeholder="Masukkan 16 digit NIK"
+                          autoComplete="off"
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                        />
+                      </div>
+                      <p className="text-[10px] text-slate-400/80 mt-1 flex items-center gap-1 ml-1 font-medium"><span className="material-symbols-outlined text-[13px] text-slate-400/60">info</span>Sesuai dengan KTP atau Kartu Keluarga</p>
                     </div>
-                    {/* Pilihan */}
-                    <div className="flex flex-col gap-1.5 min-w-0 relative">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Program Studi Pilihan</label>
-                      <div className="relative">
-                        <select name="program_studi" value={formData.program_studi} onChange={handleInputChange} className="appearance-none w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all cursor-pointer pr-10 hover:border-slate-300">
+
+                    {/* Program Studi Pilihan */}
+                    <div className="flex flex-col gap-1 min-w-0 relative">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Program Studi Pilihan</label>
+                      <div className="relative flex items-center group">
+                        <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">school</span>
+                        <select
+                          name="program_studi"
+                          value={formData.program_studi}
+                          onChange={handleInputChange}
+                          className="appearance-none w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 cursor-pointer hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                          style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}
+                        >
                           <option value="">- Pilih Program Studi -</option>
                           {prodiList.map((prodiName) => (
                             <option key={prodiName} value={prodiName}>{prodiName}</option>
@@ -1724,38 +1764,93 @@ function App() {
                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1.5 min-w-0">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Alamat Email</label>
-                      <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="email@anda.com" autoComplete="off" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all hover:border-slate-300" />
-                      <p className="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-slate-400/80">info</span>Gunakan email yang valid dan aktif</p>
+
+                    {/* Alamat Email */}
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Alamat Email</label>
+                      <div className="relative flex items-center group">
+                        <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">mail</span>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="contoh: email@anda.com"
+                          autoComplete="off"
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                        />
+                      </div>
+                      <p className="text-[10px] text-slate-400/80 mt-1 flex items-center gap-1 ml-1 font-medium"><span className="material-symbols-outlined text-[13px] text-slate-400/60">info</span>Gunakan email aktif untuk verifikasi pendaftaran</p>
                     </div>
-                    <div className="flex flex-col gap-1.5 min-w-0">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Nomor Handphone / WA</label>
-                      <input type="text" name="no_hp" value={formData.no_hp} onChange={handleInputChange} placeholder="08xxxxxxxxxx" autoComplete="off" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all hover:border-slate-300" />
+
+                    {/* Nomor Handphone */}
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Nomor Handphone / WA</label>
+                      <div className="relative flex items-center group">
+                        <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">phone</span>
+                        <input
+                          type="text"
+                          name="no_hp"
+                          value={formData.no_hp}
+                          onChange={handleInputChange}
+                          placeholder="contoh: 081234567890"
+                          autoComplete="off"
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                        />
+                      </div>
                     </div>
                   </div>
 
                   {/* Right Column */}
-                  <div className="space-y-5 pt-1 md:pt-0 flex flex-col">
-                    <div className="flex flex-col gap-1.5 min-w-0">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Buat Password</label>
-                      <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder="Minimal 8 karakter" autoComplete="new-password" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all hover:border-slate-300" />
+                  <div className="space-y-4 flex flex-col">
+                    {/* Buat Password */}
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Buat Password</label>
+                      <div className="relative flex items-center group">
+                        <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">lock</span>
+                        <input
+                          type="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          placeholder="Minimal 8 karakter"
+                          autoComplete="new-password"
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                        />
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-1.5 min-w-0 relative">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Gelombang Pendaftaran</label>
-                      <div className="relative">
-                        <select name="gelombang" value={formData.gelombang} onChange={handleInputChange} className="appearance-none w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all cursor-pointer pr-10 hover:border-slate-300">
+
+                    {/* Gelombang Pendaftaran */}
+                    <div className="flex flex-col gap-1 min-w-0 relative">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Gelombang Pendaftaran</label>
+                      <div className="relative flex items-center group">
+                        <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">event</span>
+                        <select
+                          name="gelombang"
+                          value={formData.gelombang}
+                          onChange={handleInputChange}
+                          className="appearance-none w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 cursor-pointer hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                          style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}
+                        >
                           <option>20263</option>
                           <option>20264</option>
                         </select>
                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
                       </div>
                     </div>
+
                     {/* Sumber Informasi */}
-                    <div className="flex flex-col gap-1.5 min-w-0 relative">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sumber Informasi</label>
-                      <div className="relative">
-                        <select name="sumber_informasi" value={formData.sumber_informasi} onChange={handleInputChange} className="appearance-none w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all cursor-pointer pr-10 hover:border-slate-300">
+                    <div className="flex flex-col gap-1 min-w-0 relative">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Sumber Informasi</label>
+                      <div className="relative flex items-center group">
+                        <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">info</span>
+                        <select
+                          name="sumber_informasi"
+                          value={formData.sumber_informasi}
+                          onChange={handleInputChange}
+                          className="appearance-none w-full pl-10 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 cursor-pointer hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                          style={{ backgroundImage: 'none', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none' }}
+                        >
                           <option value="">- Pilih Sumber Informasi -</option>
                           <option>Rekomendasi Karyawan Hang Tuah</option>
                           <option>Facebook</option>
@@ -1781,49 +1876,63 @@ function App() {
                         </select>
                         <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">keyboard_arrow_down</span>
                       </div>
-                      <p className="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-slate-400/80">info</span>Dari mana Anda mengetahui UHTP?</p>
+                      <p className="text-[10px] text-slate-400/80 mt-1 flex items-center gap-1 ml-1 font-medium"><span className="material-symbols-outlined text-[13px] text-slate-400/60">info</span>Dari mana Anda mengetahui UHTP?</p>
                     </div>
                     
-                    <div className="flex flex-col gap-1.5 min-w-0 pt-2 flex-grow">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Verifikasi Keamanan</label>
+                    {/* Verifikasi Keamanan */}
+                    <div className="flex flex-col gap-1 min-w-0 pt-1.5 flex-grow">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">Verifikasi Keamanan</label>
                       <div className="flex items-end gap-3 w-full">
-                        <div className="flex-1">
-                          <input type="text" name="kode_keamanan_input" value={formData.kode_keamanan_input} onChange={handleInputChange} placeholder="Ketik kode di samping" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all h-[52px] hover:border-slate-300" />
+                        <div className="flex-1 relative flex items-center group">
+                          <span className="material-symbols-outlined absolute left-3.5 text-slate-400 text-[18px] group-focus-within:text-[#00857A] transition-colors">security</span>
+                          <input
+                            type="text"
+                            name="kode_keamanan_input"
+                            value={formData.kode_keamanan_input}
+                            onChange={handleInputChange}
+                            placeholder="Ketik kode captcha"
+                            className="w-full pl-10 pr-4 py-2 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#00857A]/10 focus:border-[#00857A] text-sm font-medium transition-all duration-200 h-[42px] hover:border-slate-300 hover:bg-slate-50/80 shadow-xs"
+                          />
                         </div>
-                        <div className="w-[120px] h-[52px] bg-slate-900 text-white font-mono tracking-[0.2em] rounded-xl shadow-inner font-bold text-xl relative overflow-hidden flex items-center justify-center select-none shrink-0 border border-slate-800">
-                          <div className="absolute inset-0 top-1/2 w-full h-[1px] bg-white opacity-20 pointer-events-none"></div>
-                          <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white transform -rotate-6 origin-left z-10 opacity-20 pointer-events-none"></div>
-                          <div className="absolute top-1/3 left-0 w-full h-[1px] bg-white transform rotate-3 origin-left z-10 opacity-20 pointer-events-none"></div>
+                        <div className="w-[120px] h-[42px] bg-slate-950/95 text-emerald-400 font-mono tracking-[0.25em] rounded-xl shadow-inner font-extrabold text-base relative overflow-hidden flex items-center justify-center select-none shrink-0 border border-slate-800">
+                          <div className="absolute inset-0 top-1/2 w-full h-[1px] bg-white opacity-10 pointer-events-none"></div>
+                          <div className="absolute top-1/2 left-0 w-full h-[2.5px] bg-white transform -rotate-6 origin-left z-10 opacity-15 pointer-events-none"></div>
+                          <div className="absolute top-1/3 left-0 w-full h-[1.5px] bg-white transform rotate-3 origin-left z-10 opacity-15 pointer-events-none"></div>
                           <span className="relative z-20 mix-blend-screen opacity-90">{captchaCode}</span>
                         </div>
                       </div>
-                      <p className="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center justify-between">
-                        <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px] text-slate-400/80">info</span>Perhatikan huruf besar/kecil</span>
-                        <button type="button" onClick={generateCaptcha} className="text-primary hover:text-navy font-bold flex items-center gap-1 transition-colors">
-                          <span className="material-symbols-outlined text-[14px]">refresh</span> Tukar Kode
+                      <p className="text-[10px] text-slate-400 mt-1 flex items-center justify-between ml-1 font-medium">
+                        <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[13px] text-slate-400/60">info</span>Perhatikan huruf besar/kecil</span>
+                        <button type="button" onClick={generateCaptcha} className="group text-primary hover:text-primary-dark font-extrabold flex items-center gap-1 transition-colors cursor-pointer mr-1">
+                          <span className="material-symbols-outlined text-[13px] transition-transform duration-500 group-hover:rotate-180">refresh</span> Tukar Kode
                         </button>
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-8">
+                <div className="mt-6">
                   {registerError && (
-                    <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2 mb-4">
-                      <span className="material-symbols-outlined text-[20px]">error</span>
+                    <div className="bg-red-50/80 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-xs font-bold flex items-center gap-2 mb-2 animate-in fade-in duration-350 shadow-sm">
+                      <span className="material-symbols-outlined text-[18px] text-red-500">error</span>
                       {registerError}
                     </div>
                   )}
                   {registerSuccess && (
-                    <div className="bg-emerald-50 text-emerald-600 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2 mb-4">
-                      <span className="material-symbols-outlined text-[20px]">check_circle</span>
+                    <div className="bg-emerald-50/80 border border-emerald-100 text-emerald-600 px-4 py-3 rounded-xl text-xs font-bold flex items-center gap-2 mb-2 animate-in fade-in duration-350 shadow-sm">
+                      <span className="material-symbols-outlined text-[18px] text-emerald-500">check_circle</span>
                       {registerSuccess}
                     </div>
                   )}
                 </div>
                 
-                <div className="mt-4 pt-6 border-t border-slate-100 flex items-center justify-end">
-                  <button type="submit" disabled={isLoadingRegister} className="w-full sm:w-auto bg-primary hover:bg-navy text-white font-bold text-sm py-3.5 px-10 rounded-xl shadow-lg shadow-primary/30 transition-all hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <div className="mt-4 pt-5 border-t border-slate-100 flex items-center justify-end">
+                  <button
+                    type="submit"
+                    disabled={isLoadingRegister}
+                    className="w-full sm:w-auto text-white font-bold text-sm py-3 px-8 rounded-xl shadow-lg shadow-[#00857A]/20 transition-all hover:shadow-xl hover:shadow-[#00857A]/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    style={{ background: 'linear-gradient(90deg, #00857A, #00695C)' }}
+                  >
                     {isLoadingRegister ? 'Memproses...' : 'Daftar Sekarang'}
                     {!isLoadingRegister && <span className="material-symbols-outlined text-[18px]">how_to_reg</span>}
                   </button>

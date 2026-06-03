@@ -116,6 +116,8 @@ class DashboardController extends Controller
             'S1 Kebidanan' => 'S1 Kebidanan',
             'S2 Kesehatan Masyarakat' => 'S2 Kesehatan Masyarakat',
             'S1 Kesehatan Masyarakat' => 'S1 Kesehatan Masyarakat',
+            'S1 Kesmas' => 'S1 Kesehatan Masyarakat',
+            'S2 Kesmas' => 'S2 Kesehatan Masyarakat',
             'Profesi Bidan' => 'Profesi Bidan',
             'D3 Kebidanan' => 'D3 Kebidanan',
             'D3 RMIK' => 'D3 RMIK',
