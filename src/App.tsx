@@ -252,8 +252,8 @@ function App() {
 
     // --- AKSES JALUR CEPAT (KHUSUS MAHASISWA TEST) ---
     
-    // 1. User Mahasiswa (Jalur Cepat Offline)
-    if (loginEmail === 'student@uhtp.ac.id' && loginPassword === 'student123') {
+    // 1. User Mahasiswa (Jalur Cepat Offline - Hanya pada mode Development)
+    if (import.meta.env.DEV && loginEmail === 'student@uhtp.ac.id' && loginPassword === 'student123') {
       setLoggedInUser({
         id: 123,
         name: 'Lukman Hakim',

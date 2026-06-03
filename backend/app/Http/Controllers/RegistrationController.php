@@ -43,24 +43,25 @@ class RegistrationController extends Controller
         ]);
 
         // 1. Check for Admin Login First
-        $isSpmbAdmin = (
-            ($request->email === 'admin@spmb.com' || $request->email === 'admin123' || $request->email === 'admin@uhtp.ac.id') && $request->password === 'admin123'
-        );
+        $email = $request->email;
+        if ($email === 'admin123' || $email === 'admin@spmb.com') {
+            $email = 'admin@uhtp.ac.id';
+        }
 
-        $isCbtAdmin = (
-            $request->email === 'admincbt@uhtp.ac.id' && $request->password === 'admincbt123'
-        );
+        $adminUser = \App\Models\User::where('email', $email)->first();
 
-        if ($isSpmbAdmin || $isCbtAdmin) {
-            $token = bin2hex(random_bytes(32));
-            Cache::put('admin_token_' . $token, true, now()->addHours(8));
+        if ($adminUser && \Illuminate\Support\Facades\Hash::check($request->password, $adminUser->password)) {
+            if ($adminUser->role === 'admin' || $adminUser->role === 'admin_cbt') {
+                $token = bin2hex(random_bytes(32));
+                Cache::put('admin_token_' . $token, true, now()->addHours(8));
 
-            return response()->json([
-                'name' => $isCbtAdmin ? 'Administrator CBT' : 'Administrator',
-                'email' => $request->email,
-                'role' => $isCbtAdmin ? 'admin_cbt' : 'admin',
-                'token' => $token
-            ]);
+                return response()->json([
+                    'name' => $adminUser->name,
+                    'email' => $adminUser->email,
+                    'role' => $adminUser->role,
+                    'token' => $token
+                ]);
+            }
         }
 
         // 2. Check for Participant Login
