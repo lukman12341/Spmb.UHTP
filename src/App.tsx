@@ -750,7 +750,7 @@ function App() {
         <div className="absolute top-1/4 left-10 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
           <div ref={revealRef} className="text-center mb-16 md:mb-20 reveal-on-scroll">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-bold text-sm mb-6">
               <span className="material-symbols-outlined text-[18px]">collections_bookmark</span>
@@ -779,14 +779,14 @@ function App() {
             </div>
           </div>
 
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 relative z-10">
+          <div className="w-full max-w-none mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 relative z-10">
             {/* Brosur Depan */}
             <div
               ref={revealRef}
               onClick={() => setActiveImage('/brosurdepan2026(1).jpg')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(0,133,122,0.2)] hover:border-emerald-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-100"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-5 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(0,133,122,0.2)] hover:border-emerald-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-100"
             >
-              <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-slate-100 shadow-inner border border-slate-100">
+              <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-5 bg-slate-100 shadow-inner border border-slate-100">
                 <div className="absolute top-3 left-3 z-20 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm border border-emerald-400/20">
                   Informasi Kampus
                 </div>
@@ -806,10 +806,10 @@ function App() {
               </div>
               <div className="px-2 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-800 font-display transition-colors group-hover:text-[#00857A]">Brosur Depan</h3>
-                  <p className="text-sm text-slate-500 mt-1.5 font-medium leading-relaxed">Informasi umum kampus dan fasilitas Universitas Hang Tuah Pekanbaru.</p>
+                  <h3 className="text-xl font-extrabold text-slate-800 font-display transition-colors group-hover:text-[#00857A]">Brosur Depan</h3>
+                  <p className="text-base text-slate-500 mt-2 font-medium leading-relaxed">Informasi umum kampus dan fasilitas Universitas Hang Tuah Pekanbaru.</p>
                 </div>
-                <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs font-black uppercase tracking-wider text-emerald-700">
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black uppercase tracking-wider text-emerald-700">
                   <span>Lihat Brosur</span>
                   <span className="material-symbols-outlined text-[16px] text-emerald-600 transition-transform duration-300 group-hover:translate-x-1.5">arrow_forward</span>
                 </div>
@@ -820,9 +820,9 @@ function App() {
             <div
               ref={revealRef}
               onClick={() => setActiveImage('/brosurbelakang2026(2).jpg')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(212,175,55,0.25)] hover:border-amber-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-200"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-5 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(212,175,55,0.25)] hover:border-amber-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-200"
             >
-              <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-slate-100 shadow-inner border border-slate-100">
+              <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-5 bg-slate-100 shadow-inner border border-slate-100">
                 <div className="absolute top-3 left-3 z-20 bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm border border-amber-400/20">
                   Persyaratan & Prodi
                 </div>
@@ -842,10 +842,10 @@ function App() {
               </div>
               <div className="px-2 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-800 font-display transition-colors group-hover:text-amber-600">Brosur Belakang</h3>
-                  <p className="text-sm text-slate-500 mt-1.5 font-medium leading-relaxed">Daftar Program Studi dan Persyaratan Lengkap Pendaftaran.</p>
+                  <h3 className="text-xl font-extrabold text-slate-800 font-display transition-colors group-hover:text-amber-600">Brosur Belakang</h3>
+                  <p className="text-base text-slate-500 mt-2 font-medium leading-relaxed">Daftar Program Studi dan Persyaratan Lengkap Pendaftaran.</p>
                 </div>
-                <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs font-black uppercase tracking-wider text-amber-700">
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black uppercase tracking-wider text-amber-700">
                   <span>Lihat Persyaratan</span>
                   <span className="material-symbols-outlined text-[16px] text-amber-600 transition-transform duration-300 group-hover:translate-x-1.5">arrow_forward</span>
                 </div>
@@ -856,9 +856,9 @@ function App() {
             <div
               ref={revealRef}
               onClick={() => setActiveImage('/biaya26.jpg')}
-              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-4 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(59,130,246,0.2)] hover:border-blue-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-300"
+              className="group cursor-pointer flex flex-col bg-white rounded-3xl p-5 border border-slate-200/85 shadow-md hover:shadow-[0_30px_60px_-15px_rgba(59,130,246,0.2)] hover:border-blue-500/30 transition-all duration-500 hover:-translate-y-2 cubic-bezier reveal-on-scroll reveal-delay-300"
             >
-              <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-slate-100 shadow-inner border border-slate-100">
+              <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-5 bg-slate-100 shadow-inner border border-slate-100">
                 <div className="absolute top-3 left-3 z-20 bg-blue-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm border border-blue-400/20">
                   Estimasi Biaya
                 </div>
@@ -878,10 +878,10 @@ function App() {
               </div>
               <div className="px-2 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-800 font-display transition-colors group-hover:text-blue-600">Rincian Biaya</h3>
-                  <p className="text-sm text-slate-500 mt-1.5 font-medium leading-relaxed">Detail estimasi biaya pendidikan (registrasi, SPP, dan lainnya).</p>
+                  <h3 className="text-xl font-extrabold text-slate-800 font-display transition-colors group-hover:text-blue-600">Rincian Biaya</h3>
+                  <p className="text-base text-slate-500 mt-2 font-medium leading-relaxed">Detail estimasi biaya pendidikan (registrasi, SPP, dan lainnya).</p>
                 </div>
-                <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs font-black uppercase tracking-wider text-blue-700">
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black uppercase tracking-wider text-blue-700">
                   <span>Lihat Rincian</span>
                   <span className="material-symbols-outlined text-[16px] text-blue-600 transition-transform duration-300 group-hover:translate-x-1.5">arrow_forward</span>
                 </div>
