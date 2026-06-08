@@ -1651,35 +1651,6 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     }
   };
 
-  const handleJadwalSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/jadwal/store`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jadwalForm),
-      });
-
-      if (response.ok) {
-        setNotification({
-          message: 'Jadwal berhasil disimpan!',
-          type: 'success',
-          onConfirm: () => {
-            fetchJadwalList();
-            setJadwalForm({
-              gelombang: '', tanggal_ujian: '', jam_mulai: '', jam_berakhir: '',
-              tanggal_registrasi_mulai: '', tanggal_registrasi_akhir: ''
-            });
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error saving jadwal:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   const handleUpdateJadwal = async (e: React.FormEvent) => {
     e.preventDefault();

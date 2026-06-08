@@ -46,11 +46,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
 
   // Form fields for Schedule Modal
   const [formGelombang, setFormGelombang] = useState('');
-  const [formTanggalRegistrasiMulai, setFormTanggalRegistrasiMulai] = useState('');
-  const [formTanggalRegistrasiAkhir, setFormTanggalRegistrasiAkhir] = useState('');
-  const [formTanggalUjian, setFormTanggalUjian] = useState('');
-  const [formJamMulai, setFormJamMulai] = useState('');
-  const [formJamBerakhir, setFormJamBerakhir] = useState('');
+
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -232,11 +228,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
         setEditingSchedule(null);
         // Reset form fields
         setFormGelombang('');
-        setFormTanggalRegistrasiMulai('');
-        setFormTanggalRegistrasiAkhir('');
-        setFormTanggalUjian('');
-        setFormJamMulai('');
-        setFormJamBerakhir('');
+
         fetchSchedules();
       } else {
         const errorData = await response.json();
@@ -1226,11 +1218,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                   onClick={() => {
                     setEditingSchedule(null);
                     setFormGelombang('');
-                    setFormTanggalRegistrasiMulai('');
-                    setFormTanggalRegistrasiAkhir('');
-                    setFormTanggalUjian('');
-                    setFormJamMulai('');
-                    setFormJamBerakhir('');
+
                     setShowScheduleModal(true);
                   }}
                   className="flex items-center gap-1.5 px-4 py-2.5 bg-primary hover:bg-teal-700 active:scale-98 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm shadow-primary/10 cursor-pointer self-start sm:self-auto"
@@ -1310,11 +1298,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                                     onClick={() => {
                                       setEditingSchedule(s);
                                       setFormGelombang(s.gelombang);
-                                      setFormTanggalRegistrasiMulai(s.tanggal_registrasi_mulai);
-                                      setFormTanggalRegistrasiAkhir(s.tanggal_registrasi_akhir);
-                                      setFormTanggalUjian(s.tanggal_ujian);
-                                      setFormJamMulai(s.jam_mulai);
-                                      setFormJamBerakhir(s.jam_berakhir);
+
                                       setShowScheduleModal(true);
                                     }}
                                     className="px-2.5 py-1 text-blue-650 hover:text-blue-700 bg-blue-50/50 hover:bg-blue-100/60 border border-blue-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
