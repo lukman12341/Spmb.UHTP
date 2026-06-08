@@ -49,6 +49,7 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
 
   const [realStudentName, setRealStudentName] = useState(studentName || '');
   const [realMajor, setRealMajor] = useState(major || '');
+  const [realPhotoUrl, setRealPhotoUrl] = useState(photoUrl || '');
 
   // Sinkronisasi Status Ujian & Jadwal & Nama
   React.useEffect(() => {
@@ -62,6 +63,9 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
           setHasFinishedExam(data.is_finished || false);
           if (data.nama_peserta) setRealStudentName(data.nama_peserta);
           if (data.program_studi) setRealMajor(data.program_studi);
+          if (data.pas_photo_path) {
+            setRealPhotoUrl(`${API_BASE_URL}/storage/${data.pas_photo_path}`);
+          }
           
           // 2. Ambil jadwal berdasarkan gelombang
           const gelombang = data.gelombang || '20263';
@@ -262,7 +266,7 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
               noUjian={examNumber}
               studentName={displayStudentName}
               major={displayMajor}
-              photoUrl={photoUrl}
+              photoUrl={realPhotoUrl || photoUrl}
               hasFinishedExam={hasFinishedExam}
               onLogout={() => setShowLogoutModal(true)}
               onStartExam={handleStartExam}

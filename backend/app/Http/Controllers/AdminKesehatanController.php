@@ -346,6 +346,7 @@ class AdminKesehatanController extends Controller
             'hasil_wawancara' => $biodata->hasil_wawancara ?? (\App\Models\InterviewAnswer::where('registration_id', $biodata->registration_id)->exists() ? 'SUDAH UJIAN' : 'BELUM UJIAN'),
             'status_registrasi' => $biodata->status_registrasi ?? 'Belum Registrasi',
             'bukti_registrasi_path' => $biodata->bukti_registrasi_path ?? null,
+            'pas_photo_path' => $biodata->pas_photo_path ?? null,
             'nama_peserta' => $biodata->registration->name ?? null,
             'program_studi' => $biodata->registration->program_studi ?? null,
             'tempat_lahir' => $biodata->tempat_lahir ?? '-',
