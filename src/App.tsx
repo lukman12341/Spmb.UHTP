@@ -30,19 +30,10 @@ window.fetch = async (input, init) => {
 
   if (token) {
     init = init || {};
-    const headers = init.headers || {};
-    if (headers instanceof Headers) {
-      headers.set('X-Admin-Token', token);
-      init.headers = headers;
-    } else if (Array.isArray(headers)) {
-      headers.push(['X-Admin-Token', token]);
-      init.headers = headers;
-    } else {
-      init.headers = {
-        ...headers,
-        'X-Admin-Token': token
-      } as Record<string, string>;
-    }
+    const headers = new Headers(init.headers || {});
+    headers.set('X-Admin-Token', token);
+    headers.set('Authorization', `Bearer ${token}`);
+    init.headers = headers;
   }
   
   const response = await originalFetch(input, init);

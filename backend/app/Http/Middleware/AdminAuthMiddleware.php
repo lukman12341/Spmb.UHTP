@@ -26,6 +26,9 @@ class AdminAuthMiddleware
             ], 401);
         }
 
+        // Extend cache lifetime for another 2 hours on activity
+        Cache::put('admin_token_' . $token, true, now()->addHours(2));
+
         return $next($request);
     }
 }
