@@ -1901,20 +1901,21 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
         {!activeTab && (
           <div className="space-y-8 mt-10">
             {/* Row 3: Video Tutorial */}
-            <div className="bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl shadow-slate-900/20 border border-slate-800 group">
-              <div className="bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-5 flex items-center justify-between border-b border-slate-800">
-                <div className="flex items-center gap-4">
-                  <div className="size-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center border border-red-500/20">
-                    <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">play_circle</span>
+            <div className="max-w-3xl mx-auto">
+            <div className="bg-slate-900 rounded-2xl overflow-hidden shadow-xl shadow-slate-900/15 border border-slate-800 group">
+              <div className="bg-gradient-to-r from-slate-900 to-slate-800 px-5 py-3.5 flex items-center justify-between border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="size-8 bg-red-500/10 text-red-500 rounded-lg flex items-center justify-center border border-red-500/20">
+                    <span className="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">play_circle</span>
                   </div>
                   <div>
-                    <span className="text-xs font-black text-white uppercase tracking-widest">Video Panduan Pendaftaran</span>
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Universitas Hang Tuah Pekanbaru</p>
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Video Panduan Pendaftaran</span>
+                    <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Universitas Hang Tuah Pekanbaru</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
+                <div className="flex items-center gap-2 px-2.5 py-0.5 bg-red-500/10 border border-red-500/20 rounded-full">
                   <span className="size-1.5 bg-red-500 rounded-full animate-pulse"></span>
-                  <span className="text-[9px] font-black text-red-500 uppercase">Tutorial</span>
+                  <span className="text-[8px] font-black text-red-500 uppercase">Tutorial</span>
                 </div>
               </div>
               <div className="relative aspect-video bg-black">
@@ -1926,6 +1927,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                   referrerPolicy="strict-origin-when-cross-origin"
                 ></iframe>
               </div>
+            </div>
             </div>
 
             {/* Row 4: Simple Footer Inside Content */}
