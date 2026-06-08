@@ -26,19 +26,35 @@ class DashboardController extends Controller
         $stats = [
             [
                 'label' => 'Jalur A (Reguler)',
-                'value' => Registration::where('program_studi', 'LIKE', '%Reguler%')->count(),
+                'value' => Registration::where(function($query) {
+                    $query->where('program_studi', 'NOT LIKE', '%Ners%')
+                          ->where('program_studi', 'NOT LIKE', '%Profesi Bidan%')
+                          ->where('program_studi', 'NOT LIKE', '%Pasca%')
+                          ->where('program_studi', 'NOT LIKE', '%S2%')
+                          ->where('program_studi', 'NOT LIKE', '%Magister%')
+                          ->where('program_studi', 'NOT LIKE', '%STMIK%')
+                          ->where('program_studi', 'NOT LIKE', '%Beasiswa%')
+                          ->where('program_studi', 'NOT LIKE', '%Jalur B%');
+                })->count(),
                 'color' => 'bg-[#00c0ef]',
                 'icon' => 'school'
             ],
             [
                 'label' => 'Jalur B (Beasiswa)',
-                'value' => Registration::where('program_studi', 'LIKE', '%Beasiswa%')->count(),
+                'value' => Registration::where(function($query) {
+                    $query->where('program_studi', 'LIKE', '%Beasiswa%')
+                          ->orWhere('program_studi', 'LIKE', '%Jalur B%');
+                })->count(),
                 'color' => 'bg-[#00a65a]',
                 'icon' => 'workspace_premium'
             ],
             [
                 'label' => 'Jalur Pascasarjana',
-                'value' => Registration::where('program_studi', 'LIKE', '%Pasca%')->count(),
+                'value' => Registration::where(function($query) {
+                    $query->where('program_studi', 'LIKE', '%Pasca%')
+                          ->orWhere('program_studi', 'LIKE', '%S2%')
+                          ->orWhere('program_studi', 'LIKE', '%Magister%');
+                })->count(),
                 'color' => 'bg-[#f39c12]',
                 'icon' => 'history_edu'
             ],
