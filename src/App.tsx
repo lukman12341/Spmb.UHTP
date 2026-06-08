@@ -60,7 +60,8 @@ function App() {
     return isReload ? sessionStorage.getItem('app_isLoggedIn') === 'true' : false;
   });
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
-    return isReload ? sessionStorage.getItem('app_isAdminLoggedIn') === 'true' : false;
+    const hasToken = !!sessionStorage.getItem('admin_token');
+    return isReload && hasToken ? sessionStorage.getItem('app_isAdminLoggedIn') === 'true' : false;
   });
   const [loggedInUser, setLoggedInUser] = useState<{id?: number, name: string, program_studi: string, gelombang: string} | null>(() => {
     if (isReload) {

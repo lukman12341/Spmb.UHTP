@@ -17,7 +17,13 @@ interface CbtPortalProps {
 
 const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, major, onSelectRole }) => {
   const [view, setView] = useState<'selection' | 'login-peserta' | 'login-panitia' | 'student-dashboard' | 'admin-dashboard' | 'exam-page'>(() => {
-    return (sessionStorage.getItem('cbt_view') as any) || 'selection';
+    const savedView = sessionStorage.getItem('cbt_view');
+    const token = sessionStorage.getItem('admin_token');
+    if (savedView === 'admin-dashboard' && !token) {
+      sessionStorage.removeItem('cbt_view');
+      return 'selection';
+    }
+    return (savedView as any) || 'selection';
   });
   const [examNumber, setExamNumber] = useState(() => {
     return sessionStorage.getItem('cbt_exam_number') || '';
