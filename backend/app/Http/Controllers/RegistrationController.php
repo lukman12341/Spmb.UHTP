@@ -53,7 +53,7 @@ class RegistrationController extends Controller
         if ($adminUser && \Illuminate\Support\Facades\Hash::check($request->password, $adminUser->password)) {
             if ($adminUser->role === 'admin' || $adminUser->role === 'admin_cbt') {
                 $token = bin2hex(random_bytes(32));
-                Cache::put('admin_token_' . $token, true, now()->addHours(8));
+                Cache::put('admin_token_' . $token, true, now()->addHours(2));
 
                 return response()->json([
                     'name' => $adminUser->name,

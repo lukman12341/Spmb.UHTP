@@ -40,6 +40,7 @@ const CbtLogin: React.FC<CbtLoginProps> = ({ role, onBack, onLogin }) => {
           if (data.token) {
             sessionStorage.setItem('admin_token', data.token);
           }
+          sessionStorage.setItem('login_timestamp', String(Date.now()));
           // Pass the user name
           onLogin(data.name || 'Administrator');
         } else {
@@ -77,6 +78,7 @@ const CbtLogin: React.FC<CbtLoginProps> = ({ role, onBack, onLogin }) => {
     }
 
     // Success logic for peserta
+    sessionStorage.setItem('login_timestamp', String(Date.now()));
     onLogin(normalizedNoUjian);
   };
 

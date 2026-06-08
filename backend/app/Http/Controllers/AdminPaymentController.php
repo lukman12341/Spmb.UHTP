@@ -26,7 +26,7 @@ class AdminPaymentController extends Controller
         if ($user && \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
             if ($user->role === 'admin' || $user->role === 'admin_cbt') {
                 $token = bin2hex(random_bytes(32));
-                Cache::put('admin_token_' . $token, true, now()->addHours(8));
+                Cache::put('admin_token_' . $token, true, now()->addHours(2));
 
                 return response()->json([
                     'message' => 'Login success',

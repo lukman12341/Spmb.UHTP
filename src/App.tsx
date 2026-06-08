@@ -7,6 +7,27 @@ import LoadingSpinner from './components/LoadingSpinner';
 const originalFetch = window.fetch;
 window.fetch = async (input, init) => {
   const token = sessionStorage.getItem('admin_token');
+  const loginTimeStr = sessionStorage.getItem('login_timestamp');
+  const url = typeof input === 'string' ? input : (input instanceof Request ? input.url : '');
+  
+  if (loginTimeStr && !url.includes('/login')) {
+    const loginTime = parseInt(loginTimeStr, 10);
+    const currentTime = Date.now();
+    const twoHours = 2 * 60 * 60 * 1000;
+    if (currentTime - loginTime > twoHours) {
+      sessionStorage.clear();
+      localStorage.clear();
+      alert('Sesi Anda telah berakhir (tidak ada aktivitas selama 2 jam). Silakan login kembali.');
+      window.location.href = '/';
+      return new Response(JSON.stringify({ status: 'error', message: 'Session expired' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } else {
+      sessionStorage.setItem('login_timestamp', String(currentTime));
+    }
+  }
+
   if (token) {
     init = init || {};
     const headers = init.headers || {};
@@ -25,8 +46,12 @@ window.fetch = async (input, init) => {
   }
   
   const response = await originalFetch(input, init);
+  
+  if (response.ok && url.includes('/login')) {
+    sessionStorage.setItem('login_timestamp', String(Date.now()));
+  }
+
   if (response.status === 401) {
-    const url = typeof input === 'string' ? input : (input instanceof Request ? input.url : '');
     if (!url.includes('/login')) {
       alert('Sesi Anda telah berakhir atau tidak valid. Silakan login kembali.');
       sessionStorage.clear();
@@ -67,22 +92,19 @@ function App() {
   })();
 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return isReload ? sessionStorage.getItem('app_isLoggedIn') === 'true' : false;
+    return sessionStorage.getItem('app_isLoggedIn') === 'true';
   });
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
     const hasToken = !!sessionStorage.getItem('admin_token');
-    return isReload && hasToken ? sessionStorage.getItem('app_isAdminLoggedIn') === 'true' : false;
+    return hasToken && sessionStorage.getItem('app_isAdminLoggedIn') === 'true';
   });
   const [loggedInUser, setLoggedInUser] = useState<{id?: number, name: string, program_studi: string, gelombang: string} | null>(() => {
-    if (isReload) {
-      const user = sessionStorage.getItem('app_loggedInUser');
-      return user ? JSON.parse(user) : null;
-    }
-    return null;
+    const user = sessionStorage.getItem('app_loggedInUser');
+    return user ? JSON.parse(user) : null;
   });
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
   const [showCbt, setShowCbt] = useState(() => {
-    return isReload ? sessionStorage.getItem('app_showCbt') === 'true' : false;
+    return sessionStorage.getItem('app_showCbt') === 'true';
   });
 
   // Save states to sessionStorage whenever they change
@@ -125,9 +147,24 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (!isReload) {
-      sessionStorage.clear();
-      localStorage.clear();
+    // Check session validity based on login_timestamp
+    const loginTimeStr = sessionStorage.getItem('login_timestamp');
+    if (loginTimeStr) {
+      const loginTime = parseInt(loginTimeStr, 10);
+      const currentTime = Date.now();
+      const twoHours = 2 * 60 * 60 * 1000;
+      if (currentTime - loginTime > twoHours) {
+        // Expired! Clear everything
+        sessionStorage.clear();
+        localStorage.clear();
+        setIsLoggedIn(false);
+        setIsAdminLoggedIn(false);
+        setLoggedInUser(null);
+        setShowCbt(false);
+      } else {
+        // Refresh/slide timestamp on mount
+        sessionStorage.setItem('login_timestamp', String(currentTime));
+      }
     }
 
     const fetchProdis = async () => {
@@ -142,7 +179,7 @@ function App() {
       }
     };
     fetchProdis();
-  }, [isReload]);
+  }, []);
   
   const scrollToPortal = () => {
     const element = document.getElementById('akses-portal');
@@ -267,6 +304,7 @@ function App() {
     
     // 1. User Mahasiswa (Jalur Cepat Offline - Hanya pada mode Development)
     if (import.meta.env.DEV && loginEmail === 'student@uhtp.ac.id' && loginPassword === 'student123') {
+      sessionStorage.setItem('login_timestamp', String(Date.now()));
       setLoggedInUser({
         id: 123,
         name: 'Lukman Hakim',
