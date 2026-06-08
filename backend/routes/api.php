@@ -67,3 +67,29 @@ Route::get('/soal', [SoalController::class, 'index']);
 Route::get('/jadwal', [\App\Http\Controllers\JadwalUjianController::class, 'index']);
 Route::get('/public/peserta-ujian', [BiodataController::class, 'getPublicExamParticipants']);
 Route::post('/admin/kesehatan/update-skor', [AdminKesehatanController::class, 'updateSkor']);
+
+Route::get('/debug-stats', function() {
+    return response()->json([
+        'total' => \App\Models\Registration::count(),
+        'jalur_a' => \App\Models\Registration::where(function($query) {
+                    $query->where('program_studi', 'NOT LIKE', '%Ners%')
+                          ->where('program_studi', 'NOT LIKE', '%Profesi Bidan%')
+                          ->where('program_studi', 'NOT LIKE', '%Pasca%')
+                          ->where('program_studi', 'NOT LIKE', '%S2%')
+                          ->where('program_studi', 'NOT LIKE', '%Magister%')
+                          ->where('program_studi', 'NOT LIKE', '%STMIK%')
+                          ->where('program_studi', 'NOT LIKE', '%Beasiswa%')
+                          ->where('program_studi', 'NOT LIKE', '%Jalur B%');
+                })->count(),
+         'sql' => \App\Models\Registration::where(function($query) {
+                    $query->where('program_studi', 'NOT LIKE', '%Ners%')
+                          ->where('program_studi', 'NOT LIKE', '%Profesi Bidan%')
+                          ->where('program_studi', 'NOT LIKE', '%Pasca%')
+                          ->where('program_studi', 'NOT LIKE', '%S2%')
+                          ->where('program_studi', 'NOT LIKE', '%Magister%')
+                          ->where('program_studi', 'NOT LIKE', '%STMIK%')
+                          ->where('program_studi', 'NOT LIKE', '%Beasiswa%')
+                          ->where('program_studi', 'NOT LIKE', '%Jalur B%');
+                })->toSql(),
+    ]);
+});
