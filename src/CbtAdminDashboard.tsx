@@ -5047,17 +5047,29 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     const filterLabel1 = usesPeriode ? 'Periode Penerimaan' : 'Gelombang';
     const filterLabel2 = 'Program Studi';
     const normalizeLaporanItem = (item: any) => {
-      const detailsArray = Array.isArray(item.details) ? item.details : [];
+      // Prioritize details array from registration.exam_result.details or directly from item.details
+      const detailsArray = Array.isArray(item.details) 
+        ? item.details 
+        : (Array.isArray(item.registration?.exam_result?.details) 
+            ? item.registration.exam_result.details 
+            : []);
+            
       const hasDetails = detailsArray.length > 0;
-      const benar = item.benar ?? item.jumlah_benar ?? (hasDetails ? detailsArray.filter((d: any) => d.status === 'Betul').length : null);
-      const salah = item.salah ?? (hasDetails ? detailsArray.filter((d: any) => d.status !== 'Betul').length : null);
       
-      let nilai = item.nilai ?? item.skor ?? item.total_score;
+      // Calculate benar, salah, and nilai from CBT data (skor, total_score, details), NEVER from high school biodata 'nilai'
+      const benarVal = item.benar ?? item.jumlah_benar ?? item.registration?.exam_result?.total_score ?? (hasDetails ? detailsArray.filter((d: any) => d.status === 'Betul').length : null) ?? '-';
+      const salahVal = item.salah ?? (hasDetails ? detailsArray.filter((d: any) => d.status !== 'Betul').length : null) ?? '-';
+      
+      let nilai = item.skor ?? item.total_score ?? item.registration?.exam_result?.total_score ?? '-';
+      
       if (hasDetails) {
         const total = detailsArray.length;
         const correct = detailsArray.filter((d: any) => d.status === 'Betul').length;
         nilai = total > 0 ? Math.round((correct / total) * 100) : 0;
       }
+      
+      const finalBenar = hasDetails ? detailsArray.filter((d: any) => d.status === 'Betul').length : benarVal;
+      const finalSalah = hasDetails ? detailsArray.filter((d: any) => d.status !== 'Betul').length : salahVal;
 
       return {
         ...item,
@@ -5066,8 +5078,8 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         pilihan: item.pilihan || item.registration?.program_studi || '-',
         gelombang: item.gelombang || item.registration?.gelombang || '-',
         no_hp: item.no_hp || item.registration?.no_hp || item.no_telp || '-',
-        benar: benar,
-        salah: salah,
+        benar: finalBenar,
+        salah: finalSalah,
         nilai: nilai,
       };
     };
