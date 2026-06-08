@@ -576,13 +576,18 @@ function App() {
             {/* Left Content */}
             <div className="space-y-6 animate-slide-up">
               <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-primary-light/80 text-primary border border-primary-light/40 text-xs font-semibold">
-                <span className="flex size-2 rounded-full bg-primary"></span>
+                <span className="flex size-2 rounded-full bg-primary animate-pulse"></span>
                 PMB TA 2026/2027 Telah Dibuka
               </div>
               
-              <h1 className="text-slate-900 text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight font-display">
+              <h1 className="text-slate-900 text-4xl md:text-5xl lg:text-[4rem] font-black leading-[1.1] tracking-tight font-display">
                 Selamat Datang di Situs <br />
-                <span className="text-primary">PMB Online</span>
+                <span className="relative inline-block mt-2">
+                  <span className="bg-gradient-to-r from-primary via-teal-600 to-emerald-500 bg-clip-text text-transparent drop-shadow-xs">
+                    PMB Online
+                  </span>
+                  <span className="absolute -bottom-1.5 left-0 w-full h-[6px] bg-gradient-to-r from-primary/30 to-emerald-500/10 rounded-full blur-[0.5px]"></span>
+                </span>
               </h1>
               
               <p className="text-slate-600 text-base md:text-lg font-medium max-w-xl leading-relaxed">
