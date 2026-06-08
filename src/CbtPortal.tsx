@@ -64,7 +64,7 @@ const CbtPortal: React.FC<CbtPortalProps> = ({ onBack, photoUrl, studentName, ma
           if (data.nama_peserta) setRealStudentName(data.nama_peserta);
           if (data.program_studi) setRealMajor(data.program_studi);
           if (data.pas_photo_path) {
-            setRealPhotoUrl(`${API_BASE_URL}/storage/${data.pas_photo_path}`);
+            setRealPhotoUrl(data.pas_photo_path.startsWith('data:') ? data.pas_photo_path : `${API_BASE_URL}/storage/${data.pas_photo_path}`);
           }
           
           // 2. Ambil jadwal berdasarkan gelombang

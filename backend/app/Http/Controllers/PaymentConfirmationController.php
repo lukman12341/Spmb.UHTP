@@ -22,8 +22,10 @@ class PaymentConfirmationController extends Controller
 
         if ($request->hasFile('bukti_file')) {
             $file = $request->file('bukti_file');
-            // Store the file in public/payments directory
-            $path = $file->store('payments', 'public');
+            $fileData = file_get_contents($file->getRealPath());
+            $mimeType = $file->getMimeType();
+            $base64 = base64_encode($fileData);
+            $path = 'data:' . $mimeType . ';base64,' . $base64;
 
             $payment = PaymentConfirmation::create([
                 'tanggal_bayar' => $request->tanggal_bayar,

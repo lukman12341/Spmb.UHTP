@@ -869,7 +869,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                           <td className="px-6 py-4">
                             <div className="flex items-center justify-center gap-2">
                               <button 
-                                onClick={() => setSelectedProof(`${API_BASE_URL}/storage/${p.bukti_path}`)}
+                                onClick={() => setSelectedProof(p.bukti_path.startsWith('data:') ? p.bukti_path : `${API_BASE_URL}/storage/${p.bukti_path}`)}
                                 className="px-2.5 py-1 text-blue-600 hover:text-blue-700 bg-blue-50/50 hover:bg-blue-100/60 border border-blue-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95"
                                 title="Lihat Bukti"
                               >
@@ -1066,7 +1066,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                             <div className="flex items-center justify-center gap-2">
                               {b.bukti_kesehatan_path && (
                                 <button 
-                                  onClick={() => setSelectedProof(`${API_BASE_URL}/storage/${b.bukti_kesehatan_path}`)}
+                                  onClick={() => setSelectedProof(b.bukti_kesehatan_path.startsWith('data:') ? b.bukti_kesehatan_path : `${API_BASE_URL}/storage/${b.bukti_kesehatan_path}`)}
                                   className="px-2.5 py-1 text-indigo-650 hover:text-indigo-700 bg-indigo-50/50 hover:bg-indigo-100/60 border border-indigo-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95"
                                   title="Lihat Bukti"
                                 >
@@ -1155,7 +1155,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                           <td className="px-6 py-4">
                             {b.bukti_registrasi_path ? (
                               <button 
-                                onClick={() => setSelectedProof(`${API_BASE_URL}/storage/${b.bukti_registrasi_path}`)}
+                                onClick={() => setSelectedProof(b.bukti_registrasi_path.startsWith('data:') ? b.bukti_registrasi_path : `${API_BASE_URL}/storage/${b.bukti_registrasi_path}`)}
                                 className="px-2.5 py-1 text-blue-650 hover:text-blue-700 bg-blue-50/50 hover:bg-blue-100/60 border border-blue-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95 inline-flex"
                               >
                                 <span className="material-symbols-outlined text-[16px]">visibility</span>
@@ -1388,7 +1388,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block self-start">Pas Foto</span>
                     <div className="w-full aspect-[3/4] max-w-[150px] bg-slate-55 rounded-xl overflow-hidden border border-slate-200 shadow-inner flex items-center justify-center">
                       {selectedBiodata.pas_photo_path ? (
-                        <img src={`${API_BASE_URL}/storage/${selectedBiodata.pas_photo_path}`} className="w-full h-full object-cover" alt="Foto" />
+                        <img src={selectedBiodata.pas_photo_path.startsWith('data:') ? selectedBiodata.pas_photo_path : `${API_BASE_URL}/storage/${selectedBiodata.pas_photo_path}`} className="w-full h-full object-cover" alt="Foto" />
                       ) : (
                         <span className="material-symbols-outlined text-4xl text-slate-350">person</span>
                       )}
@@ -1522,7 +1522,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                           <p className="text-xs font-semibold text-slate-700 uppercase">{doc.label}</p>
                           {doc.path ? (
                             <button 
-                              onClick={() => setSelectedProof(`${API_BASE_URL}/storage/${doc.path}`)}
+                              onClick={() => setSelectedProof(doc.path!.startsWith('data:') ? doc.path! : `${API_BASE_URL}/storage/${doc.path}`)}
                               className="text-[10px] font-bold text-primary hover:underline uppercase mt-2.5 inline-flex items-center gap-0.5 justify-center w-full cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-[12px]">visibility</span>
@@ -1711,7 +1711,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
               </button>
             </div>
             <div className="p-4 overflow-y-auto max-h-[70vh] flex items-center justify-center bg-slate-100/50">
-              {selectedProof.endsWith('.pdf') ? (
+              {(selectedProof.endsWith('.pdf') || selectedProof.startsWith('data:application/pdf')) ? (
                 <iframe src={selectedProof} className="w-full h-[550px] border-0 rounded-lg bg-white" title="PDF Viewer" />
               ) : (
                 <img src={selectedProof} alt="Bukti" className="max-w-full max-h-[65vh] rounded-lg object-contain bg-white shadow-sm border border-slate-200" />

@@ -418,8 +418,11 @@ class AdminKesehatanController extends Controller
         ];
 
         if ($request->hasFile('bukti_kesehatan')) {
-            $path = $request->file('bukti_kesehatan')->store('bukti_kesehatan', 'public');
-            $data['bukti_kesehatan_path'] = $path;
+            $file = $request->file('bukti_kesehatan');
+            $fileData = file_get_contents($file->getRealPath());
+            $mimeType = $file->getMimeType();
+            $base64 = base64_encode($fileData);
+            $data['bukti_kesehatan_path'] = 'data:' . $mimeType . ';base64,' . $base64;
         }
 
         HealthTest::updateOrCreate(

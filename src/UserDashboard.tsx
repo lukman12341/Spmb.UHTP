@@ -134,7 +134,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
           provinsi: data.provinsi_orang_tua || '', no_hp_ayah: data.no_hp_ayah || '', no_hp_ibu: data.no_hp_ibu || ''
         });
         if (data.pas_photo_path) {
-          setPhotoUrl(`${API_BASE_URL}/storage/${data.pas_photo_path}`);
+          setPhotoUrl(data.pas_photo_path.startsWith('data:') ? data.pas_photo_path : `${API_BASE_URL}/storage/${data.pas_photo_path}`);
         }
 
         setExistingFiles({
@@ -352,7 +352,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
         // Update local photo URL if uploaded
         if (data.data) {
-          if (data.data.pas_photo_path) setPhotoUrl(`${API_BASE_URL}/storage/${data.data.pas_photo_path}`);
+          if (data.data.pas_photo_path) {
+            setPhotoUrl(data.data.pas_photo_path.startsWith('data:') ? data.data.pas_photo_path : `${API_BASE_URL}/storage/${data.data.pas_photo_path}`);
+          }
           setExistingFiles({
             pas_photo: data.data.pas_photo_path || existingFiles.pas_photo,
             ktp: data.data.ktp_path || existingFiles.ktp,
@@ -456,6 +458,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
   // Helper to check if file is an image
   const isImageFile = (url: string) => {
     if (!url) return false;
+    if (url.startsWith('data:image/')) return true;
     const extension = url.split('.').pop()?.toLowerCase();
     return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '');
   };

@@ -37,15 +37,17 @@ class BiodataController extends Controller
         $fileFields = ['pas_photo', 'ktp', 'ijazah', 'transkrip'];
         foreach ($fileFields as $field) {
             if ($request->hasFile($field)) {
-                // Delete old file if exists
+                // Delete old file if exists (only if it was a physical file, not base64)
                 $oldPathField = $field . '_path';
-                if ($biodata->$oldPathField) {
+                if ($biodata->$oldPathField && !str_starts_with($biodata->$oldPathField, 'data:')) {
                     Storage::disk('public')->delete($biodata->$oldPathField);
                 }
 
                 $file = $request->file($field);
-                $path = $file->store('biodata_files', 'public');
-                $biodata->$oldPathField = $path;
+                $fileData = file_get_contents($file->getRealPath());
+                $mimeType = $file->getMimeType();
+                $base64 = base64_encode($fileData);
+                $biodata->$oldPathField = 'data:' . $mimeType . ';base64,' . $base64;
             }
         }
 
@@ -209,13 +211,15 @@ class BiodataController extends Controller
         $biodata = Biodata::where('exam_number', $request->no_ujian)->first();
         
         if ($request->hasFile('bukti_registrasi')) {
-            if ($biodata->bukti_registrasi_path) {
+            if ($biodata->bukti_registrasi_path && !str_starts_with($biodata->bukti_registrasi_path, 'data:')) {
                 Storage::disk('public')->delete($biodata->bukti_registrasi_path);
             }
 
             $file = $request->file('bukti_registrasi');
-            $path = $file->store('registration_files', 'public');
-            $biodata->bukti_registrasi_path = $path;
+            $fileData = file_get_contents($file->getRealPath());
+            $mimeType = $file->getMimeType();
+            $base64 = base64_encode($fileData);
+            $biodata->bukti_registrasi_path = 'data:' . $mimeType . ';base64,' . $base64;
             $biodata->status_registrasi = 'Menunggu Verifikasi';
             $biodata->save();
         }
