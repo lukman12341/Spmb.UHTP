@@ -280,6 +280,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   const [pendaftaranData, setPendaftaranData] = useState<any[]>([]);
   const [registrasiData, setRegistrasiData] = useState<any[]>([]);
   const [sumberData, setSumberData] = useState<any[]>([]);
+  const [isDashboardLoading, setIsDashboardLoading] = useState(true);
 
 
   const [totals, setTotals] = useState({
@@ -1420,6 +1421,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   };
 
   const fetchDashboardData = async () => {
+    setIsDashboardLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`);
       if (!response.ok) {
@@ -1439,6 +1441,8 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+    } finally {
+      setIsDashboardLoading(false);
     }
   };
 
@@ -2054,7 +2058,16 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
           </div>
           <div className="px-6 py-8 bg-slate-50/40">
-            {pendaftaranData.length > 0 ? renderBarChart(pendaftaranData, Math.max(...pendaftaranData.map(d => Number(d.val)), 8), 'pendaftaran') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
+            {isDashboardLoading ? (
+              <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>
+            ) : pendaftaranData.length > 0 ? (
+              renderBarChart(pendaftaranData, Math.max(...pendaftaranData.map(d => Number(d.val)), 8), 'pendaftaran')
+            ) : (
+              <div className="h-48 flex flex-col items-center justify-center text-slate-400 text-sm gap-2">
+                <span className="material-symbols-outlined text-[32px] text-slate-300">bar_chart</span>
+                <span className="font-semibold text-slate-400">Belum ada data pendaftar</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -2072,7 +2085,16 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
           </div>
           <div className="px-6 py-8 bg-slate-50/40">
-            {registrasiData.length > 0 ? renderBarChart(registrasiData, Math.max(...registrasiData.map(d => Number(d.val)), 8), 'registrasi') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
+            {isDashboardLoading ? (
+              <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>
+            ) : registrasiData.length > 0 ? (
+              renderBarChart(registrasiData, Math.max(...registrasiData.map(d => Number(d.val)), 8), 'registrasi')
+            ) : (
+              <div className="h-48 flex flex-col items-center justify-center text-slate-400 text-sm gap-2">
+                <span className="material-symbols-outlined text-[32px] text-slate-300">bar_chart</span>
+                <span className="font-semibold text-slate-400">Belum ada data registrasi</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -2090,7 +2112,16 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
           </div>
           <div className="px-6 py-8 bg-slate-50/40">
-            {sumberData.length > 0 ? renderBarChart(sumberData, Math.max(...sumberData.map(d => Number(d.val)), 8), 'sumber') : <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>}
+            {isDashboardLoading ? (
+              <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Memuat data grafik...</div>
+            ) : sumberData.length > 0 ? (
+              renderBarChart(sumberData, Math.max(...sumberData.map(d => Number(d.val)), 8), 'sumber')
+            ) : (
+              <div className="h-48 flex flex-col items-center justify-center text-slate-400 text-sm gap-2">
+                <span className="material-symbols-outlined text-[32px] text-slate-300">bar_chart</span>
+                <span className="font-semibold text-slate-400">Belum ada data responden</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
