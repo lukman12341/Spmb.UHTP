@@ -585,7 +585,7 @@ function App() {
                   Selamat Datang di Situs
                 </span>
                 <span className="relative inline-block mt-1">
-                  <span className="font-display font-extrabold text-5xl md:text-6xl lg:text-7.5xl bg-gradient-to-r from-primary via-teal-600 to-emerald-500 bg-clip-text text-transparent drop-shadow-xs tracking-tight">
+                  <span className="font-display font-extrabold italic text-5xl md:text-6xl lg:text-7.5xl bg-gradient-to-r from-primary via-teal-600 to-emerald-500 bg-clip-text text-transparent drop-shadow-xs tracking-tight">
                     PMB Online
                   </span>
                   <span className="absolute -bottom-2.5 left-0 w-full h-[6px] bg-gradient-to-r from-primary/30 via-teal-500/20 to-transparent rounded-full blur-[0.5px]"></span>
