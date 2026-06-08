@@ -16,11 +16,11 @@ class JadwalUjianController extends Controller
     {
         $validated = $request->validate([
             'gelombang' => 'required|string',
-            'tanggal_ujian' => 'required|date',
-            'jam_mulai' => 'required',
-            'jam_berakhir' => 'required',
-            'tanggal_registrasi_mulai' => 'required|date',
-            'tanggal_registrasi_akhir' => 'required|date',
+            'tanggal_ujian' => 'nullable|date',
+            'jam_mulai' => 'nullable',
+            'jam_berakhir' => 'nullable',
+            'tanggal_registrasi_mulai' => 'nullable|date',
+            'tanggal_registrasi_akhir' => 'nullable|date',
         ]);
 
         $jadwal = \App\Models\JadwalUjian::create($validated);
@@ -32,11 +32,11 @@ class JadwalUjianController extends Controller
         $jadwal = \App\Models\JadwalUjian::findOrFail($id);
         $validated = $request->validate([
             'gelombang' => 'required|string',
-            'tanggal_ujian' => 'required|date',
-            'jam_mulai' => 'required',
-            'jam_berakhir' => 'required',
-            'tanggal_registrasi_mulai' => 'required|date',
-            'tanggal_registrasi_akhir' => 'required|date',
+            'tanggal_ujian' => 'nullable|date',
+            'jam_mulai' => 'nullable',
+            'jam_berakhir' => 'nullable',
+            'tanggal_registrasi_mulai' => 'nullable|date',
+            'tanggal_registrasi_akhir' => 'nullable|date',
         ]);
 
         $jadwal->update($validated);

@@ -299,4 +299,22 @@ class BiodataController extends Controller
         }
         return $val;
     }
+
+    public function getPublicExamParticipants()
+    {
+        $participants = Biodata::where('is_finalized', true)
+            ->whereNotNull('exam_number')
+            ->with('registration:id,name,program_studi,gelombang')
+            ->get()
+            ->map(function ($b) {
+                return [
+                    'nama' => $b->registration->name ?? '-',
+                    'pilihan' => $b->registration->program_studi ?? '-',
+                    'gelombang' => $b->registration->gelombang ?? '-',
+                    'no_ujian' => $b->exam_number,
+                ];
+            });
+
+        return response()->json($participants);
+    }
 }

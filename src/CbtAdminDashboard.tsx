@@ -2416,91 +2416,42 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       </div>
 
       <div className="bg-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden mb-10">
-        <div className="px-8 py-5 border-b border-slate-100 bg-white flex items-center gap-3">
-          <div className="size-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
-            <span className="material-symbols-outlined text-[18px]">{editingJadwalId ? 'edit_calendar' : 'add_circle'}</span>
-          </div>
-          <h3 className="font-bold text-slate-800 text-sm tracking-wide">{editingJadwalId ? 'Edit Jadwal Ujian' : 'Tambah Jadwal Baru'}</h3>
-        </div>
-
-        <form onSubmit={editingJadwalId ? handleUpdateJadwal : handleJadwalSubmit} className="p-8 space-y-6">
-          {/* Group: Identitas & Tanggal */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-500 ml-0.5">Gelombang</label>
-              <input type="text" placeholder="Contoh: 20261" className="w-full px-4 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 shadow-inner/5" value={jadwalForm.gelombang} onChange={e => setJadwalForm({ ...jadwalForm, gelombang: e.target.value })} />
+        {!editingJadwalId ? (
+          <div className="p-8 text-center flex flex-col items-center justify-center">
+            <div className="size-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4">
+              <span className="material-symbols-outlined text-[32px]">calendar_today</span>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-500 ml-0.5">Tanggal Ujian</label>
-              <div className="relative group/field">
-                <input
-                  type="date"
-                  onClick={(e) => {
-                    try { (e.target as HTMLInputElement).showPicker(); } catch { }
-                  }}
-                  className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
-                  value={jadwalForm.tanggal_ujian}
-                  onChange={e => setJadwalForm({ ...jadwalForm, tanggal_ujian: e.target.value })}
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
-                  <span className="material-symbols-outlined text-[20px] leading-none flex items-center justify-center">calendar_today</span>
-                </div>
-              </div>
+            <h3 className="font-bold text-slate-800 text-lg mb-2">Atur Jadwal Gelombang Ujian</h3>
+            <p className="text-sm text-slate-500 max-w-lg leading-relaxed">
+              Silakan pilih salah satu gelombang dari <strong>Daftar Jadwal Aktif</strong> di bawah, lalu klik tombol <strong>Edit (ikon pensil)</strong> untuk mengatur periode registrasi dan pelaksanaan ujian.
+            </p>
+            <div className="text-xs text-amber-700 bg-amber-50/50 px-4 py-3 rounded-xl mt-4 font-semibold border border-amber-200/40 max-w-md">
+              * Pembuatan atau pendaftaran gelombang baru dikelola sepenuhnya oleh General Admin (Admin PMB) di Admin UHTP.
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-            {/* Group: Waktu Pelaksanaan */}
-            <div className="space-y-4 p-6 bg-slate-50/30 rounded-2xl border border-slate-100">
-              <h4 className="text-xs font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
-                <span className="material-symbols-outlined text-[20px] text-emerald-600">schedule</span>
-                Waktu Pelaksanaan
-              </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Jam Mulai</label>
-                  <div className="relative group/field">
-                    <input
-                      type="text"
-                      value={jadwalForm.jam_mulai}
-                      readOnly
-                      onClick={() => setActiveTimePicker({ field: 'jam_mulai', label: 'Pilih Jam Mulai' })}
-                      placeholder="08:00:00"
-                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
-                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Jam Berakhir</label>
-                  <div className="relative group/field">
-                    <input
-                      type="text"
-                      value={jadwalForm.jam_berakhir}
-                      readOnly
-                      onClick={() => setActiveTimePicker({ field: 'jam_berakhir', label: 'Pilih Jam Berakhir' })}
-                      placeholder="21:00:00"
-                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
-                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
-                    </div>
-                  </div>
-                </div>
+        ) : (
+          <>
+            <div className="px-8 py-5 border-b border-slate-100 bg-white flex items-center gap-3">
+              <div className="size-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
+                <span className="material-symbols-outlined text-[18px]">edit_calendar</span>
               </div>
+              <h3 className="font-bold text-slate-800 text-sm tracking-wide">Atur Jadwal Ujian & Periode Registrasi</h3>
             </div>
 
-            {/* Group: Periode Pendaftaran */}
-            <div className="space-y-4 p-6 bg-slate-50/30 rounded-2xl border border-slate-100">
-              <h4 className="text-xs font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
-                <span className="material-symbols-outlined text-[20px] text-emerald-600">app_registration</span>
-                Periode Registrasi
-              </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Tgl Mulai</label>
+            <form onSubmit={handleUpdateJadwal} className="p-8 space-y-6">
+              {/* Group: Identitas & Tanggal */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-500 ml-0.5">Gelombang</label>
+                  <input 
+                    type="text" 
+                    disabled
+                    className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-sm font-semibold text-slate-400 cursor-not-allowed outline-none shadow-inner/5" 
+                    value={jadwalForm.gelombang} 
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-500 ml-0.5">Tanggal Ujian</label>
                   <div className="relative group/field">
                     <input
                       type="date"
@@ -2508,54 +2459,123 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                         try { (e.target as HTMLInputElement).showPicker(); } catch { }
                       }}
                       className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
-                      value={jadwalForm.tanggal_registrasi_mulai}
-                      onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_mulai: e.target.value })}
+                      value={jadwalForm.tanggal_ujian || ''}
+                      onChange={e => setJadwalForm({ ...jadwalForm, tanggal_ujian: e.target.value })}
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
-                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Tgl Akhir</label>
-                  <div className="relative group/field">
-                    <input
-                      type="date"
-                      onClick={(e) => {
-                        try { (e.target as HTMLInputElement).showPicker(); } catch { }
-                      }}
-                      className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
-                      value={jadwalForm.tanggal_registrasi_akhir}
-                      onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_akhir: e.target.value })}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
-                      <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
+                      <span className="material-symbols-outlined text-[20px] leading-none flex items-center justify-center">calendar_today</span>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div className="pt-5 flex justify-end gap-3 border-t border-slate-100 mt-6">
-            {editingJadwalId && (
-              <button type="button" onClick={() => { setEditingJadwalId(null); setJadwalForm({ gelombang: '', tanggal_ujian: '', jam_mulai: '', jam_berakhir: '', tanggal_registrasi_mulai: '', tanggal_registrasi_akhir: '' }); }} className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all duration-200 active:scale-95">Batal</button>
-            )}
-            <button type="submit" disabled={isSaving} className="px-8 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 font-bold text-[11px] uppercase tracking-wider active:scale-95 disabled:opacity-50 flex items-center gap-2">
-              {isSaving ? (
-                <>
-                  <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
-                  Memproses...
-                </>
-              ) : (
-                <>
-                  <span className="material-symbols-outlined text-[16px]">{editingJadwalId ? 'save' : 'add_task'}</span>
-                  {editingJadwalId ? 'Update Jadwal' : 'Simpan Jadwal'}
-                </>
-              )}
-            </button>
-          </div>
-        </form>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                {/* Group: Waktu Pelaksanaan */}
+                <div className="space-y-4 p-6 bg-slate-50/30 rounded-2xl border border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+                    <span className="material-symbols-outlined text-[20px] text-emerald-600">schedule</span>
+                    Waktu Pelaksanaan
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Jam Mulai</label>
+                      <div className="relative group/field">
+                        <input
+                          type="text"
+                          value={jadwalForm.jam_mulai || ''}
+                          readOnly
+                          onClick={() => setActiveTimePicker({ field: 'jam_mulai', label: 'Pilih Jam Mulai' })}
+                          placeholder="08:00:00"
+                          className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
+                          <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Jam Berakhir</label>
+                      <div className="relative group/field">
+                        <input
+                          type="text"
+                          value={jadwalForm.jam_berakhir || ''}
+                          readOnly
+                          onClick={() => setActiveTimePicker({ field: 'jam_berakhir', label: 'Pilih Jam Berakhir' })}
+                          placeholder="21:00:00"
+                          className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
+                          <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">schedule</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Group: Periode Pendaftaran */}
+                <div className="space-y-4 p-6 bg-slate-50/30 rounded-2xl border border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+                    <span className="material-symbols-outlined text-[20px] text-emerald-600">app_registration</span>
+                    Periode Registrasi
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Tgl Mulai</label>
+                      <div className="relative group/field">
+                        <input
+                          type="date"
+                          onClick={(e) => {
+                            try { (e.target as HTMLInputElement).showPicker(); } catch { }
+                          }}
+                          className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+                          value={jadwalForm.tanggal_registrasi_mulai || ''}
+                          onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_mulai: e.target.value })}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
+                          <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-semibold text-slate-400 block ml-0.5">Tgl Akhir</label>
+                      <div className="relative group/field">
+                        <input
+                          type="date"
+                          onClick={(e) => {
+                            try { (e.target as HTMLInputElement).showPicker(); } catch { }
+                          }}
+                          className="w-full pl-4 pr-10 py-3 bg-slate-50/50 hover:bg-slate-50 border border-slate-200/80 rounded-xl focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-semibold text-slate-700 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+                          value={jadwalForm.tanggal_registrasi_akhir || ''}
+                          onChange={e => setJadwalForm({ ...jadwalForm, tanggal_registrasi_akhir: e.target.value })}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 pointer-events-none group-focus-within/field:text-primary transition-colors">
+                          <span className="material-symbols-outlined text-[18px] leading-none flex items-center justify-center">calendar_today</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-5 flex justify-end gap-3 border-t border-slate-100 mt-6">
+                <button type="button" onClick={() => { setEditingJadwalId(null); setJadwalForm({ gelombang: '', tanggal_ujian: '', jam_mulai: '', jam_berakhir: '', tanggal_registrasi_mulai: '', tanggal_registrasi_akhir: '' }); }} className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all duration-200 active:scale-95 cursor-pointer">Batal</button>
+                <button type="submit" disabled={isSaving} className="px-8 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 font-bold text-[11px] uppercase tracking-wider active:scale-95 disabled:opacity-50 flex items-center gap-2 cursor-pointer">
+                  {isSaving ? (
+                    <>
+                      <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
+                      Memproses...
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[16px]">save</span>
+                      Simpan Jadwal
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -2620,7 +2640,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Tanggal Ujian</p>
-                      <p className="text-sm font-semibold text-slate-700">{new Date(j.tanggal_ujian).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                      <p className="text-sm font-semibold text-slate-700">
+                        {j.tanggal_ujian ? new Date(j.tanggal_ujian).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : <span className="text-slate-400 font-normal italic">Belum diatur</span>}
+                      </p>
                     </div>
                   </div>
 
@@ -2632,7 +2654,9 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Waktu Ujian</p>
-                      <p className="text-sm font-semibold text-slate-700">{j.jam_mulai.substring(0, 5)} - {j.jam_berakhir.substring(0, 5)} WIB</p>
+                      <p className="text-sm font-semibold text-slate-700">
+                        {j.jam_mulai && j.jam_berakhir ? `${j.jam_mulai.substring(0, 5)} - ${j.jam_berakhir.substring(0, 5)} WIB` : <span className="text-slate-400 font-normal italic">Belum diatur</span>}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -2646,9 +2670,15 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 text-left">Periode Registrasi</p>
                       <div className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
-                        <span>{new Date(j.tanggal_registrasi_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
-                        <span className="text-slate-300">→</span>
-                        <span>{new Date(j.tanggal_registrasi_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                        {j.tanggal_registrasi_mulai && j.tanggal_registrasi_akhir ? (
+                          <>
+                            <span>{new Date(j.tanggal_registrasi_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+                            <span className="text-slate-300">→</span>
+                            <span>{new Date(j.tanggal_registrasi_akhir).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                          </>
+                        ) : (
+                          <span className="text-slate-400 font-normal italic">Belum diatur</span>
+                        )}
                       </div>
                     </div>
                   </div>

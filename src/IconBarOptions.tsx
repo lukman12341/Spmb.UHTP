@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { API_BASE_URL } from './config';
 
 // Common links data with modern curated colors
 const links = [
@@ -1342,6 +1343,110 @@ export function IconBarOptionCategorized() {
     const [activeTab, setActiveTab] = useState('pendaftaran');
     const [activeModal, setActiveModal] = useState<string | null>(null);
 
+    // State for Schedules (Jadwal)
+    const [schedules, setSchedules] = useState<any[]>([]);
+    const [loadingSchedules, setLoadingSchedules] = useState(false);
+
+    // State for Participants (Peserta Ujian)
+    const [participants, setParticipants] = useState<any[]>([]);
+    const [loadingParticipants, setLoadingParticipants] = useState(false);
+
+    // Table search, entries, and pagination state
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showEntries, setShowEntries] = useState(100);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // Table sorting state
+    const [sortColumn, setSortColumn] = useState<string>('nama');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+    useEffect(() => {
+        if (activeModal === 'jadwal') {
+            setLoadingSchedules(true);
+            fetch(`${API_BASE_URL}/api/jadwal`)
+                .then(res => res.json())
+                .then(data => {
+                    setSchedules(Array.isArray(data) ? data : []);
+                    setLoadingSchedules(false);
+                })
+                .catch(err => {
+                    console.error('Error fetching schedules:', err);
+                    setLoadingSchedules(false);
+                });
+        } else if (activeModal === 'peserta-ujian') {
+            setLoadingParticipants(true);
+            fetch(`${API_BASE_URL}/api/public/peserta-ujian`)
+                .then(res => res.json())
+                .then(data => {
+                    setParticipants(Array.isArray(data) ? data : []);
+                    setLoadingParticipants(false);
+                    setCurrentPage(1); // Reset to page 1 on fetch
+                })
+                .catch(err => {
+                    console.error('Error fetching participants:', err);
+                    setLoadingParticipants(false);
+                });
+        }
+    }, [activeModal]);
+
+    // Handle Sorting
+    const handleSort = (columnName: string) => {
+        if (sortColumn === columnName) {
+            setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+        } else {
+            setSortColumn(columnName);
+            setSortDirection('asc');
+        }
+        setCurrentPage(1);
+    };
+
+    // Filter participants based on search query
+    const filteredParticipants = participants.filter(p => {
+        const query = searchQuery.toLowerCase();
+        return (
+            (p.nama && p.nama.toLowerCase().includes(query)) ||
+            (p.pilihan && p.pilihan.toLowerCase().includes(query)) ||
+            (p.gelombang && p.gelombang.toLowerCase().includes(query)) ||
+            (p.no_ujian && p.no_ujian.toLowerCase().includes(query))
+        );
+    });
+
+    // Sort filtered participants
+    const sortedParticipants = [...filteredParticipants].sort((a, b) => {
+        let valA = a[sortColumn] || '';
+        let valB = b[sortColumn] || '';
+
+        valA = valA.toString().toLowerCase();
+        valB = valB.toString().toLowerCase();
+
+        if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    // Pagination calculations
+    const totalEntries = sortedParticipants.length;
+    const totalPages = Math.ceil(totalEntries / showEntries) || 1;
+    const startIndex = (currentPage - 1) * showEntries;
+    const endIndex = Math.min(startIndex + showEntries, totalEntries);
+    const paginatedParticipants = sortedParticipants.slice(startIndex, endIndex);
+
+    // Helpers to format dates and times beautifully
+    const formatDate = (dateString?: string) => {
+        if (!dateString) return '-';
+        try {
+            const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        } catch {
+            return dateString;
+        }
+    };
+
+    const formatTime = (timeString?: string) => {
+        if (!timeString) return '-';
+        return timeString.split(':').slice(0, 2).join(':');
+    };
+
     const handleLinkClick = (e: React.MouseEvent, id?: string) => {
         if (id) {
             e.preventDefault();
@@ -1460,15 +1565,63 @@ export function IconBarOptionCategorized() {
                     </div>
                 );
             case 'jadwal':
-                return (
-                    <div className="flex flex-col items-center justify-center py-12 px-4 bg-slate-50 rounded-2xl border border-slate-200 text-center">
-                        <div className="size-20 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center mb-6">
-                            <span className="material-symbols-outlined text-[40px]">calendar_month</span>
+                if (loadingSchedules) {
+                    return (
+                        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00857A]"></div>
+                            <p className="text-slate-500 font-medium mt-4">Memuat jadwal pendaftaran...</p>
                         </div>
-                        <h4 className="text-2xl font-bold text-slate-800 mb-3 tracking-tight">Jadwal Segera Diumumkan</h4>
-                        <p className="text-slate-600 text-base max-w-md mx-auto leading-relaxed">
-                            Saat ini jadwal penerimaan mahasiswa baru sedang dalam tahap penyusunan. Pantau terus informasi terbaru melalui portal ini!
-                        </p>
+                    );
+                }
+
+                if (schedules.length === 0) {
+                    return (
+                        <div className="flex flex-col items-center justify-center py-12 px-4 bg-slate-50 rounded-2xl border border-slate-200 text-center">
+                            <div className="size-20 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center mb-6">
+                                <span className="material-symbols-outlined text-[40px]">calendar_month</span>
+                            </div>
+                            <h4 className="text-2xl font-bold text-slate-800 mb-3 tracking-tight">Jadwal Segera Diumumkan</h4>
+                            <p className="text-slate-600 text-base max-w-md mx-auto leading-relaxed">
+                                Saat ini jadwal penerimaan mahasiswa baru sedang dalam tahap penyusunan. Pantau terus informasi terbaru melalui portal ini!
+                            </p>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {schedules.map((schedule, idx) => (
+                            <div key={idx} className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
+                                <div className="flex justify-between items-start mb-4 pl-2">
+                                    <span className="px-3 py-1 bg-amber-50 text-amber-700 font-bold rounded-full text-xs border border-amber-200">
+                                        {schedule.gelombang}
+                                    </span>
+                                    <span className="material-symbols-outlined text-amber-500">
+                                        event
+                                    </span>
+                                </div>
+                                
+                                <div className="space-y-4 pl-2">
+                                    <div>
+                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Masa Pendaftaran</div>
+                                        <div className="text-slate-700 font-bold text-[15px]">
+                                            {formatDate(schedule.tanggal_registrasi_mulai)} s/d {formatDate(schedule.tanggal_registrasi_akhir)}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="pt-3 border-t border-slate-100">
+                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pelaksanaan Ujian</div>
+                                        <div className="text-slate-700 font-bold text-[15px]">
+                                            {formatDate(schedule.tanggal_ujian)}
+                                        </div>
+                                        <div className="text-slate-500 text-sm mt-0.5 font-medium">
+                                            Pukul {formatTime(schedule.jam_mulai)} - {formatTime(schedule.jam_berakhir)} WIB
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 );
             case 'cara-daftar':
@@ -1606,22 +1759,47 @@ export function IconBarOptionCategorized() {
                     </div>
                 );
             case 'peserta-ujian':
+                if (loadingParticipants) {
+                    return (
+                        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00857A]"></div>
+                            <p className="text-slate-500 font-medium mt-4">Memuat data peserta ujian...</p>
+                        </div>
+                    );
+                }
+
                 return (
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in duration-300">
                         <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div className="flex items-center gap-2 text-sm text-slate-600">
                                 <span>Show</span>
-                                <select className="border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-slate-700 font-medium bg-slate-50">
-                                    <option>100</option>
-                                    <option>50</option>
-                                    <option>25</option>
-                                    <option>10</option>
+                                <select 
+                                    value={showEntries}
+                                    onChange={(e) => {
+                                        setShowEntries(Number(e.target.value));
+                                        setCurrentPage(1);
+                                    }}
+                                    className="border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-slate-700 font-medium bg-slate-50"
+                                >
+                                    <option value={10}>10</option>
+                                    <option value={25}>25</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
                                 </select>
                                 <span>entries</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-slate-600 w-full sm:w-auto">
                                 <span>Search:</span>
-                                <input type="text" className="border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-full sm:w-48 transition-all" />
+                                <input 
+                                    type="text" 
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                    placeholder="Cari nama, prodi, no. ujian..."
+                                    className="border border-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-full sm:w-48 transition-all text-slate-700 bg-white" 
+                                />
                             </div>
                         </div>
 
@@ -1629,76 +1807,121 @@ export function IconBarOptionCategorized() {
                             <table className="w-full text-left border-collapse min-w-[700px]">
                                 <thead>
                                     <tr className="bg-slate-50/80 text-slate-600 border-b-2 border-slate-200 text-sm">
-                                        <th className="px-4 py-3 font-bold w-16 cursor-pointer hover:bg-slate-100 group/th transition-colors">
-                                            <div className="flex items-center justify-between">
-                                                No
-                                                <div className="flex flex-col opacity-50 space-y-[-8px]">
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_up</span>
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_down</span>
-                                                </div>
-                                            </div>
+                                        <th className="px-4 py-3 font-bold w-16">
+                                            No
                                         </th>
-                                        <th className="px-4 py-3 font-bold cursor-pointer hover:bg-slate-100 group/th transition-colors">
+                                        <th 
+                                            onClick={() => handleSort('nama')}
+                                            className="px-4 py-3 font-bold cursor-pointer hover:bg-slate-100 group/th transition-colors"
+                                        >
                                             <div className="flex items-center justify-between">
                                                 Nama
                                                 <div className="flex flex-col opacity-50 space-y-[-8px]">
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_up</span>
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_down</span>
+                                                    <span className={`material-symbols-outlined text-[14px] ${sortColumn === 'nama' && sortDirection === 'asc' ? 'text-primary font-bold opacity-100' : 'opacity-40'}`}>arrow_drop_up</span>
+                                                    <span className={`material-symbols-outlined text-[14px] ${sortColumn === 'nama' && sortDirection === 'desc' ? 'text-primary font-bold opacity-100' : 'opacity-40'}`}>arrow_drop_down</span>
                                                 </div>
                                             </div>
                                         </th>
-                                        <th className="px-4 py-3 font-bold cursor-pointer hover:bg-slate-100 group/th transition-colors">
+                                        <th 
+                                            onClick={() => handleSort('pilihan')}
+                                            className="px-4 py-3 font-bold cursor-pointer hover:bg-slate-100 group/th transition-colors"
+                                        >
                                             <div className="flex items-center justify-between">
                                                 Pilihan
                                                 <div className="flex flex-col opacity-50 space-y-[-8px]">
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_up</span>
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_down</span>
+                                                    <span className={`material-symbols-outlined text-[14px] ${sortColumn === 'pilihan' && sortDirection === 'asc' ? 'text-primary font-bold opacity-100' : 'opacity-40'}`}>arrow_drop_up</span>
+                                                    <span className={`material-symbols-outlined text-[14px] ${sortColumn === 'pilihan' && sortDirection === 'desc' ? 'text-primary font-bold opacity-100' : 'opacity-40'}`}>arrow_drop_down</span>
                                                 </div>
                                             </div>
                                         </th>
-                                        <th className="px-4 py-3 font-bold cursor-pointer hover:bg-slate-100 group/th transition-colors">
+                                        <th 
+                                            onClick={() => handleSort('gelombang')}
+                                            className="px-4 py-3 font-bold cursor-pointer hover:bg-slate-100 group/th transition-colors"
+                                        >
                                             <div className="flex items-center justify-between">
                                                 Gel
                                                 <div className="flex flex-col opacity-50 space-y-[-8px]">
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_up</span>
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_down</span>
+                                                    <span className={`material-symbols-outlined text-[14px] ${sortColumn === 'gelombang' && sortDirection === 'asc' ? 'text-primary font-bold opacity-100' : 'opacity-40'}`}>arrow_drop_up</span>
+                                                    <span className={`material-symbols-outlined text-[14px] ${sortColumn === 'gelombang' && sortDirection === 'desc' ? 'text-primary font-bold opacity-100' : 'opacity-40'}`}>arrow_drop_down</span>
                                                 </div>
                                             </div>
                                         </th>
-                                        <th className="px-4 py-3 font-bold cursor-pointer hover:bg-slate-100 group/th transition-colors">
+                                        <th 
+                                            onClick={() => handleSort('no_ujian')}
+                                            className="px-4 py-3 font-bold cursor-pointer hover:bg-slate-100 group/th transition-colors"
+                                        >
                                             <div className="flex items-center justify-between">
                                                 No. Ujian
                                                 <div className="flex flex-col opacity-50 space-y-[-8px]">
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_up</span>
-                                                    <span className="material-symbols-outlined text-[14px]">arrow_drop_down</span>
+                                                    <span className={`material-symbols-outlined text-[14px] ${sortColumn === 'no_ujian' && sortDirection === 'asc' ? 'text-primary font-bold opacity-100' : 'opacity-40'}`}>arrow_drop_up</span>
+                                                    <span className={`material-symbols-outlined text-[14px] ${sortColumn === 'no_ujian' && sortDirection === 'desc' ? 'text-primary font-bold opacity-100' : 'opacity-40'}`}>arrow_drop_down</span>
                                                 </div>
                                             </div>
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colSpan={5} className="px-4 py-8 text-center text-slate-500 bg-slate-50/30 text-[15px] font-medium border-b border-slate-100">
-                                            No data available in table
-                                        </td>
-                                    </tr>
+                                <tbody className="divide-y divide-slate-100">
+                                    {paginatedParticipants.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={5} className="px-4 py-8 text-center text-slate-500 bg-slate-50/30 text-[15px] font-medium">
+                                                Tidak ada data peserta ujian yang ditemukan
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        paginatedParticipants.map((participant, index) => (
+                                            <tr key={index} className="hover:bg-slate-50/50 transition-colors text-slate-700 text-[14px]">
+                                                <td className="px-4 py-3 text-slate-400 font-medium">{startIndex + index + 1}</td>
+                                                <td className="px-4 py-3 font-bold text-slate-800">{participant.nama}</td>
+                                                <td className="px-4 py-3 font-medium text-slate-600">{participant.pilihan}</td>
+                                                <td className="px-4 py-3">
+                                                    <span className="px-2.5 py-0.5 bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded text-xs">
+                                                        {participant.gelombang}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 font-mono font-bold text-[#00857A]">{participant.no_ujian}</td>
+                                            </tr>
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
 
-                        <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[13px] text-slate-500 bg-slate-50/30">
-                            <div>Showing 0 to 0 of 0 entries</div>
+                        <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[13px] text-slate-500 bg-slate-50/30 font-medium">
+                            <div>
+                                Showing {totalEntries === 0 ? 0 : startIndex + 1} to {endIndex} of {totalEntries} entries
+                                {filteredParticipants.length !== participants.length && ` (filtered from ${participants.length} total entries)`}
+                            </div>
                             <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
-                                <button className="px-4 py-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-colors border-r border-slate-200 disabled:opacity-50" disabled>Previous</button>
-                                <button className="px-4 py-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-colors disabled:opacity-50" disabled>Next</button>
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors border-r border-slate-200 disabled:opacity-30 disabled:hover:bg-transparent font-bold cursor-pointer disabled:cursor-not-allowed"
+                                >
+                                    Previous
+                                </button>
+                                <div className="px-4 py-1.5 text-slate-700 font-bold bg-slate-50 border-r border-slate-200">
+                                    Page {currentPage} of {totalPages}
+                                </div>
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors disabled:opacity-30 disabled:hover:bg-transparent font-bold cursor-pointer disabled:cursor-not-allowed"
+                                >
+                                    Next
+                                </button>
                             </div>
                         </div>
                         
                         <div className="px-5 py-5 bg-white flex items-center justify-between shadow-inner">
-                            <p className="font-bold text-slate-700 text-[16px]">Jumlah Data : <span className="font-black text-slate-900 bg-slate-100 px-2 py-1 rounded-md">1469 Data</span></p>
+                            <p className="font-bold text-slate-700 text-[16px]">
+                                Jumlah Data : <span className="font-black text-slate-900 bg-slate-100 px-2.5 py-1.5 rounded-md">{participants.length} Data</span>
+                            </p>
                             
                             <div className="hidden sm:flex h-2.5 w-64 bg-slate-200 rounded-full overflow-hidden shadow-inner">
-                                <div className="w-1/3 bg-slate-400 rounded-full"></div>
+                                <div 
+                                    className="bg-[#00857A] rounded-full transition-all duration-500" 
+                                    style={{ width: `${participants.length > 0 ? Math.min((totalEntries / participants.length) * 100, 100) : 0}%` }}
+                                ></div>
                             </div>
                         </div>
                     </div>

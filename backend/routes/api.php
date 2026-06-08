@@ -65,4 +65,5 @@ Route::get('/exam/check-status/{no_ujian}', [AdminKesehatanController::class, 'c
 Route::post('/exam/registrasi/store', [BiodataController::class, 'storeRegistrasi']);
 Route::get('/soal', [SoalController::class, 'index']);
 Route::get('/jadwal', [\App\Http\Controllers\JadwalUjianController::class, 'index']);
+Route::get('/public/peserta-ujian', [BiodataController::class, 'getPublicExamParticipants']);
 Route::post('/admin/kesehatan/update-skor', [AdminKesehatanController::class, 'updateSkor']);

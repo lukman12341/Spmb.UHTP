@@ -17,15 +17,41 @@ interface AdminDashboardProps {
   user: any;
 }
 
+const checkIsHealthProgram = (programStudi: string): boolean => {
+  const choices = programStudi ? programStudi.toLowerCase() : '';
+  const isS1Kesmas = choices.includes('s1') && (choices.includes('kesmas') || choices.includes('kesehatan masyarakat') || choices.includes('ikm'));
+  const isS1Bidan = choices.includes('s1') && (choices.includes('bidan') || choices.includes('kebidanan'));
+  const isS1Keperawatan = choices.includes('s1') && (choices.includes('keperawatan') || choices.includes('kperwatan') || choices.includes('kpr'));
+  const isD3Rmik = choices.includes('d3') && (choices.includes('rmik') || choices.includes('rekam medis') || choices.includes('perekam medis') || choices.includes('mik'));
+  const isD4Rmik = choices.includes('d4') && (choices.includes('rmik') || choices.includes('mik') || choices.includes('rekam medis') || choices.includes('perekam medis') || choices.includes('manajemen informasi kesehatan'));
+  const isProfesiNers = choices.includes('profesi') && choices.includes('ners');
+  const isProfesiBidan = choices.includes('profesi') && (choices.includes('bidan') || choices.includes('kebidanan'));
+  return isS1Kesmas || isS1Bidan || isS1Keperawatan || isD3Rmik || isD4Rmik || isProfesiNers || isProfesiBidan;
+};
+
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [biodatas, setBiodatas] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProof, setSelectedProof] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'payments' | 'students' | 'health' | 'registration'>('payments');
+  const [activeTab, setActiveTab] = useState<'payments' | 'students' | 'health' | 'registration' | 'schedules'>('payments');
   const [selectedBiodata, setSelectedBiodata] = useState<any | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'finalized' | 'draft' | 'pending' | 'verified' | 'Menunggu' | 'Sehat' | 'Tidak Sehat' | 'Menunggu Verifikasi'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'finalized' | 'draft' | 'pending' | 'verified' | 'Menunggu' | 'Sehat' | 'Tidak Sehat' | 'verified_health' | 'Menunggu Verifikasi' | 'Sudah Registrasi' | 'Ditolak'>('all');
+
+  // Schedules (Jadwal) States
+  const [schedules, setSchedules] = useState<any[]>([]);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [editingSchedule, setEditingSchedule] = useState<any | null>(null);
+
+  // Form fields for Schedule Modal
+  const [formGelombang, setFormGelombang] = useState('');
+  const [formTanggalRegistrasiMulai, setFormTanggalRegistrasiMulai] = useState('');
+  const [formTanggalRegistrasiAkhir, setFormTanggalRegistrasiAkhir] = useState('');
+  const [formTanggalUjian, setFormTanggalUjian] = useState('');
+  const [formJamMulai, setFormJamMulai] = useState('');
+  const [formJamBerakhir, setFormJamBerakhir] = useState('');
+
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [modalTab, setModalTab] = useState<'profile' | 'parent' | 'document'>('profile');
@@ -48,12 +74,71 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
     totalFinalized: biodatas.filter(b => (b.is_finalized == 1 || b.is_finalized === true)).length,
     totalDraft: biodatas.filter(b => !(b.is_finalized == 1 || b.is_finalized === true)).length,
     totalPaymentsPending: payments.filter(p => p.status === 'pending').length,
-    totalPaymentsVerified: payments.filter(p => p.status === 'verified').length
+    totalPaymentsVerified: payments.filter(p => p.status === 'verified').length,
+    totalRegistrasiMenunggu: biodatas.filter(b => b.status_registrasi === 'Menunggu Verifikasi').length,
+    totalRegistrasiSudah: biodatas.filter(b => b.status_registrasi === 'Sudah Registrasi').length,
+    totalHealthRequired: biodatas.filter(b => b.is_finalized && checkIsHealthProgram(b.registration?.program_studi || '')).length,
+    totalHealthPending: biodatas.filter(b => b.is_finalized && checkIsHealthProgram(b.registration?.program_studi || '') && b.status_kesehatan === 'Menunggu').length,
+    totalHealthVerified: biodatas.filter(b => b.is_finalized && checkIsHealthProgram(b.registration?.program_studi || '') && (b.status_kesehatan === 'Sehat' || b.status_kesehatan === 'Lulus' || b.status_kesehatan === 'Tidak Sehat' || b.status_kesehatan === 'Tidak Lulus')).length
+  };
+
+  const getTabCards = () => {
+    switch (activeTab) {
+      case 'payments':
+        return [
+          { id: 'all', label: 'Total Transaksi', val: payments.length, icon: 'receipt_long', iconColor: 'text-blue-600 bg-blue-150', bgNormal: 'bg-blue-50/40 hover:bg-blue-55 border-blue-200/50 text-blue-900', bgActive: 'bg-blue-100 border-blue-500 ring-2 ring-blue-500/20 text-blue-900 shadow-md', tab: 'payments' },
+          { id: 'pending', label: 'Menunggu Bayar', val: stats.totalPaymentsPending, icon: 'pending_actions', iconColor: 'text-amber-600 bg-amber-150', bgNormal: 'bg-amber-50/40 hover:bg-amber-55 border-amber-200/50 text-amber-900', bgActive: 'bg-amber-100 border-amber-500 ring-2 ring-amber-500/20 text-amber-900 shadow-md', tab: 'payments' },
+          { id: 'verified', label: 'Bayar Terverifikasi', val: stats.totalPaymentsVerified, icon: 'payments', iconColor: 'text-indigo-650 bg-indigo-150', bgNormal: 'bg-indigo-50/40 hover:bg-indigo-55 border-indigo-200/50 text-indigo-900', bgActive: 'bg-indigo-100 border-indigo-500 ring-2 ring-indigo-500/20 text-indigo-900 shadow-md', tab: 'payments' }
+        ];
+      case 'students':
+        return [
+          { id: 'all', label: 'Total Pendaftar', val: stats.totalRegistered, icon: 'group', iconColor: 'text-blue-600 bg-blue-150', bgNormal: 'bg-blue-50/40 hover:bg-blue-55 border-blue-200/50 text-blue-900', bgActive: 'bg-blue-100 border-blue-500 ring-2 ring-blue-500/20 text-blue-900 shadow-md', tab: 'students' },
+          { id: 'finalized', label: 'Sudah Finalisasi', val: stats.totalFinalized, icon: 'verified', iconColor: 'text-emerald-600 bg-emerald-150', bgNormal: 'bg-emerald-50/40 hover:bg-emerald-55 border-emerald-200/50 text-emerald-900', bgActive: 'bg-emerald-100 border-emerald-500 ring-2 ring-emerald-500/20 text-emerald-900 shadow-md', tab: 'students' },
+          { id: 'draft', label: 'Belum Finalisasi', val: stats.totalDraft, icon: 'edit_document', iconColor: 'text-rose-600 bg-rose-155', bgNormal: 'bg-rose-50/40 hover:bg-rose-55 border-rose-200/50 text-rose-900', bgActive: 'bg-rose-100 border-rose-500 ring-2 ring-rose-500/20 text-rose-900 shadow-md', tab: 'students' }
+        ];
+      case 'health':
+        return [
+          { id: 'all', label: 'Wajib Tes Kesehatan', val: stats.totalHealthRequired, icon: 'medical_services', iconColor: 'text-blue-600 bg-blue-150', bgNormal: 'bg-blue-50/40 hover:bg-blue-55 border-blue-200/50 text-blue-900', bgActive: 'bg-blue-100 border-blue-500 ring-2 ring-blue-500/20 text-blue-900 shadow-md', tab: 'health' },
+          { id: 'Menunggu', label: 'Menunggu Verifikasi', val: stats.totalHealthPending, icon: 'pending_actions', iconColor: 'text-amber-600 bg-amber-150', bgNormal: 'bg-amber-50/40 hover:bg-amber-55 border-amber-200/50 text-amber-900', bgActive: 'bg-amber-100 border-amber-500 ring-2 ring-amber-500/20 text-amber-900 shadow-md', tab: 'health' },
+          { id: 'verified_health', label: 'Kesehatan Terverifikasi', val: stats.totalHealthVerified, icon: 'health_and_safety', iconColor: 'text-emerald-600 bg-emerald-150', bgNormal: 'bg-emerald-50/40 hover:bg-emerald-55 border-emerald-200/50 text-emerald-900', bgActive: 'bg-emerald-100 border-emerald-500 ring-2 ring-emerald-500/20 text-emerald-900 shadow-md', tab: 'health' }
+        ];
+      case 'registration':
+        return [
+          { id: 'all', label: 'Total Registrasi Ulang', val: biodatas.filter(b => b.status_registrasi).length, icon: 'app_registration', iconColor: 'text-blue-600 bg-blue-150', bgNormal: 'bg-blue-50/40 hover:bg-blue-55 border-blue-200/50 text-blue-900', bgActive: 'bg-blue-100 border-blue-500 ring-2 ring-blue-500/20 text-blue-900 shadow-md', tab: 'registration' },
+          { id: 'Menunggu Verifikasi', label: 'Registrasi Menunggu', val: stats.totalRegistrasiMenunggu, icon: 'pending_actions', iconColor: 'text-teal-600 bg-teal-150', bgNormal: 'bg-teal-50/40 hover:bg-teal-55 border-teal-200/50 text-teal-900', bgActive: 'bg-teal-100 border-teal-500 ring-2 ring-teal-500/20 text-teal-900 shadow-md', tab: 'registration' },
+          { id: 'Sudah Registrasi', label: 'Registrasi Terverifikasi', val: stats.totalRegistrasiSudah, icon: 'how_to_reg', iconColor: 'text-purple-600 bg-purple-150', bgNormal: 'bg-purple-50/40 hover:bg-purple-55 border-purple-200/50 text-purple-900', bgActive: 'bg-purple-100 border-purple-500 ring-2 ring-purple-500/20 text-purple-900 shadow-md', tab: 'registration' }
+        ];
+      case 'schedules':
+        return [
+          { id: 'all', label: 'Total Gelombang', val: schedules.length, icon: 'calendar_month', iconColor: 'text-blue-600 bg-blue-150', bgNormal: 'bg-blue-50/40 hover:bg-blue-55 border-blue-200/50 text-blue-900', bgActive: 'bg-blue-100 border-blue-500 ring-2 ring-blue-500/20 text-blue-950 shadow-md', tab: 'schedules' },
+          { id: 'active_reg', label: 'Pendaftaran Aktif', val: schedules.filter(s => {
+              if (!s.tanggal_registrasi_mulai || !s.tanggal_registrasi_akhir) return false;
+              const now = new Date();
+              const start = new Date(s.tanggal_registrasi_mulai);
+              const end = new Date(s.tanggal_registrasi_akhir);
+              now.setHours(0,0,0,0);
+              start.setHours(0,0,0,0);
+              end.setHours(0,0,0,0);
+              return now >= start && now <= end;
+            }).length, icon: 'check_circle', iconColor: 'text-emerald-600 bg-emerald-150', bgNormal: 'bg-emerald-50/40 hover:bg-emerald-55 border-emerald-200/50 text-emerald-900', bgActive: 'bg-emerald-100 border-emerald-500 ring-2 ring-emerald-500/20 text-emerald-900 shadow-md', tab: 'schedules' },
+          { id: 'upcoming_exams', label: 'Ujian Mendatang', val: schedules.filter(s => {
+              if (!s.tanggal_ujian) return false;
+              const now = new Date();
+              const examDate = new Date(s.tanggal_ujian);
+              now.setHours(0,0,0,0);
+              examDate.setHours(0,0,0,0);
+              return examDate >= now;
+            }).length, icon: 'pending_actions', iconColor: 'text-amber-600 bg-amber-150', bgNormal: 'bg-amber-50/40 hover:bg-amber-55 border-amber-200/50 text-amber-900', bgActive: 'bg-amber-100 border-amber-500 ring-2 ring-emerald-500/20 text-emerald-900 shadow-md', tab: 'schedules' }
+        ];
+      default:
+        return [];
+    }
   };
 
   useEffect(() => {
     fetchPayments();
     fetchBiodatas();
+    fetchSchedules();
   }, []);
 
   const fetchPayments = async () => {
@@ -99,8 +184,98 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
   };
 
   const handleRefresh = async () => {
-    await Promise.all([fetchPayments(), fetchBiodatas()]);
+    await Promise.all([fetchPayments(), fetchBiodatas(), fetchSchedules()]);
   };
+
+  const fetchSchedules = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/jadwal`);
+      const data = await res.json();
+      setSchedules(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch schedules:', error);
+    }
+  };
+
+  const handleSaveSchedule = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formGelombang) {
+      alert('Nama Gelombang wajib diisi!');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const url = editingSchedule 
+        ? `${API_BASE_URL}/api/jadwal/${editingSchedule.id}/update`
+        : `${API_BASE_URL}/api/jadwal/store`;
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          gelombang: formGelombang,
+          tanggal_registrasi_mulai: editingSchedule ? editingSchedule.tanggal_registrasi_mulai : null,
+          tanggal_registrasi_akhir: editingSchedule ? editingSchedule.tanggal_registrasi_akhir : null,
+          tanggal_ujian: editingSchedule ? editingSchedule.tanggal_ujian : null,
+          jam_mulai: editingSchedule ? editingSchedule.jam_mulai : null,
+          jam_berakhir: editingSchedule ? editingSchedule.jam_berakhir : null
+        })
+      });
+
+      if (response.ok) {
+        alert(editingSchedule ? 'Gelombang berhasil diperbarui!' : 'Gelombang baru berhasil ditambahkan!');
+        setShowScheduleModal(false);
+        setEditingSchedule(null);
+        // Reset form fields
+        setFormGelombang('');
+        setFormTanggalRegistrasiMulai('');
+        setFormTanggalRegistrasiAkhir('');
+        setFormTanggalUjian('');
+        setFormJamMulai('');
+        setFormJamBerakhir('');
+        fetchSchedules();
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || 'Gagal menyimpan gelombang.');
+      }
+    } catch (error) {
+      console.error('Error saving schedule:', error);
+      alert('Terjadi kesalahan koneksi.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteSchedule = async (id: number) => {
+    if (!window.confirm('Apakah Anda yakin ingin menghapus jadwal gelombang ini?')) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/jadwal/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        alert('Jadwal berhasil dihapus.');
+        fetchSchedules();
+      } else {
+        alert('Gagal menghapus jadwal.');
+      }
+    } catch (error) {
+      console.error('Error deleting schedule:', error);
+      alert('Terjadi kesalahan koneksi.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const handleUpdateStatusKesehatan = async () => {
     if (!selectedHealthStudent) return;
@@ -218,7 +393,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             programStudi.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = statusFilter === 'all' || b.status_kesehatan === statusFilter;
+        const matchesStatus = statusFilter === 'all' || 
+                            (statusFilter === 'Menunggu' && b.status_kesehatan === 'Menunggu') ||
+                            (statusFilter === 'verified_health' && (b.status_kesehatan === 'Sehat' || b.status_kesehatan === 'Lulus' || b.status_kesehatan === 'Tidak Sehat' || b.status_kesehatan === 'Tidak Lulus'));
         return matchesSearch && matchesStatus;
       });
 
@@ -270,6 +447,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
         b.status_registrasi || '-'
       ]);
       downloadCSV(headers, rows, "Laporan_Registrasi_Ulang_SPMB");
+    } else if (activeTab === 'schedules') {
+      const filtered = schedules.filter(s => {
+        return s.gelombang.toLowerCase().includes(searchTerm.toLowerCase());
+      });
+
+      if (filtered.length === 0) {
+        alert("Tidak ada data jadwal untuk dieksport.");
+        return;
+      }
+
+      const headers = ["Gelombang", "Registrasi Mulai", "Registrasi Akhir", "Tanggal Ujian", "Waktu Ujian"];
+      const rows = filtered.map(s => [
+        s.gelombang,
+        s.tanggal_registrasi_mulai,
+        s.tanggal_registrasi_akhir,
+        s.tanggal_ujian,
+        `${s.jam_mulai} - ${s.jam_berakhir}`
+      ]);
+      downloadCSV(headers, rows, "Laporan_Jadwal_SPMB");
     }
   };
 
@@ -385,7 +581,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
             { id: 'payments', label: 'Pembayaran', icon: 'payments' },
             { id: 'students', label: 'Pendaftar', icon: 'group' },
             { id: 'health', label: 'Kesehatan', icon: 'health_and_safety' },
-            { id: 'registration', label: 'Registrasi', icon: 'app_registration' }
+            { id: 'registration', label: 'Registrasi', icon: 'app_registration' },
+            { id: 'schedules', label: 'Jadwal PMB', icon: 'calendar_month' }
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -490,7 +687,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                 { id: 'payments', label: 'Pembayaran', icon: 'payments' },
                 { id: 'students', label: 'Pendaftar', icon: 'group' },
                 { id: 'health', label: 'Kesehatan', icon: 'health_and_safety' },
-                { id: 'registration', label: 'Registrasi', icon: 'app_registration' }
+                { id: 'registration', label: 'Registrasi', icon: 'app_registration' },
+                { id: 'schedules', label: 'Jadwal PMB', icon: 'calendar_month' }
               ].map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -566,14 +764,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
         {/* Content Container */}
         <main className="flex-1 p-6 md:p-8 space-y-6 overflow-y-auto">
           
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-            {[
-              { id: 'all', label: 'Total Pendaftar', val: stats.totalRegistered, icon: 'group', iconColor: 'text-blue-600 bg-blue-150', bgNormal: 'bg-blue-50/40 hover:bg-blue-55 border-blue-200/50 text-blue-900', bgActive: 'bg-blue-100 border-blue-500 ring-2 ring-blue-500/20 text-blue-900 shadow-md', tab: 'students' },
-              { id: 'finalized', label: 'Sudah Finalisasi', val: stats.totalFinalized, icon: 'verified', iconColor: 'text-emerald-600 bg-emerald-150', bgNormal: 'bg-emerald-50/40 hover:bg-emerald-55 border-emerald-200/50 text-emerald-900', bgActive: 'bg-emerald-100 border-emerald-500 ring-2 ring-emerald-500/20 text-emerald-900 shadow-md', tab: 'students' },
-              { id: 'draft', label: 'Belum Finalisasi', val: stats.totalDraft, icon: 'edit_document', iconColor: 'text-rose-600 bg-rose-155', bgNormal: 'bg-rose-50/40 hover:bg-rose-55 border-rose-200/50 text-rose-900', bgActive: 'bg-rose-100 border-rose-500 ring-2 ring-rose-500/20 text-rose-900 shadow-md', tab: 'students' },
-              { id: 'pending', label: 'Menunggu Bayar', val: stats.totalPaymentsPending, icon: 'pending_actions', iconColor: 'text-amber-600 bg-amber-150', bgNormal: 'bg-amber-50/40 hover:bg-amber-55 border-amber-200/50 text-amber-900', bgActive: 'bg-amber-100 border-amber-500 ring-2 ring-amber-500/20 text-amber-900 shadow-md', tab: 'payments' },
-              { id: 'verified', label: 'Bayar Terverifikasi', val: stats.totalPaymentsVerified, icon: 'payments', iconColor: 'text-indigo-650 bg-indigo-150', bgNormal: 'bg-indigo-50/40 hover:bg-indigo-55 border-indigo-200/50 text-indigo-900', bgActive: 'bg-indigo-100 border-indigo-500 ring-2 ring-indigo-500/20 text-indigo-900 shadow-md', tab: 'payments' }
-            ].map((s) => {
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {getTabCards().map((s) => {
               const isActive = statusFilter === s.id;
               return (
                 <button 
@@ -604,7 +796,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Filter:</span>
               <span className="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-700 rounded-full text-xs font-semibold uppercase tracking-wide flex items-center gap-1.5 shadow-sm">
                 <span className="size-1.5 rounded-full bg-primary animate-pulse"></span>
-                {statusFilter === 'all' ? 'Semua Data' : statusFilter === 'finalized' ? 'Finalisasi' : statusFilter === 'draft' ? 'Draft' : statusFilter === 'pending' ? 'Menunggu Bayar' : 'Lunas Terverifikasi'}
+                {statusFilter === 'all' ? 'Semua Data' : 
+                 statusFilter === 'finalized' ? 'Finalisasi' : 
+                 statusFilter === 'draft' ? 'Draft' : 
+                 statusFilter === 'pending' ? 'Menunggu Bayar' : 
+                 statusFilter === 'verified' ? 'Lunas Terverifikasi' : 
+                 statusFilter === 'Menunggu' ? 'Menunggu Kesehatan' :
+                 statusFilter === 'verified_health' ? 'Kesehatan Terverifikasi' :
+                 statusFilter === 'Menunggu Verifikasi' ? 'Registrasi Menunggu' : 
+                 statusFilter === 'Sudah Registrasi' ? 'Registrasi Terverifikasi' : 
+                 statusFilter}
               </span>
             </div>
 
@@ -836,7 +1037,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                           const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                               examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                               programStudi.toLowerCase().includes(searchTerm.toLowerCase());
-                          const matchesStatus = statusFilter === 'all' || b.status_kesehatan === statusFilter;
+                          const matchesStatus = statusFilter === 'all' || 
+                                              (statusFilter === 'Menunggu' && b.status_kesehatan === 'Menunggu') ||
+                                              (statusFilter === 'verified_health' && (b.status_kesehatan === 'Sehat' || b.status_kesehatan === 'Lulus' || b.status_kesehatan === 'Tidak Sehat' || b.status_kesehatan === 'Tidak Lulus'));
                           return matchesSearch && matchesStatus;
                         })
                         .map((b) => (
@@ -906,7 +1109,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                 </table>
               </div>
             </div>
-          ) : (
+          ) : activeTab === 'registration' ? (
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -1012,7 +1215,133 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                 </table>
               </div>
             </div>
-          )}
+          ) : activeTab === 'schedules' ? (
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden animate-in fade-in duration-300">
+              <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wider">Daftar Jadwal Penerimaan Mahasiswa Baru</h3>
+                  <p className="text-xs text-slate-450 mt-1 font-medium">Kelola gelombang pendaftaran, masa registrasi, dan tanggal pelaksanaan ujian CBT.</p>
+                </div>
+                <button 
+                  onClick={() => {
+                    setEditingSchedule(null);
+                    setFormGelombang('');
+                    setFormTanggalRegistrasiMulai('');
+                    setFormTanggalRegistrasiAkhir('');
+                    setFormTanggalUjian('');
+                    setFormJamMulai('');
+                    setFormJamBerakhir('');
+                    setShowScheduleModal(true);
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2.5 bg-primary hover:bg-teal-700 active:scale-98 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm shadow-primary/10 cursor-pointer self-start sm:self-auto"
+                >
+                  <span className="material-symbols-outlined text-[16px]">add</span>
+                  <span>Tambah Jadwal</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/20 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                      <th className="px-6 py-4">Gelombang</th>
+                      <th className="px-6 py-4">Masa Pendaftaran</th>
+                      <th className="px-6 py-4">Tanggal Ujian</th>
+                      <th className="px-6 py-4">Waktu Ujian</th>
+                      <th className="px-6 py-4 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-sm">
+                    {schedules.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
+                          <span className="material-symbols-outlined text-4xl mb-2 opacity-50">calendar_today</span>
+                          <p>Belum ada data jadwal gelombang. Silakan tambahkan jadwal baru.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      schedules
+                        .filter(s => s.gelombang.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .map((s) => {
+                          const now = new Date();
+                          const start = s.tanggal_registrasi_mulai ? new Date(s.tanggal_registrasi_mulai) : null;
+                          const end = s.tanggal_registrasi_akhir ? new Date(s.tanggal_registrasi_akhir) : null;
+                          now.setHours(0,0,0,0);
+                          if (start) start.setHours(0,0,0,0);
+                          if (end) end.setHours(0,0,0,0);
+                          const isActive = !!(start && end && now >= start && now <= end);
+
+                          return (
+                            <tr key={s.id} className="hover:bg-slate-50/20 transition-colors duration-150">
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                  <span className="px-3 py-1 bg-amber-50 text-amber-700 font-bold border border-amber-200/50 rounded-full text-xs">
+                                    {s.gelombang}
+                                  </span>
+                                  {isActive && (
+                                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold text-[9px] uppercase tracking-widest rounded">
+                                      Aktif
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 font-semibold text-slate-700">
+                                {s.tanggal_registrasi_mulai && s.tanggal_registrasi_akhir ? (
+                                  <>
+                                    {s.tanggal_registrasi_mulai} <span className="text-slate-400 font-normal">s/d</span> {s.tanggal_registrasi_akhir}
+                                  </>
+                                ) : (
+                                  <span className="text-slate-400 font-normal italic">Belum diatur</span>
+                                )}
+                              </td>
+                              <td className="px-6 py-4 font-bold text-slate-800">
+                                {s.tanggal_ujian ? s.tanggal_ujian : <span className="text-slate-400 font-normal italic">Belum diatur</span>}
+                              </td>
+                              <td className="px-6 py-4 font-mono font-bold text-slate-600">
+                                {s.jam_mulai && s.jam_berakhir ? (
+                                  `${s.jam_mulai.split(':').slice(0,2).join(':')} - ${s.jam_berakhir.split(':').slice(0,2).join(':')} WIB`
+                                ) : (
+                                  <span className="text-slate-400 font-normal italic font-sans">Belum diatur</span>
+                                )}
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center justify-center gap-2">
+                                  <button 
+                                    onClick={() => {
+                                      setEditingSchedule(s);
+                                      setFormGelombang(s.gelombang);
+                                      setFormTanggalRegistrasiMulai(s.tanggal_registrasi_mulai);
+                                      setFormTanggalRegistrasiAkhir(s.tanggal_registrasi_akhir);
+                                      setFormTanggalUjian(s.tanggal_ujian);
+                                      setFormJamMulai(s.jam_mulai);
+                                      setFormJamBerakhir(s.jam_berakhir);
+                                      setShowScheduleModal(true);
+                                    }}
+                                    className="px-2.5 py-1 text-blue-650 hover:text-blue-700 bg-blue-50/50 hover:bg-blue-100/60 border border-blue-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
+                                    title="Ubah Jadwal"
+                                  >
+                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                    <span>Ubah</span>
+                                  </button>
+                                  <button 
+                                    onClick={() => handleDeleteSchedule(s.id)}
+                                    className="px-2.5 py-1 text-rose-650 hover:text-rose-700 bg-rose-50/50 hover:bg-rose-100/60 border border-rose-250/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
+                                    title="Hapus Jadwal"
+                                  >
+                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                    <span>Hapus</span>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : null}
 
         </main>
       </div>
@@ -1429,6 +1758,73 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                 Keluar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Schedule Create/Edit Modal */}
+      {showScheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowScheduleModal(false)}></div>
+          
+          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col z-10 animate-in zoom-in-95 duration-200 max-h-[90vh]">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="size-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[24px]">calendar_month</span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm uppercase tracking-tight">
+                    {editingSchedule ? 'Ubah Gelombang Jadwal' : 'Tambah Gelombang Jadwal'}
+                  </h3>
+                  <p className="text-[10px] font-bold text-slate-450 uppercase tracking-wider mt-0.5">Atur jadwal pendaftaran dan seleksi</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowScheduleModal(false)} 
+                className="size-8 bg-slate-200/60 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleSaveSchedule} className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white space-y-4">
+              <div>
+                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Nama Gelombang Baru</label>
+                <input 
+                  type="text" 
+                  value={formGelombang}
+                  onChange={(e) => setFormGelombang(e.target.value)}
+                  placeholder="Contoh: Gelombang I"
+                  required
+                  className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                />
+                <p className="text-[10px] text-slate-500 mt-2 leading-relaxed">
+                  * Nama gelombang ini akan dibuat di sini terlebih dahulu. Untuk pengaturan masa registrasi, tanggal ujian, dan jam ujian dapat diatur selanjutnya melalui panel <strong>CBT Admin</strong>.
+                </p>
+              </div>
+
+              {/* Modal Footer Buttons */}
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                <button 
+                  type="button"
+                  onClick={() => setShowScheduleModal(false)}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200/80 text-slate-600 font-bold text-xs rounded-xl transition-all uppercase tracking-wider cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isLoading}
+                  className="px-5 py-2.5 bg-primary hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-md shadow-primary/10 uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-[16px]">save</span>
+                  <span>{isLoading ? 'Menyimpan...' : 'Simpan'}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

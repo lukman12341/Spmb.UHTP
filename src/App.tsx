@@ -623,6 +623,7 @@ function App() {
                     title="Universitas Hang Tuah Pekanbaru Video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
+                    referrerPolicy="strict-origin-when-cross-origin"
                   ></iframe>
                 </div>
               </div>
@@ -1079,6 +1080,14 @@ function App() {
       {/* Footer */}
       {/* Footer */}
       <footer className="bg-[#00695C] border-t-2 border-[#D4AF37] pt-16 pb-8 text-white w-full font-sans overflow-hidden relative">
+        {/* Background Image Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover opacity-[0.08] pointer-events-none"
+          style={{ 
+            backgroundImage: "url('/gedung-uhtp.png')",
+            backgroundPosition: "center 25%"
+          }}
+        ></div>
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-12">
             

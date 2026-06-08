@@ -685,7 +685,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
             </div>
             <button
               onClick={() => setShowLogoutModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white border border-rose-700 rounded-xl text-[11px] font-bold transition-all active:scale-95 shadow-md shadow-rose-950/10"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-50 hover:bg-rose-600 text-slate-600 hover:text-white border border-slate-200 hover:border-rose-600 rounded-xl text-[11px] font-bold transition-all active:scale-95 shadow-sm hover:shadow-md hover:shadow-rose-600/10"
             >
               <span className="material-symbols-outlined text-[18px]">logout</span>
               <span>KELUAR</span>
@@ -934,7 +934,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
               <button
                 onClick={() => setShowLogoutModal(true)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-rose-600 text-white hover:bg-rose-700 font-bold text-xs rounded-lg transition-colors border border-rose-700 shadow-md shadow-rose-950/20"
+                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 text-white hover:bg-rose-600 font-bold text-xs rounded-lg transition-colors border border-white/20 hover:border-rose-600 shadow-sm"
               >
                 <span className="material-symbols-outlined text-[16px]">logout</span>
                 <span className="hidden sm:inline text-[11px] uppercase tracking-wider">Keluar</span>
@@ -1888,61 +1888,67 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                     </div>
                   </div>
                 </div>
-
-                {/* Row 3: Video Tutorial */}
-                <div className="bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl shadow-slate-900/20 border border-slate-800 group">
-                  <div className="bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-5 flex items-center justify-between border-b border-slate-800">
-                    <div className="flex items-center gap-4">
-                      <div className="size-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center border border-red-500/20">
-                        <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">play_circle</span>
-                      </div>
-                      <div>
-                        <span className="text-xs font-black text-white uppercase tracking-widest">Video Panduan Pendaftaran</span>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Universitas Hang Tuah Pekanbaru</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
-                      <span className="size-1.5 bg-red-500 rounded-full animate-pulse"></span>
-                      <span className="text-[9px] font-black text-red-500 uppercase">Tutorial</span>
-                    </div>
-                  </div>
-                  <div className="relative aspect-video bg-black">
-                    <iframe
-                      className="absolute inset-0 w-full h-full"
-                      src="https://www.youtube.com/embed/ghTNfJnyRQg?rel=0"
-                      title="YouTube"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                </div>
-
-                {/* Row 4: Simple Footer Inside Content */}
-                <div className="pt-10 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
-                  <div className="flex items-center gap-6">
-                    <img src="/logo-uhtp.png" alt="Logo" className="h-10 opacity-40 grayscale hover:grayscale-0 transition-all duration-500" />
-                    <div>
-                      <p className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Universitas Hang Tuah Pekanbaru</p>
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Unggul & Terpercaya</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    {[
-                      { id: 'facebook', color: 'hover:text-blue-600' },
-                      { id: 'instagram', color: 'hover:text-pink-600' },
-                      { id: 'twitter', color: 'hover:text-sky-500' },
-                      { id: 'youtube', color: 'hover:text-red-600' }
-                    ].map(social => (
-                      <a key={social.id} href="#" className={`size-10 rounded-2xl border border-slate-200 flex items-center justify-center text-slate-400 ${social.color} hover:border-current hover:bg-slate-50 transition-all duration-300 shadow-sm hover:shadow-md`}>
-                        <i className={`fab fa-${social.id} text-sm`}></i>
-                      </a>
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
 
           </div>
         </div>
+
+        {/* Row 3 & 4 (Moved outside the 12-column grid to span full-width) */}
+        {!activeTab && (
+          <div className="space-y-8 mt-10">
+            {/* Row 3: Video Tutorial */}
+            <div className="bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl shadow-slate-900/20 border border-slate-800 group">
+              <div className="bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-5 flex items-center justify-between border-b border-slate-800">
+                <div className="flex items-center gap-4">
+                  <div className="size-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center border border-red-500/20">
+                    <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">play_circle</span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-black text-white uppercase tracking-widest">Video Panduan Pendaftaran</span>
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Universitas Hang Tuah Pekanbaru</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
+                  <span className="size-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                  <span className="text-[9px] font-black text-red-500 uppercase">Tutorial</span>
+                </div>
+              </div>
+              <div className="relative aspect-video bg-black">
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/ghTNfJnyRQg?rel=0"
+                  title="YouTube"
+                  allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
+                ></iframe>
+              </div>
+            </div>
+
+            {/* Row 4: Simple Footer Inside Content */}
+            <div className="pt-10 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex items-center gap-6">
+                <img src="/logo-uhtp.png" alt="Logo" className="h-10 opacity-40 grayscale hover:grayscale-0 transition-all duration-500" />
+                <div>
+                  <p className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Universitas Hang Tuah Pekanbaru</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Unggul & Terpercaya</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                {[
+                  { id: 'facebook', color: 'hover:text-blue-600' },
+                  { id: 'instagram', color: 'hover:text-pink-600' },
+                  { id: 'twitter', color: 'hover:text-sky-500' },
+                  { id: 'youtube', color: 'hover:text-red-600' }
+                ].map(social => (
+                  <a key={social.id} href="#" className={`size-10 rounded-2xl border border-slate-200 flex items-center justify-center text-slate-400 ${social.color} hover:border-current hover:bg-slate-50 transition-all duration-300 shadow-sm hover:shadow-md`}>
+                    <i className={`fab fa-${social.id} text-sm`}></i>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Footer Minimalist */}
