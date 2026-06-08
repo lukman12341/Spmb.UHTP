@@ -580,13 +580,15 @@ function App() {
                 PMB TA 2026/2027 Telah Dibuka
               </div>
               
-              <h1 className="text-slate-900 text-4xl md:text-5xl lg:text-[4rem] font-black leading-[1.1] tracking-tight font-display">
-                Selamat Datang di Situs <br />
-                <span className="relative inline-block mt-2">
-                  <span className="bg-gradient-to-r from-primary via-teal-600 to-emerald-500 bg-clip-text text-transparent drop-shadow-xs">
+              <h1 className="text-slate-900 leading-none tracking-tight">
+                <span className="font-serif italic font-normal text-slate-500/95 text-3xl md:text-4xl lg:text-[2.75rem] block mb-2 tracking-wide">
+                  Selamat Datang di Situs
+                </span>
+                <span className="relative inline-block mt-1">
+                  <span className="font-display font-extrabold text-5xl md:text-6xl lg:text-7.5xl bg-gradient-to-r from-primary via-teal-600 to-emerald-500 bg-clip-text text-transparent drop-shadow-xs tracking-tight">
                     PMB Online
                   </span>
-                  <span className="absolute -bottom-1.5 left-0 w-full h-[6px] bg-gradient-to-r from-primary/30 to-emerald-500/10 rounded-full blur-[0.5px]"></span>
+                  <span className="absolute -bottom-2.5 left-0 w-full h-[6px] bg-gradient-to-r from-primary/30 via-teal-500/20 to-transparent rounded-full blur-[0.5px]"></span>
                 </span>
               </h1>
               
