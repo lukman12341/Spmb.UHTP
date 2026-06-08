@@ -1679,9 +1679,19 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             });
           }
         });
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setNotification({
+          message: errorData.message || 'Gagal memperbaharui jadwal. Silakan periksa kembali data Anda.',
+          type: 'error'
+        });
       }
     } catch (error) {
       console.error('Error updating jadwal:', error);
+      setNotification({
+        message: 'Koneksi ke server gagal. Silakan coba lagi.',
+        type: 'error'
+      });
     } finally {
       setIsSaving(false);
     }
