@@ -37,8 +37,11 @@ const CbtLogin: React.FC<CbtLoginProps> = ({ role, onBack, onLogin }) => {
         const data = await response.json();
 
         if (response.ok) {
-          // Pass the user name or object
-          onLogin(data.user?.name || 'Administrator');
+          if (data.token) {
+            sessionStorage.setItem('admin_token', data.token);
+          }
+          // Pass the user name
+          onLogin(data.name || 'Administrator');
         } else {
           setError(data.message || 'Username atau Password Panitia salah');
         }
