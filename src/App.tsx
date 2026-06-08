@@ -593,7 +593,7 @@ function App() {
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <button 
                   onClick={scrollToPortal}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold text-sm shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 hover:scale-[1.03] cursor-pointer relative overflow-hidden group"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-primary hover:bg-[#00bfa5] text-white font-bold text-sm shadow-md hover:shadow-lg hover:shadow-[#00bfa5]/30 transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0 cursor-pointer relative overflow-hidden group"
                 >
                   <span className="relative z-10">Daftar Sekarang</span>
                   <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
