@@ -142,9 +142,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/payments`);
       const data = await res.json();
-      setPayments(data);
+      setPayments(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch payments:', error);
+      setPayments([]);
     } finally {
       setIsLoading(false);
     }
@@ -154,9 +155,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/biodatas`);
       const data = await res.json();
-      setBiodatas(data);
+      setBiodatas(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch biodatas:', error);
+      setBiodatas([]);
     }
   };
 

@@ -3,7 +3,7 @@ import { API_BASE_URL } from './config';
 import { IconBarOptionCategorized } from './IconBarOptions';
 import LoadingSpinner from './components/LoadingSpinner';
 
-// Fetch Interceptor to automatically add X-Admin-Token header if admin is logged in
+// Fetch Interceptor to automatically add X-Admin-Token header and handle auth errors
 const originalFetch = window.fetch;
 window.fetch = async (input, init) => {
   const token = sessionStorage.getItem('admin_token');
@@ -23,7 +23,17 @@ window.fetch = async (input, init) => {
       } as Record<string, string>;
     }
   }
-  return originalFetch(input, init);
+  
+  const response = await originalFetch(input, init);
+  if (response.status === 401) {
+    const url = typeof input === 'string' ? input : (input instanceof Request ? input.url : '');
+    if (!url.includes('/login')) {
+      alert('Sesi Anda telah berakhir atau tidak valid. Silakan login kembali.');
+      sessionStorage.clear();
+      window.location.href = '/';
+    }
+  }
+  return response;
 };
 
 const UserDashboard = lazy(() => import('./UserDashboard'));
