@@ -10,6 +10,7 @@ interface Payment {
   bukti_path: string;
   status: string;
   created_at: string;
+  registration?: any;
 }
 
 interface AdminDashboardProps {
@@ -851,7 +852,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                       payments
                         .filter(p => {
                           const matchesSearch = String(p.nama_penyetor || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                              String(p.kode_pembayaran || '').toLowerCase().includes(searchTerm.toLowerCase());
+                                              String(p.kode_pembayaran || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                              String(p.registration?.name || '').toLowerCase().includes(searchTerm.toLowerCase());
                           const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
                           return matchesSearch && matchesStatus;
                         })
@@ -863,7 +865,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                               {p.kode_pembayaran}
                             </span>
                           </td>
-                          <td className="px-6 py-4 font-semibold text-slate-800">{p.nama_penyetor}</td>
+                          <td className="px-6 py-4">
+                            <div className="font-semibold text-slate-800">{p.nama_penyetor}</div>
+                            {p.registration?.name && (
+                              <div className="text-[10px] text-primary font-bold mt-0.5 uppercase tracking-wider">
+                                Pendaftar: {p.registration.name}
+                              </div>
+                            )}
+                          </td>
                           <td className="px-6 py-4 font-bold text-slate-800 text-right">Rp {p.jumlah_bayar}</td>
                           <td className="px-6 py-4">{getStatusBadge(p.status)}</td>
                           <td className="px-6 py-4">
