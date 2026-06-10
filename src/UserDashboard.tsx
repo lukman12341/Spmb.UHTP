@@ -203,6 +203,12 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
     init();
   }, [paymentCode, checkPaymentStatus, fetchBiodata]);
 
+  useEffect(() => {
+    if (paymentStatus === 'rejected' && isFinalized) {
+      setIsFinalized(false);
+    }
+  }, [paymentStatus, isFinalized]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setBuktiFile(e.target.files[0]);
