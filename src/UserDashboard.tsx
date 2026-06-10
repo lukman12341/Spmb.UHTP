@@ -181,9 +181,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
       const data = await res.json();
       if (data && data.status) {
         setPaymentStatus(data.status);
-        if (data.status === 'rejected') {
-          setIsKonfirmasiModalOpen(true);
-        }
         if (data.tanggal_bayar) {
           setVerifiedPaymentDate(data.tanggal_bayar);
         }
@@ -202,12 +199,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
     };
     init();
   }, [paymentCode, checkPaymentStatus, fetchBiodata]);
-
-  useEffect(() => {
-    if (paymentStatus === 'rejected' && isFinalized) {
-      setIsFinalized(false);
-    }
-  }, [paymentStatus, isFinalized]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -716,6 +707,18 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                 <p className="text-primary font-bold text-xs uppercase tracking-widest">Universitas Hang Tuah Pekanbaru</p>
               </div>
 
+              {paymentStatus === 'rejected' && (
+                <div className="p-5 bg-rose-50 border border-rose-200 text-rose-800 rounded-3xl text-xs font-semibold leading-relaxed flex items-start gap-3.5 shadow-md animate-in fade-in slide-in-from-top-4 duration-300">
+                  <span className="material-symbols-outlined text-[24px] text-rose-550 shrink-0 mt-0.5 animate-bounce">warning</span>
+                  <div>
+                    <span className="font-extrabold uppercase text-[10px] tracking-wider block text-rose-600 mb-1">
+                      Bukti Pembayaran Ditolak Admin
+                    </span>
+                    Bukti transfer pembayaran formulir Anda ditolak oleh admin. Anda harus memperbaiki bukti bayar Anda untuk dapat mencetak kartu ujian atau mengikuti ujian online. Silakan klik tombol kembali di kiri atas halaman ini lalu klik **"Konfirmasi Bayar"** untuk mengunggah ulang bukti pembayaran yang valid.
+                  </div>
+                </div>
+              )}
+
               {/* Premium Exam Card (Screen Version) */}
               <div className="exam-card-premium rounded-[32px] shadow-xl border-none overflow-hidden animate-in fade-in zoom-in duration-500">
                 <div className="card-header-premium">
@@ -778,14 +781,16 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                   <div className="pt-6 flex flex-wrap gap-4 print:hidden">
                     <button
                       onClick={handlePrintExamCard}
-                      className="flex-1 min-w-[180px] bg-primary hover:bg-navy text-white font-bold py-3.5 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-primary/10"
+                      disabled={paymentStatus === 'rejected'}
+                      className="flex-1 min-w-[180px] bg-primary hover:bg-navy text-white font-bold py-3.5 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-primary/10 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <span className="material-symbols-outlined text-[18px]">print</span>
                       <span className="text-xs">CETAK KARTU</span>
                     </button>
                     <button
                       onClick={() => onOpenCbt(photoUrl)}
-                      className="flex-1 min-w-[180px] bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-slate-900/10"
+                      disabled={paymentStatus === 'rejected'}
+                      className="flex-1 min-w-[180px] bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-md shadow-slate-900/10 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <span className="material-symbols-outlined text-[18px]">computer</span>
                       <span className="text-xs">UJIAN ONLINE</span>
