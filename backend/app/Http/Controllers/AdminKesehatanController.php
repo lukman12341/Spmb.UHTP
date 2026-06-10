@@ -47,7 +47,12 @@ class AdminKesehatanController extends Controller
 
     public function index(Request $request)
     {
-        $query = Registration::with(['biodata', 'examResult', 'healthTest', 'interviewAnswers.soal'])
+        $query = Registration::with([
+            'biodata:id,registration_id,exam_number,hasil_wawancara,pewawancara,catatan_wawancara,status_registrasi',
+            'examResult',
+            'healthTest',
+            'interviewAnswers.soal'
+        ])
             ->whereHas('biodata', function ($q) {
                 // Hanya mahasiswa yang sudah difinalisasi (memiliki no ujian)
                 $q->whereNotNull('exam_number');
@@ -180,7 +185,7 @@ class AdminKesehatanController extends Controller
                 'skor' => $skor,
                 'jumlah_benar' => $jumlah_benar,
                 'no_telp' => $reg->no_hp ?? '-',
-                'hasil_wawancara' => $hasil_wawancara ?? (\App\Models\InterviewAnswer::where('registration_id', $reg->id)->exists() ? 'SUDAH UJIAN' : 'BELUM UJIAN'),
+                'hasil_wawancara' => $hasil_wawancara ?? ($reg->interviewAnswers->isNotEmpty() ? 'SUDAH UJIAN' : 'BELUM UJIAN'),
                 'pewawancara' => $reg->biodata->pewawancara ?? null,
                 'catatan_wawancara' => $reg->biodata->catatan_wawancara ?? null,
                 'status' => $finalStatus,
