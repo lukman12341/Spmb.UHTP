@@ -699,25 +699,22 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
         <div className="max-w-6xl mx-auto px-6 py-10 print:p-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-            {/* Main Content: Exam Card (Left Column) */}
-            <div className="lg:col-span-8 space-y-8">
+            <div className="lg:col-span-8 space-y-6">
+              {paymentStatus === 'rejected' && (
+                <div className="p-4 bg-rose-50/70 border border-rose-200/50 text-rose-900 rounded-2xl text-xs font-medium leading-relaxed flex items-start gap-3 shadow-xs animate-in fade-in duration-300">
+                  <span className="material-symbols-outlined text-[18px] text-rose-500 shrink-0 mt-0.5">warning</span>
+                  <div>
+                    <span className="font-bold text-rose-700 block mb-0.5 text-[11px] uppercase tracking-wider">Bukti Pembayaran Ditolak</span>
+                    Bukti transfer pembayaran formulir Anda ditolak oleh admin. Silakan kembali (klik tombol panah di kiri atas) lalu klik <strong>"Konfirmasi Bayar"</strong> untuk mengunggah ulang bukti pembayaran Anda.
+                  </div>
+                </div>
+              )}
+
               {/* Page Titles */}
               <div className="text-left space-y-1">
                 <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">KARTU PESERTA UJIAN</h2>
                 <p className="text-primary font-bold text-xs uppercase tracking-widest">Universitas Hang Tuah Pekanbaru</p>
               </div>
-
-              {paymentStatus === 'rejected' && (
-                <div className="p-5 bg-rose-50 border border-rose-200 text-rose-800 rounded-3xl text-xs font-semibold leading-relaxed flex items-start gap-3.5 shadow-md animate-in fade-in slide-in-from-top-4 duration-300">
-                  <span className="material-symbols-outlined text-[24px] text-rose-550 shrink-0 mt-0.5 animate-bounce">warning</span>
-                  <div>
-                    <span className="font-extrabold uppercase text-[10px] tracking-wider block text-rose-600 mb-1">
-                      Bukti Pembayaran Ditolak Admin
-                    </span>
-                    Bukti transfer pembayaran formulir Anda ditolak oleh admin. Anda harus memperbaiki bukti bayar Anda untuk dapat mencetak kartu ujian atau mengikuti ujian online. Silakan klik tombol kembali di kiri atas halaman ini lalu klik **"Konfirmasi Bayar"** untuk mengunggah ulang bukti pembayaran yang valid.
-                  </div>
-                </div>
-              )}
 
               {/* Premium Exam Card (Screen Version) */}
               <div className="exam-card-premium rounded-[32px] shadow-xl border-none overflow-hidden animate-in fade-in zoom-in duration-500">
