@@ -127,6 +127,9 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
         }
         if (statusData.status_registrasi) {
           setStatusRegistrasi(statusData.status_registrasi);
+          if (statusData.status_registrasi === 'Ditolak') {
+            setCurrentView('registrasi');
+          }
         }
         if (statusData.bukti_registrasi_path) {
           setBuktiRegistrasiPath(statusData.bukti_registrasi_path);

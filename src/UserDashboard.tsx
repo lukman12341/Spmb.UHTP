@@ -181,6 +181,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
       const data = await res.json();
       if (data && data.status) {
         setPaymentStatus(data.status);
+        if (data.status === 'rejected') {
+          setIsKonfirmasiModalOpen(true);
+        }
         if (data.tanggal_bayar) {
           setVerifiedPaymentDate(data.tanggal_bayar);
         }
@@ -1998,6 +2001,14 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto grow space-y-5">
+              {paymentStatus === 'rejected' && (
+                <div className="bg-rose-50 border border-rose-100 text-rose-800 px-4 py-3 rounded-2xl flex items-start gap-3 animate-in fade-in duration-300">
+                  <span className="material-symbols-outlined text-[18px] text-rose-500 shrink-0 mt-0.5">warning</span>
+                  <p className="text-xs font-semibold leading-relaxed">
+                    ⚠️ Bukti transfer ditolak admin. Silakan periksa kembali dan unggah bukti transfer yang benar.
+                  </p>
+                </div>
+              )}
 
               <div className="bg-blue-50 border border-blue-100 text-blue-800 px-4 py-3 rounded-xl flex items-start gap-3">
                 <span className="material-symbols-outlined text-blue-500 shrink-0 mt-0.5">info</span>
