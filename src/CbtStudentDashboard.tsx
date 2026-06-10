@@ -824,6 +824,16 @@ const CbtStudentDashboard: React.FC<CbtStudentDashboardProps> = ({ noUjian, stud
                   <span className="text-[9px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-md border border-primary/15">Wajib</span>
                 </div>
 
+                {statusRegistrasi === 'Ditolak' && (
+                  <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-[11px] font-semibold leading-relaxed flex items-start gap-2.5 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                    <span className="material-symbols-outlined text-[18px] text-rose-500 shrink-0">warning</span>
+                    <div>
+                      <span className="font-extrabold uppercase text-[9px] tracking-wider block text-rose-600 mb-0.5">Bukti Registrasi Ditolak</span>
+                      Berkas bukti registrasi ulang Anda ditolak oleh admin. Silakan periksa kembali berkas Anda dan unggah ulang bukti transfer yang valid.
+                    </div>
+                  </div>
+                )}
+
                 <div className={`relative flex-1 group transition-all duration-300 border-2 border-dashed rounded-2xl p-6 text-center flex flex-col items-center justify-center min-h-[260px] ${buktiRegistrasiFile ? 'border-primary bg-primary/3' : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50'}`}>
                   <input 
                     type="file" 

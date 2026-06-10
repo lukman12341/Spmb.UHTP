@@ -379,6 +379,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   const [pengumumanFilterRegistrasi, setPengumumanFilterRegistrasi] = useState('ALL');
   const [pengumumanData, setPengumumanData] = useState<any[]>([]);
   const [pengumumanLoading, setPengumumanLoading] = useState(false);
+  const [pengumumanSearch, setPengumumanSearch] = useState('');
 
   // Laporan (Reports) State
   const [laporanView, setLaporanView] = useState<'rekap_keseluruhan' | 'belum_registrasi' | 'laporan_ujian_tulis' | 'laporan_tes_kesehatan' | 'rekap_tes_kesehatan'>('rekap_keseluruhan');
@@ -388,6 +389,29 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
   const [laporanPeriodeOptions, setLaporanPeriodeOptions] = useState<string[]>(['2026']);
   const [laporanLoading, setLaporanLoading] = useState(false);
   const [laporanData, setLaporanData] = useState<any[]>([]);
+  const [laporanSearch, setLaporanSearch] = useState('');
+
+  // CBT Detail Search State
+  const [detailSearch, setDetailSearch] = useState('');
+
+  const filteredLaporanData = useMemo(() => {
+    return laporanData.filter(item => {
+      const search = laporanSearch.toLowerCase();
+      return String(item.nama || '').toLowerCase().includes(search) ||
+        String(item.no_ujian || '').toLowerCase().includes(search) ||
+        String(item.pilihan || '').toLowerCase().includes(search);
+    });
+  }, [laporanData, laporanSearch]);
+
+  const filteredCbtResultDetails = useMemo(() => {
+    return cbtResultDetails.filter(item => {
+      const search = detailSearch.toLowerCase();
+      return String(item.pertanyaan || '').toLowerCase().includes(search) ||
+        String(item.jawaban || '').toLowerCase().includes(search) ||
+        String(item.kunci || '').toLowerCase().includes(search) ||
+        String(item.status || '').toLowerCase().includes(search);
+    });
+  }, [cbtResultDetails, detailSearch]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -543,10 +567,10 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
   const filteredKesehatanData = useMemo(() => {
     return kesehatanData.filter(mhs => {
-      const matchesSearch = (mhs.nama?.toLowerCase() || '').includes(kesehatanSearch.toLowerCase()) ||
-        (mhs.no_ujian?.toLowerCase() || '').includes(kesehatanSearch.toLowerCase());
+      const matchesSearch = String(mhs.nama || '').toLowerCase().includes(kesehatanSearch.toLowerCase()) ||
+        String(mhs.no_ujian || '').toLowerCase().includes(kesehatanSearch.toLowerCase());
       
-      const statusKesLower = (mhs.status_kesehatan || '').toLowerCase();
+      const statusKesLower = String(mhs.status_kesehatan || '').toLowerCase();
       const isKesehatanFinal = statusKesLower === 'sehat' || statusKesLower === 'tidak sehat' || statusKesLower === 'lulus' || statusKesLower === 'tidak lulus';
 
       let isCorrectView = true;
@@ -816,6 +840,14 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     return pengumumanData.filter(mhs => {
       const statusLower = (mhs.status || '').toLowerCase();
       
+      // Filter by search
+      if (pengumumanSearch) {
+        const matchesSearch = String(mhs.nama || '').toLowerCase().includes(pengumumanSearch.toLowerCase()) ||
+          String(mhs.no_ujian || '').toLowerCase().includes(pengumumanSearch.toLowerCase()) ||
+          String(mhs.pilihan || '').toLowerCase().includes(pengumumanSearch.toLowerCase());
+        if (!matchesSearch) return false;
+      }
+
       // Filter by prodi
       if (pengumumanFilterProdi !== 'ALL') {
         const studentProdi = (mhs.pilihan || '').toLowerCase();
@@ -1247,15 +1279,15 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     ];
 
     return wawancaraData.filter(mhs => {
-      const pilihanLower = (mhs.pilihan || '').toLowerCase();
+      const pilihanLower = String(mhs.pilihan || '').toLowerCase();
       const isAllowedProdi = isKelulusanView ? true : allowedWawancaraProdi.some(prodi => pilihanLower.includes(prodi));
-      const matchesSearch = (mhs.nama?.toLowerCase() || '').includes(wawancaraSearch.toLowerCase()) ||
-        (mhs.no_ujian?.toLowerCase() || '').includes(wawancaraSearch.toLowerCase());
+      const matchesSearch = String(mhs.nama || '').toLowerCase().includes(wawancaraSearch.toLowerCase()) ||
+        String(mhs.no_ujian || '').toLowerCase().includes(wawancaraSearch.toLowerCase());
 
-      const wawancaraStatusLower = (mhs.hasil_wawancara || '').toLowerCase();
+      const wawancaraStatusLower = String(mhs.hasil_wawancara || '').toLowerCase();
       const isWawancaraFinal = wawancaraStatusLower === 'lulus' || wawancaraStatusLower === 'tidak lulus';
 
-      const statusLower = (mhs.status || '').toLowerCase();
+      const statusLower = String(mhs.status || '').toLowerCase();
       const isFinalStatus = statusLower !== 'proses' && statusLower !== '';
 
       let isCorrectView = true;
@@ -3839,8 +3871,8 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
   const renderAbsensi = () => {
     const filteredAbsensi = absensiData.filter(mhs =>
-      (mhs.nama?.toLowerCase() || '').includes(absensiSearch.toLowerCase()) ||
-      (mhs.no_ujian?.toLowerCase() || '').includes(absensiSearch.toLowerCase())
+      String(mhs.nama || '').toLowerCase().includes(absensiSearch.toLowerCase()) ||
+      String(mhs.no_ujian || '').toLowerCase().includes(absensiSearch.toLowerCase())
     );
 
     const paginatedAbsensi = filteredAbsensi.slice(
@@ -4034,8 +4066,8 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
 
   const renderBeritaAcara = () => {
     const filteredBerita = beritaData.filter(mhs =>
-      (mhs.nama?.toLowerCase() || '').includes(beritaSearch.toLowerCase()) ||
-      (mhs.no_ujian?.toLowerCase() || '').includes(beritaSearch.toLowerCase())
+      String(mhs.nama || '').toLowerCase().includes(beritaSearch.toLowerCase()) ||
+      String(mhs.no_ujian || '').toLowerCase().includes(beritaSearch.toLowerCase())
     );
 
     const paginatedBerita = filteredBerita.slice(
@@ -4469,11 +4501,21 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           </div>
         ) : pengumumanData.length > 0 ? (
           <div className="bg-white shadow-sm rounded-sm overflow-hidden border border-slate-200">
-            <div className="p-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <div className="p-3 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h4 className="text-sm font-bold text-slate-600">
                 Preview Data Pengumuman 
                 <span className="text-slate-400 font-normal ml-2">({filtered.length} peserta)</span>
               </h4>
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <span>Search:</span>
+                <input
+                  type="text"
+                  value={pengumumanSearch}
+                  onChange={(e) => setPengumumanSearch(e.target.value)}
+                  className="px-2 py-1 border border-slate-300 rounded-sm outline-none focus:border-[#00a65a]"
+                  placeholder="Cari nama, no ujian, prodi..."
+                />
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-[13px]">
@@ -4766,7 +4808,13 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
             </div>
             <div className="flex items-center gap-2 text-sm text-slate-600">
               <span>Search:</span>
-              <input type="text" className="px-2 py-1 border border-slate-300 rounded-sm outline-none focus:border-[#00a65a]" />
+              <input
+                type="text"
+                value={detailSearch}
+                onChange={(e) => setDetailSearch(e.target.value)}
+                className="px-2 py-1 border border-slate-300 rounded-sm outline-none focus:border-[#00a65a]"
+                placeholder="Cari..."
+              />
             </div>
           </div>
 
@@ -4783,7 +4831,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                 </tr>
               </thead>
               <tbody>
-                {cbtResultDetails.length > 0 ? cbtResultDetails.map((item, idx) => (
+                {filteredCbtResultDetails.length > 0 ? filteredCbtResultDetails.map((item, idx) => (
                   <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3 border-r border-slate-200 text-center bg-slate-100">{idx + 1}</td>
                     <td className="px-4 py-3 border-r border-slate-200 text-slate-600">{item.no_ujian}</td>
@@ -5284,10 +5332,20 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
           </div>
         ) : laporanData.length > 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-slate-100 mt-5 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h4 className="text-sm font-bold text-slate-700">
-                Preview Data — <span className="text-[#00857A]">{laporanData.length} entri</span>
+                Preview Data — <span className="text-[#00857A]">{filteredLaporanData.length} entri</span> {laporanSearch && <span className="text-slate-450 font-normal text-xs">(difilter dari {laporanData.length} total)</span>}
               </h4>
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <span>Search:</span>
+                <input
+                  type="text"
+                  value={laporanSearch}
+                  onChange={(e) => setLaporanSearch(e.target.value)}
+                  className="px-2 py-1 border border-slate-300 rounded-sm outline-none focus:border-[#00857A]"
+                  placeholder="Cari nama, no ujian, prodi..."
+                />
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left border-collapse">
@@ -5315,46 +5373,52 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                   </tr>
                 </thead>
                 <tbody>
-                  {laporanData.map((item, idx) => (
-                    <tr key={item.id || idx} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors text-slate-700 font-medium">
-                      <td className="px-4 py-3 text-center text-slate-400">{idx + 1}</td>
-                      <td className="px-4 py-3 font-mono text-blue-600 font-bold">{item.no_ujian || '-'}</td>
-                      <td className="px-4 py-3 font-bold text-slate-800 uppercase">{item.nama || '-'}</td>
-                      <td className="px-4 py-3">{item.pilihan || '-'}</td>
-                      {laporanView === 'rekap_keseluruhan' && <td className="px-4 py-3 text-center font-bold">{item.gelombang || '-'}</td>}
-                      {laporanView === 'rekap_keseluruhan' && (
-                        <td className="px-4 py-3 text-center">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                            (item.status || '').toLowerCase() === 'lulus' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                            (item.status || '').toLowerCase() === 'tidak lulus' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
-                            'bg-slate-50 text-slate-500 border border-slate-200'
-                          }`}>{item.status || '-'}</span>
-                        </td>
-                      )}
-                      {laporanView === 'belum_registrasi' && <td className="px-4 py-3 text-center font-bold">{item.gelombang || '-'}</td>}
-                      {laporanView === 'belum_registrasi' && <td className="px-4 py-3 text-center">{item.no_hp || '-'}</td>}
-
-                      {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold text-emerald-600">{item.benar ?? '-'}</td>}
-                      {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold text-rose-500">{item.salah ?? '-'}</td>}
-                      {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold">{item.nilai ?? item.total_score ?? '-'}</td>}
-                      {laporanView === 'rekap_tes_kesehatan' && (
-                        <td className="px-4 py-3 text-center">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                            !item.status_kesehatan ? 'bg-slate-50 text-slate-500 border border-slate-200' :
-                            (item.status_kesehatan === 'Sehat' || item.status_kesehatan === 'Lulus') ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                            item.status_kesehatan === 'Menunggu' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
-                            'bg-rose-50 text-rose-600 border border-rose-100'
-                          }`}>{item.status_kesehatan || 'Belum Tes'}</span>
-                        </td>
-                      )}
-                      {laporanView === 'rekap_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.keterangan_kesehatan || '-'}</td>}
-                      {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.tinggi_badan || '-'}</td>}
-                      {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.golongan_darah || '-'}</td>}
-                      {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.visus || '-'}</td>}
-                      {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.tekanan_darah || '-'}</td>}
-                      {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.buta_warna || '-'}</td>}
+                  {filteredLaporanData.length === 0 ? (
+                    <tr>
+                      <td colSpan={15} className="px-4 py-8 text-center text-slate-400 font-semibold">Tidak ada data yang cocok dengan pencarian Anda</td>
                     </tr>
-                  ))}
+                  ) : (
+                    filteredLaporanData.map((item, idx) => (
+                      <tr key={item.id || idx} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors text-slate-700 font-medium">
+                        <td className="px-4 py-3 text-center text-slate-400">{idx + 1}</td>
+                        <td className="px-4 py-3 font-mono text-blue-600 font-bold">{item.no_ujian || '-'}</td>
+                        <td className="px-4 py-3 font-bold text-slate-800 uppercase">{item.nama || '-'}</td>
+                        <td className="px-4 py-3">{item.pilihan || '-'}</td>
+                        {laporanView === 'rekap_keseluruhan' && <td className="px-4 py-3 text-center font-bold">{item.gelombang || '-'}</td>}
+                        {laporanView === 'rekap_keseluruhan' && (
+                          <td className="px-4 py-3 text-center">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                              (item.status || '').toLowerCase() === 'lulus' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+                              (item.status || '').toLowerCase() === 'tidak lulus' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
+                              'bg-slate-50 text-slate-500 border border-slate-200'
+                            }`}>{item.status || '-'}</span>
+                          </td>
+                        )}
+                        {laporanView === 'belum_registrasi' && <td className="px-4 py-3 text-center font-bold">{item.gelombang || '-'}</td>}
+                        {laporanView === 'belum_registrasi' && <td className="px-4 py-3 text-center">{item.no_hp || '-'}</td>}
+
+                        {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold text-emerald-600">{item.benar ?? '-'}</td>}
+                        {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold text-rose-500">{item.salah ?? '-'}</td>}
+                        {laporanView === 'laporan_ujian_tulis' && <td className="px-4 py-3 text-center font-bold">{item.nilai ?? item.total_score ?? '-'}</td>}
+                        {laporanView === 'rekap_tes_kesehatan' && (
+                          <td className="px-4 py-3 text-center">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                              !item.status_kesehatan ? 'bg-slate-50 text-slate-500 border border-slate-200' :
+                              (item.status_kesehatan === 'Sehat' || item.status_kesehatan === 'Lulus') ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+                              item.status_kesehatan === 'Menunggu' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
+                              'bg-rose-50 text-rose-600 border border-rose-100'
+                            }`}>{item.status_kesehatan || 'Belum Tes'}</span>
+                          </td>
+                        )}
+                        {laporanView === 'rekap_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.keterangan_kesehatan || '-'}</td>}
+                        {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.tinggi_badan || '-'}</td>}
+                        {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.golongan_darah || '-'}</td>}
+                        {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.visus || '-'}</td>}
+                        {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.tekanan_darah || '-'}</td>}
+                        {laporanView === 'laporan_tes_kesehatan' && <td className="px-4 py-3 text-center">{item.buta_warna || '-'}</td>}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

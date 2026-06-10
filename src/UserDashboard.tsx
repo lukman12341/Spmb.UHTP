@@ -1004,14 +1004,15 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
                 {/* Step 2 */}
                 <div className="relative">
-                  <div className={`absolute -left-[23px] top-0.5 size-4 rounded-full ${paymentStatus === 'verified' ? 'bg-emerald-500' : (paymentStatus === 'pending' ? 'bg-amber-400' : 'bg-slate-200')} border-2 border-white ring-1 ${paymentStatus === 'verified' ? 'ring-emerald-500' : (paymentStatus === 'pending' ? 'ring-amber-400' : 'ring-slate-200')} flex items-center justify-center z-10`}>
-                    {paymentStatus === 'verified' && <span className="material-symbols-outlined text-[10px] text-white font-bold">check</span>}
-                  </div>
-                  <h4 className={`text-xs font-bold ${paymentStatus === 'verified' ? 'text-slate-800' : 'text-slate-600'}`}>Pembayaran Formulir</h4>
-                  <p className="text-[10px] text-slate-400 font-medium">
-                    {paymentStatus === 'verified' ? 'Lunas & Diverifikasi' : (paymentStatus === 'pending' ? 'Menunggu Konfirmasi' : 'Silakan lakukan transfer')}
-                  </p>
-                </div>
+                   <div className={`absolute -left-[23px] top-0.5 size-4 rounded-full ${paymentStatus === 'verified' ? 'bg-emerald-500' : (paymentStatus === 'pending' ? 'bg-amber-400' : (paymentStatus === 'rejected' ? 'bg-rose-500' : 'bg-slate-200'))} border-2 border-white ring-1 ${paymentStatus === 'verified' ? 'ring-emerald-500' : (paymentStatus === 'pending' ? 'ring-amber-400' : (paymentStatus === 'rejected' ? 'ring-rose-500' : 'ring-slate-200'))} flex items-center justify-center z-10`}>
+                     {paymentStatus === 'verified' && <span className="material-symbols-outlined text-[10px] text-white font-bold">check</span>}
+                     {paymentStatus === 'rejected' && <span className="material-symbols-outlined text-[10px] text-white font-bold">close</span>}
+                   </div>
+                   <h4 className={`text-xs font-bold ${paymentStatus === 'verified' ? 'text-slate-800' : 'text-slate-600'}`}>Pembayaran Formulir</h4>
+                   <p className="text-[10px] text-slate-400 font-medium">
+                     {paymentStatus === 'verified' ? 'Lunas & Diverifikasi' : (paymentStatus === 'pending' ? 'Menunggu Konfirmasi' : (paymentStatus === 'rejected' ? 'Ditolak (Upload Ulang)' : 'Silakan lakukan transfer'))}
+                   </p>
+                 </div>
 
                 {/* Step 3 */}
                 <div className={`relative ${paymentStatus !== 'verified' ? 'opacity-50' : ''}`}>
@@ -1774,6 +1775,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                       </div>
                       {paymentStatus === 'verified' && <span className="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider">Terverifikasi</span>}
                       {paymentStatus === 'pending' && <span className="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider">Menunggu</span>}
+                      {paymentStatus === 'rejected' && <span className="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider">Ditolak</span>}
                       {paymentStatus === 'belum_bayar' && <span className="bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider">Belum Bayar</span>}
                     </div>
 
@@ -1791,10 +1793,17 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
                           Menunggu Verifikasi
                         </div>
                       ) : (
-                        <button onClick={() => setIsKonfirmasiModalOpen(true)} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all">
-                          <span className="material-symbols-outlined text-[18px]">upload_file</span>
-                          Konfirmasi Bayar
-                        </button>
+                        <div className="space-y-3 w-full">
+                           {paymentStatus === 'rejected' && (
+                             <p className="text-[11px] font-bold text-rose-500 text-center leading-relaxed bg-rose-50 border border-rose-100 py-2 rounded-xl">
+                               ⚠️ Bukti transfer ditolak admin. Silakan unggah bukti yang benar.
+                             </p>
+                           )}
+                           <button onClick={() => setIsKonfirmasiModalOpen(true)} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all">
+                             <span className="material-symbols-outlined text-[18px]">upload_file</span>
+                             Konfirmasi Bayar
+                           </button>
+                        </div>
                       )
                     )}
                   </div>

@@ -330,8 +330,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
 
     if (activeTab === 'payments') {
       const filtered = payments.filter(p => {
-        const matchesSearch = p.nama_penyetor.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            p.kode_pembayaran.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = String(p.nama_penyetor || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            String(p.kode_pembayaran || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
         return matchesSearch && matchesStatus;
       });
@@ -352,8 +352,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
       downloadCSV(headers, rows, "Laporan_Pembayaran_SPMB");
     } else if (activeTab === 'students') {
       const filtered = biodatas.filter(b => {
-        const name = b.registration?.name || '';
-        const examNumber = b.exam_number || '';
+        const name = String(b.registration?.name || '');
+        const examNumber = String(b.exam_number || '');
         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             examNumber.toLowerCase().includes(searchTerm.toLowerCase());
         
@@ -381,9 +381,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
     } else if (activeTab === 'health') {
       const filtered = biodatas.filter(b => {
         if (!b.is_finalized) return false;
-        const name = b.registration?.name || '';
-        const examNumber = b.exam_number || '';
-        const programStudi = b.registration?.program_studi || '';
+        const name = String(b.registration?.name || '');
+        const examNumber = String(b.exam_number || '');
+        const programStudi = String(b.registration?.program_studi || '');
         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             programStudi.toLowerCase().includes(searchTerm.toLowerCase());
@@ -418,9 +418,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
     } else if (activeTab === 'registration') {
       const filtered = biodatas.filter(b => {
         if (!b.status_registrasi) return false;
-        const name = b.registration?.name || '';
-        const examNumber = b.exam_number || '';
-        const programStudi = b.registration?.program_studi || '';
+        const name = String(b.registration?.name || '');
+        const examNumber = String(b.exam_number || '');
+        const programStudi = String(b.registration?.program_studi || '');
         const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             programStudi.toLowerCase().includes(searchTerm.toLowerCase());
@@ -443,7 +443,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
       downloadCSV(headers, rows, "Laporan_Registrasi_Ulang_SPMB");
     } else if (activeTab === 'schedules') {
       const filtered = schedules.filter(s => {
-        return s.gelombang.toLowerCase().includes(searchTerm.toLowerCase());
+        return String(s.gelombang || '').toLowerCase().includes(searchTerm.toLowerCase());
       });
 
       if (filtered.length === 0) {
@@ -850,8 +850,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                     ) : (
                       payments
                         .filter(p => {
-                          const matchesSearch = p.nama_penyetor.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                              p.kode_pembayaran.toLowerCase().includes(searchTerm.toLowerCase());
+                          const matchesSearch = String(p.nama_penyetor || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                              String(p.kode_pembayaran || '').toLowerCase().includes(searchTerm.toLowerCase());
                           const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
                           return matchesSearch && matchesStatus;
                         })
@@ -876,25 +876,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                                 <span className="material-symbols-outlined text-[16px]">visibility</span>
                                 <span>Bukti</span>
                               </button>
-                              {p.status === 'pending' && (
-                                <>
-                                  <button 
-                                    onClick={() => handleUpdateStatus(p.id, 'verified')}
-                                    className="px-2.5 py-1 text-emerald-600 hover:text-emerald-700 bg-emerald-50/50 hover:bg-emerald-100/60 border border-emerald-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95"
-                                    title="Verifikasi Lunas"
-                                  >
-                                    <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                                    <span>Lunas</span>
-                                  </button>
-                                  <button 
-                                    onClick={() => handleUpdateStatus(p.id, 'rejected')}
-                                    className="px-2.5 py-1 text-rose-600 hover:text-rose-700 bg-rose-50/50 hover:bg-rose-100/60 border border-rose-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95"
-                                    title="Tolak"
-                                  >
-                                    <span className="material-symbols-outlined text-[16px]">cancel</span>
-                                    <span>Tolak</span>
-                                  </button>
-                                </>
+                              {p.status !== 'verified' && (
+                                <button 
+                                  onClick={() => handleUpdateStatus(p.id, 'verified')}
+                                  className="px-2.5 py-1 text-emerald-600 hover:text-emerald-700 bg-emerald-50/50 hover:bg-emerald-100/60 border border-emerald-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95"
+                                  title="Verifikasi Lunas"
+                                >
+                                  <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                                  <span>Lunas</span>
+                                </button>
+                              )}
+                              {p.status !== 'rejected' && (
+                                <button 
+                                  onClick={() => handleUpdateStatus(p.id, 'rejected')}
+                                  className="px-2.5 py-1 text-rose-600 hover:text-rose-700 bg-rose-50/50 hover:bg-rose-100/60 border border-rose-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 active:scale-95"
+                                  title="Tolak"
+                                >
+                                  <span className="material-symbols-outlined text-[16px]">cancel</span>
+                                  <span>Tolak</span>
+                                </button>
                               )}
                             </div>
                           </td>
@@ -929,9 +929,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                     ) : (
                       biodatas
                         .filter(b => {
-                          const name = b.registration?.name || '';
-                          const examNumber = b.exam_number || '';
-                          const programStudi = b.registration?.program_studi || '';
+                          const name = String(b.registration?.name || '');
+                          const examNumber = String(b.exam_number || '');
+                          const programStudi = String(b.registration?.program_studi || '');
                           const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                               examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                               programStudi.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1012,7 +1012,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                         .filter(b => {
                           if (!b.is_finalized) return false;
                           
-                          const programStudi = b.registration?.program_studi || '';
+                          const programStudi = String(b.registration?.program_studi || '');
                           const pilihanLower = programStudi.toLowerCase();
                           
                           const isS1Kesmas = pilihanLower.includes('s1') && (pilihanLower.includes('kesmas') || pilihanLower.includes('kesehatan masyarakat') || pilihanLower.includes('ikm'));
@@ -1026,8 +1026,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                           const hasHealthTest = isS1Kesmas || isS1Bidan || isS1Keperawatan || isD3Rmik || isD4Rmik || isProfesiNers || isProfesiBidan;
                           if (!hasHealthTest) return false;
 
-                          const name = b.registration?.name || '';
-                          const examNumber = b.exam_number || '';
+                          const name = String(b.registration?.name || '');
+                          const examNumber = String(b.exam_number || '');
                           const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                               examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                               programStudi.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1129,9 +1129,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                       biodatas
                         .filter(b => {
                           if (!b.status_registrasi) return false;
-                          const name = b.registration?.name || '';
-                          const examNumber = b.exam_number || '';
-                          const programStudi = b.registration?.program_studi || '';
+                          const name = String(b.registration?.name || '');
+                          const examNumber = String(b.exam_number || '');
+                          const programStudi = String(b.registration?.program_studi || '');
                           const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                               examNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                               programStudi.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1175,30 +1175,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center justify-center gap-2">
-                              {b.status_registrasi === 'Menunggu Verifikasi' && (
-                                <>
-                                  <button 
-                                    onClick={() => handleVerifyRegistrasi(b.id, 'Sudah Registrasi')}
-                                    disabled={isLoading}
-                                    className="px-2.5 py-1 text-emerald-600 hover:text-emerald-700 bg-emerald-50/50 hover:bg-emerald-100/60 border border-emerald-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
-                                    title="Verifikasi ACC"
-                                  >
-                                    <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                                    <span>ACC</span>
-                                  </button>
-                                  <button 
-                                    onClick={() => handleVerifyRegistrasi(b.id, 'Ditolak')}
-                                    disabled={isLoading}
-                                    className="px-2.5 py-1 text-rose-600 hover:text-rose-700 bg-rose-50/50 hover:bg-rose-100/60 border border-rose-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
-                                    title="Tolak"
-                                  >
-                                    <span className="material-symbols-outlined text-[16px]">cancel</span>
-                                    <span>Tolak</span>
-                                  </button>
-                                </>
+                              {b.status_registrasi !== 'Sudah Registrasi' && (
+                                <button 
+                                  onClick={() => handleVerifyRegistrasi(b.id, 'Sudah Registrasi')}
+                                  disabled={isLoading}
+                                  className="px-2.5 py-1 text-emerald-600 hover:text-emerald-700 bg-emerald-50/50 hover:bg-emerald-100/60 border border-emerald-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
+                                  title="Verifikasi ACC"
+                                >
+                                  <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                                  <span>ACC</span>
+                                </button>
                               )}
-                              {b.status_registrasi !== 'Menunggu Verifikasi' && (
-                                 <span className="bg-slate-50 text-slate-450 border border-slate-200/60 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm uppercase tracking-wider">Terverifikasi</span>
+                              {b.status_registrasi !== 'Ditolak' && (
+                                <button 
+                                  onClick={() => handleVerifyRegistrasi(b.id, 'Ditolak')}
+                                  disabled={isLoading}
+                                  className="px-2.5 py-1 text-rose-600 hover:text-rose-700 bg-rose-50/50 hover:bg-rose-100/60 border border-rose-200/50 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
+                                  title="Tolak"
+                                >
+                                  <span className="material-symbols-outlined text-[16px]">cancel</span>
+                                  <span>Tolak</span>
+                                </button>
                               )}
                             </div>
                           </td>
@@ -1251,7 +1248,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, user }) => {
                       </tr>
                     ) : (
                       schedules
-                        .filter(s => s.gelombang.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .filter(s => String(s.gelombang || '').toLowerCase().includes(searchTerm.toLowerCase()))
                         .map((s) => {
                           const now = new Date();
                           const start = s.tanggal_registrasi_mulai ? new Date(s.tanggal_registrasi_mulai) : null;
