@@ -701,12 +701,11 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onLogout, onOpenCbt, user
 
             <div className="lg:col-span-8 space-y-6">
               {paymentStatus === 'rejected' && (
-                <div className="p-4 bg-rose-50/70 border border-rose-200/50 text-rose-900 rounded-2xl text-xs font-medium leading-relaxed flex items-start gap-3 shadow-xs animate-in fade-in duration-300">
-                  <span className="material-symbols-outlined text-[18px] text-rose-500 shrink-0 mt-0.5">warning</span>
-                  <div>
-                    <span className="font-bold text-rose-700 block mb-0.5 text-[11px] uppercase tracking-wider">Bukti Pembayaran Ditolak</span>
-                    Bukti transfer pembayaran formulir Anda ditolak oleh admin. Silakan kembali (klik tombol panah di kiri atas) lalu klik <strong>"Konfirmasi Bayar"</strong> untuk mengunggah ulang bukti pembayaran Anda.
-                  </div>
+                <div className="bg-amber-50 border border-amber-100 text-amber-900 px-4 py-3 rounded-2xl flex items-start gap-3 shadow-sm animate-in fade-in duration-300">
+                  <span className="material-symbols-outlined text-amber-500 shrink-0 mt-0.5 text-[20px]">warning</span>
+                  <p className="text-xs font-semibold leading-relaxed">
+                    Bukti transfer pembayaran formulir ditolak oleh admin. Silakan klik tombol kembali (panah di kiri atas) dan klik <strong>"Konfirmasi Bayar"</strong> untuk mengunggah ulang bukti pembayaran Anda.
+                  </p>
                 </div>
               )}
 
