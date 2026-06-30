@@ -23,3 +23,9 @@ check_photo.php
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment files
+.env
+.env.*
+.env.local
+.env.*.local
