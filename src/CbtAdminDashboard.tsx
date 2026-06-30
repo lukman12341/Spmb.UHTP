@@ -5068,11 +5068,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
       'S1 TI Program RPLA2', 'S2 KESMAS', 'S2 KESMAS PROGRAM REGULER', 'S2 Kesmas Program RPLA2'
     ];
 
-    const laporanProdiOptions = 
-      laporanView === 'rekap_keseluruhan' ? rekapKeseluruhanProdiOptions : 
-      laporanView === 'belum_registrasi' ? belumRegistrasiProdiOptions : 
-      (laporanView === 'laporan_ujian_tulis' || laporanView === 'laporan_tes_kesehatan') ? ujianTulisProdiOptions : 
-      prodiOptions;
+    const laporanProdiOptions = prodiOptions;
 
     const buttonLabels: Record<string, string> = {
       rekap_keseluruhan: 'Cetak',
