@@ -16,10 +16,14 @@ class AdminKesehatanController extends Controller
 {
     public function getOptions()
     {
-        $gelombang = Periode::orderBy('kode_periode')->pluck('kode_periode');
-        if ($gelombang->isEmpty()) {
-            $gelombang = Registration::whereNotNull('gelombang')->distinct()->orderBy('gelombang')->pluck('gelombang');
-        }
+        $gelombangDb = Periode::pluck('kode_periode')->toArray();
+        $gelombangReg = Registration::whereNotNull('gelombang')->distinct()->pluck('gelombang')->toArray();
+
+        $gelombang = collect(array_merge($gelombangDb, $gelombangReg))
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
 
         $prodiDb = Prodi::orderBy('nama_prodi')->pluck('nama_prodi')->toArray();
         $prodiReg = Registration::whereNotNull('program_studi')->distinct()->pluck('program_studi')->toArray();
