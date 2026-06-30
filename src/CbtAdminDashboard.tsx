@@ -5241,7 +5241,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
                       value={laporanFilterProdi}
                       onChange={(e) => setLaporanFilterProdi(e.target.value)}
                     >
-                      <option value="">{laporanView === 'rekap_keseluruhan' ? '--Pilih Prodi--' : 'Semua Program Studi'}</option>
+                      <option value="">Semua Program Studi</option>
                       {laporanProdiOptions.map(opt => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
