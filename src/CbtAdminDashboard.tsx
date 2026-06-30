@@ -1368,7 +1368,7 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         const data = await response.json();
         setStatDetailsData(data);
       } else {
-        const response = await fetch(`${API_BASE_URL}/api/admin/biodatas`);
+        const response = await fetch(`${API_BASE_URL}/api/admin/biodatas?exclude_files=1`);
         const data = await response.json();
         
         let filtered: any[] = [];
@@ -5100,10 +5100,10 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
         endpoint = `${API_BASE_URL}/api/admin/wawancara?gelombang=${laporanFilterGelombang || ''}`;
         // use existing endpoint with fallback
         if (usesPeriode && !laporanFilterGelombang) {
-          endpoint = `${API_BASE_URL}/api/admin/biodatas`;
+          endpoint = `${API_BASE_URL}/api/admin/biodatas?exclude_files=1`;
         }
       } else if (laporanView === 'belum_registrasi') {
-        endpoint = `${API_BASE_URL}/api/admin/biodatas`;
+        endpoint = `${API_BASE_URL}/api/admin/biodatas?exclude_files=1`;
       } else if (laporanView === 'laporan_ujian_tulis') {
         endpoint = `${API_BASE_URL}/api/admin/wawancara?gelombang=${laporanFilterGelombang}&tpa_only=1`;
       } else if (laporanView === 'rekap_tes_kesehatan') {

@@ -94,10 +94,19 @@ class BiodataController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil semua registrasi beserta relasi biodata, healthTest, dan examResult-nya
-        $registrations = Registration::with(['biodata', 'healthTest', 'examResult'])->get();
+        $excludeFiles = $request->query('exclude_files') === '1';
+
+        if ($excludeFiles) {
+            $registrations = Registration::with([
+                'biodata:id,registration_id,exam_number,is_finalized,status_registrasi,hasil_wawancara,pewawancara,catatan_wawancara',
+                'healthTest:id,registration_id,status_kesehatan,tinggi_badan,golongan_darah,buta_warna,visus,tekanan_darah,riwayat_penyakit,keterangan_kesehatan',
+                'examResult'
+            ])->get();
+        } else {
+            $registrations = Registration::with(['biodata', 'healthTest', 'examResult'])->get();
+        }
         
         $mapped = $registrations->map(function (Registration $r) {
             $b = $r->biodata;
