@@ -5021,53 +5021,6 @@ const CbtAdminDashboard: React.FC<CbtAdminDashboardProps> = ({ onLogout, adminNa
     const usesPeriode = laporanView === 'rekap_keseluruhan' || laporanView === 'belum_registrasi';
     const usesGelombang = !usesPeriode;
     const usesProdi = laporanView !== 'rekap_tes_kesehatan';
-    const rekapKeseluruhanProdiOrder = [
-      'S2 Kesmas',
-      'S1 Kesmas',
-      'S1 Keperawatan',
-      'S1 Kebidanan',
-      'S1 Teknik Informatika',
-      'S1 Sistem Informasi',
-      'S1 Ilmu Hukum',
-      'S1 Ilmu Komunikasi',
-      'D3 Rekam Medis',
-      'Profesi Bidan',
-      'Profesi Ners',
-    ];
-    const normalizeRekapProdi = (prodi: string) => prodi
-      .replace(/Kesehatan Masyarakat/gi, 'Kesmas')
-      .replace(/\s+Program\s+.*/i, '')
-      .trim();
-    const rekapKeseluruhanProdiOptions = rekapKeseluruhanProdiOrder.filter((label) =>
-      prodiOptions.some((prodi) => normalizeRekapProdi(prodi) === label)
-    );
-    const belumRegistrasiProdiOptions = [
-      'D3 REKAM MEDIS', 'PROFESI NERS', 'PROFESI BIDAN', 'S1 ILMU HUKUM', 'S1 ILMU KOMUNIKASI', 
-      'S1 TI PINDAHAN', 'S1 KESMAS PROGRAM REGULER', 'S1 KESMAS PROGRAM RPLA1', 'S1 KESMAS PROGRAM RPLA2', 
-      'S1 TI PROGRAM REGULER', 'S1 TI PROGRAM RPLA1', 'S1 TI PROGRAM RPLA2', 'S1 SI PROGRAM REGULER', 
-      'S1 SI PROGRAM RPLA1', 'S1 SI PROGRAM RPLA2', 'S2 KESMAS PROGRAM REGULER', 'S2 KESMAS PROGRAM RPLA2', 
-      'S1 KEBIDANAN PROGRAM REGULER', 'S1 KEBIDANAN PROGRAM RPLA1', 'S1 KEBIDANAN PROGRAM RPLA2', 
-      'S1 KEPERAWATAN PROGRAM REGULER', 'S1 KEPERAWATAN PROGRAM RPLA1', 'S1 KEPERAWATAN PROGRAM RPLA2', 
-      'S1 ILMU KOMUNIKASI PINDAHAN', 'D4 MANAJEMEN INFORMASI KESEHATAN', 'S1 KEBIDANAN PROGRAM PINDAHAN', 
-      'S1 KEPERAWATAN PINDAHAN'
-    ];
-
-    const ujianTulisProdiOptions = [
-      'D3 KEBIDANAN', 'D3 REKAM MEDIK', 'D3 Rekam Medis', 'D4 Manajemen Informasi Kesehatan', 
-      'ILMU KOMUNIKASI PINDAHAN', 'NERS', 'PROFESI BIDAN', 'PROFESI NERS', 'S1 ILMU HUKUM', 
-      'S1 ILMU KOMUNIKASI', 'S1 ILMU KOMUNIKASI PINDAHAN', 'S1 KEBIDANAN', 'S1 Kebidanan Program Reguler', 
-      'S1 KEBIDANAN PROGRAM RPLA1', 'S1 KEBIDANAN PROGRAM RPLA2', 'S1 KEPERAWATAN', 'S1 KEPERAWATAN B NON REGULER', 
-      'S1 KEPERAWATAN PINDAHAN', 'S1 Keperawatan Program Reguler', 'S1 Keperawatan Program RPLA1', 
-      'S1 KEPERAWATAN PROGRAM RPLA2', 'S1 KESMAS JALUR A NON REGULER', 'S1 KESMAS JALUR A REGULER', 
-      'S1 KESMAS JALUR B NON REGULER', 'S1 KESMAS JALUR B REGULER', 'S1 Kesmas Program Reguler', 
-      'S1 Kesmas Program RPLA1', 'S1 Kesmas Program RPLA2', 'S1 SI Program Reguler', 'S1 SI Program RPLA1', 
-      'S1 SI Program RPLA2', 'S1 SISTEM INFORMASI', 'S1 SISTEM INFORMASI B NON REGULER', 
-      'S1 SISTEM INFORMASI PINDAHAN', 'S1 SISTEM INFORMASI TRANSFER', 'S1 TEKNIK INFORMATIKA', 
-      'S1 TEKNIK INFORMATIKA B NON REGULER', 'S1 TEKNIK INFORMATIKA PINDAHAN', 'S1 TEKNIK INFORMATIKA REGULER', 
-      'S1 TEKNIK INFORMATIKA TRANSFER', 'S1 TI PINDAHAN', 'S1 TI Program Reguler', 'S1 TI Program RPLA1', 
-      'S1 TI Program RPLA2', 'S2 KESMAS', 'S2 KESMAS PROGRAM REGULER', 'S2 Kesmas Program RPLA2'
-    ];
-
     const laporanProdiOptions = prodiOptions;
 
     const buttonLabels: Record<string, string> = {
